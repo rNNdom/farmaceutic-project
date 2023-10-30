@@ -1,0 +1,81 @@
+import { StyleSheet } from "react-native";
+import Header from "../../components/Header";
+import { Text, View } from "../../components/Themed";
+import { Image } from "react-native";
+import StarRating from "react-native-star-rating-widget";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useContext } from "react";
+import { CartContext } from "../context";
+
+export default function ProductOnCart(item: any) {
+  const _item = item.item;
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        marginHorizontal: 10,
+        marginVertical: 5,
+        borderRadius: 8,
+      }}
+    >
+      <Image source={_item.image} style={styles.image} />
+      <View
+        style={{
+          flexDirection: "column",
+          justifyContent: "space-between",
+          marginHorizontal: 10,
+          flex: 1,
+          paddingVertical: 15,
+        }}
+      >
+        <View>
+          <View>
+            <Text style={styles.colorcustom}>{_item.brand}</Text>
+            <Text style={[styles.colorcustom, styles.title]}>{_item.name}</Text>
+          </View>
+        </View>
+
+        <Text style={styles.money}>{formatMoney(_item.price)}</Text>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+          alignItems: "flex-end",
+        }}
+      >
+        <Text style={styles.margin}>Cantidad: {_item.quantity}</Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  image: {
+    width: 120,
+    height: 120,
+  },
+  colorcustom: {
+    color: "#1969a3",
+  },
+  money: {
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  margin: {
+    margin: 10,
+    fontSize: 16,
+    fontWeight: "500",
+  },
+});
+
+function formatMoney(number: number) {
+  return new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+  }).format(number);
+}

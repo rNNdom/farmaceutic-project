@@ -3,11 +3,24 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": [
+        "./src/*"
+      ]
     },
     "jsx": "react-native",
-    "types": ["nativewind/types"]
+    "types": [
+      "nativewind/types"
+    ]
   },
-  "include": ["expo-plugins", "src", "*.ts", "index.tsx", "*.js"],
-  "exclude": ["node_modules", "*.config.js"]
+  "include": [
+    "expo-plugins",
+    "src",
+    "*.ts",
+    "index.tsx",
+    "*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "*.config.js"
+  ]
 }
