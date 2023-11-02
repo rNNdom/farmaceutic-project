@@ -35,8 +35,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...((FontAwesome.font as unknown) as Record<string, unknown>),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    ...(FontAwesome.font as unknown as Record<string, unknown>),
   });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
@@ -63,7 +63,9 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   return (
     <ClerkProvider
-      publishableKey={Constants.expoConfig?.extra?.clerkPublishableKey as string}
+      publishableKey={
+        Constants.expoConfig?.extra?.clerkPublishableKey as string
+      }
     >
       <TRPCProvider>
         <SafeAreaProvider>
@@ -84,15 +86,24 @@ function RootLayoutNav() {
                 <Stack>
                   <Stack.Screen
                     name="(tabs)"
-                    options={{ headerShown: false }}
+                    options={{
+                      headerShown: false,
+                      animation: "slide_from_right",
+                    }}
                   />
                   <Stack.Screen
                     name="(auth)"
-                    options={{ headerShown: false }}
+                    options={{
+                      headerShown: false,
+                      animation: "slide_from_right",
+                    }}
                   />
                   <Stack.Screen
                     name="modal"
-                    options={{ presentation: "modal" }}
+                    options={{
+                      presentation: "modal",
+                      animation: "slide_from_bottom",
+                    }}
                   />
                 </Stack>
               </CartProvider>
