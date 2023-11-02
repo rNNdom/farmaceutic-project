@@ -1,8 +1,9 @@
-import { StyleSheet } from "react-native";
-import { Text, View, Ionicons, SafeAreaView } from "../components/Themed";
-import { Link } from "expo-router";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { useContext } from "react";
+import { StyleSheet } from "react-native";
+import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { Link } from "expo-router";
+
+import { Ionicons, SafeAreaView, Text, View } from "../components/Themed";
 import { CartContext } from "./context";
 
 export default function Header(props: any) {
@@ -67,10 +68,12 @@ export default function Header(props: any) {
           </Link>
         </View>
       </View>
-      <View style={styles.input}>
-        <TextInput placeholder="Buscar" maxLength={40} />
-        <Ionicons name="ios-search-outline" size={20} />
-      </View>
+      {props.showSearch && (
+        <View style={styles.input}>
+          <TextInput placeholder="Buscar" maxLength={40} />
+          <Ionicons name="ios-search-outline" size={20} />
+        </View>
+      )}
     </SafeAreaView>
   );
 }

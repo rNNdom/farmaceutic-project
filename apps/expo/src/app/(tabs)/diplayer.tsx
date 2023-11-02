@@ -1,12 +1,13 @@
 import { StyleSheet } from "react-native";
+
 import Header from "../../components/Header";
-import { Text } from "../../components/Themed";
 import ListProducts from "../../components/home/ListProducts";
+import { Text } from "../../components/Themed";
 
 export default function DisplayerScreen() {
   return (
     <>
-      <Header />
+      <Header showSearch />
 
       <Text style={styles.current}>{"Inicio > Medicamentos"}</Text>
       <ListProducts />

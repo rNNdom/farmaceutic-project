@@ -1,14 +1,8 @@
 import { StyleSheet } from "react-native";
-import Header from "../../components/Header";
-import { Text, View } from "../../components/Themed";
-import CarouselComponent from "../../components/home/CarouselHome";
-import RecomendedComponent from "../../components/home/RecomendProd";
-import ViewCategories from "../../components/home/ViewCategories";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
-import NewBrands from "../../components/home/NewBrands";
+import { FlatList } from "react-native-gesture-handler";
 
-import Product from "./Product";
 import ListCatHeader from "./ListCatHeader";
+import Product from "./Product";
 
 export default function ListProducts() {
   const data = [
@@ -120,36 +114,9 @@ export default function ListProducts() {
   return (
     <FlatList
       data={data}
-      ListHeaderComponent={
-        <>
-          <ListCatHeader data={types} />
-        </>
-      }
+      // ListHeaderComponent={<ListCatHeader data={types} />}
       renderItem={({ item }) => <Product item={item} />}
       keyExtractor={(item) => item._id.toString()}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-  home: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  current: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginHorizontal: 18,
-    marginVertical: 8,
-    opacity: 0.5,
-  },
-});

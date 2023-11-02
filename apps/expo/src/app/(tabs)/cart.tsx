@@ -1,10 +1,11 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
-import Header from "../../components/Header";
 import { useContext } from "react";
-import { CartContext } from "../../components/context";
-import { Text, View } from "../../components/Themed";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+
+import { CartContext } from "../../components/context";
+import Header from "../../components/Header";
 import ProductOnCart from "../../components/home/ProductOnCart";
+import { Text, View } from "../../components/Themed";
 
 const EmptyComponent = () => {
   return (
@@ -56,7 +57,7 @@ export default function CatalogoScreen() {
 
   return (
     <>
-      <Header />
+      <Header showSearch />
       {cart.length === 0 ? (
         <EmptyComponent />
       ) : (
