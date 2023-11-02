@@ -6,7 +6,6 @@
 
 /** @type {import("@expo/config-plugins").ConfigPlugin} */
 const defineConfig = (config) => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   return require("@expo/config-plugins").withProjectBuildGradle(
     config,
     (config) => {

@@ -1,33 +1,60 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import "~/styles/globals.css";
 
-import { headers } from "next/headers";
-import { ClerkProvider, SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignIn,
+  UserButton,
+} from "@clerk/nextjs";
+import { LayoutPanelLeft, Users } from "lucide-react";
 
-import { TRPCReactProvider } from "./providers";
+import { Sidebar } from "~/components/Sidebar";
 
 const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-export const metadata: Metadata = {
-  title: "Create T3 Turbo",
-  description: "Simple monorepo with shared backend for web & mobile apps",
-  openGraph: {
-    title: "Create T3 Turbo",
-    description: "Simple monorepo with shared backend for web & mobile apps",
-    url: "https://create-t3-turbo.vercel.app",
-    siteName: "Create T3 Turbo",
+const NavItems = [
+  {
+    key: "dashboard",
+    label: (
+      <>
+        <LayoutPanelLeft size={20} strokeWidth={1.75} />
+        Panel General
+      </>
+    ),
+    ref: "/",
   },
-  twitter: {
-    card: "summary_large_image",
-    site: "@jullerino",
-    creator: "@jullerino",
+  {
+    key: "delivers",
+    label: (
+      <>
+        <Users size={20} strokeWidth={1.75} />
+        Trabajadores
+      </>
+    ),
+    ref: "/delivery",
   },
-};
+  {
+    key: "account",
+    label: (
+      <>
+        <UserButton
+          appearance={{
+            elements: {
+              avatarBox: "h-9 w-9 ",
+              userButtonBox: "pl-2 pr-2 pt-2 pb-2",
+            },
+          }}
+        />
+      </>
+    ),
+  },
+];
 
 export default function Layout(props: { children: React.ReactNode }) {
   return (
@@ -35,9 +62,12 @@ export default function Layout(props: { children: React.ReactNode }) {
       <html lang="en">
         <body className={["font-sans", fontSans.variable].join(" ")}>
           <SignedIn>
-            <TRPCReactProvider headers={headers()}>
-              {props.children}
-            </TRPCReactProvider>
+            <div className="flex h-screen w-screen ">
+              <section className="w-72 border-r">
+                <Sidebar navItems={NavItems} />
+              </section>
+              <main className="flex-grow overflow-auto ">{props.children}</main>
+            </div>
           </SignedIn>
           <SignedOut>
             <div className="flex h-screen w-screen ">
