@@ -1,4 +1,5 @@
 import React from "react";
+
 import ProfileInfo from "../../components/ProfileInfo";
 import { Card, CardContent, CardHeader } from "../../components/ui/card";
 
