@@ -14,11 +14,11 @@ function lazyLoadConfig() {
 
 /** @type {import("@babel/core").ConfigFunction} */
 module.exports = function (api) {
-  api.cache.forever();
+  api.cache(true);
 
   return {
     presets: ["babel-preset-expo"],
-    plugins: [
+    plugins: ["react-native-reanimated/plugin",
       [
         "nativewind/babel",
         {
@@ -26,6 +26,7 @@ module.exports = function (api) {
         },
       ],
       require.resolve("expo-router/babel"),
+      
     ],
   };
 };
