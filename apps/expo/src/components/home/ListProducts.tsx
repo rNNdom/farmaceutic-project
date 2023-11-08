@@ -1,93 +1,28 @@
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 
+import _Product from "../../utils/MOCK_DATA.json";
 import ListCatHeader from "./ListCatHeader";
 import Product from "./Product";
 
 export default function ListProducts() {
-  const data = [
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/amox.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 1,
-    },
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/amox.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 2,
-    },
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/ibu.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 3,
-    },
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/amox.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 4,
-    },
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/amox.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 5,
-    },
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/ibu.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 6,
-    },
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/amox.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 7,
-    },
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/amox.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 8,
-    },
-    {
-      name: "Medicamento 1",
-      image: require("../../assets/carrousel-test/ibu.png"),
-      price: 10000,
-      brand: "Marca 1",
-      reviews: 4.5,
-      reviewsCount: 5,
-      _id: 9,
-    },
-  ];
+  const data = _Product.map((item) => {
+    return {
+      _id: item.prod_id,
+      name: item.prod_name,
+      image: item.prod_image,
+      price: item.prod_price,
+      brand: item.prod_brand,
+      reviews: item.prod_reviews,
+      reviewsCount: item.prod_reviews,
+      dateExpiration: item.prod_date_expiration,
+      datePackage: item.prod_date_package,
+      status: item.prod_status,
+      quantity: item.prod_quantity,
+      description: item.prod_description,
+    };
+  });
 
   const types = [
     {
@@ -114,9 +49,36 @@ export default function ListProducts() {
   return (
     <FlatList
       data={data}
-      // ListHeaderComponent={<ListCatHeader data={types} />}
+      ListHeaderComponent={
+        <>
+          <ListCatHeader data={types} />
+        </>
+      }
       renderItem={({ item }) => <Product item={item} />}
       keyExtractor={(item) => item._id.toString()}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: "80%",
+  },
+  home: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
+  current: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginHorizontal: 18,
+    marginVertical: 8,
+    opacity: 0.5,
+  },
+});

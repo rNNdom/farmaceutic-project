@@ -15,6 +15,11 @@ export interface Product {
   reviews: number;
   reviewsCount: number;
   _id: number;
+  dateExpiration: string;
+  datePackage: string;
+  status: string;
+  quantity: number;
+  description: string;
 }
 
 export interface ProductProps {
@@ -37,38 +42,17 @@ export default function Product(item: Readonly<ProductProps>) {
       }}
       asChild
     >
-      <Pressable
-        style={{
-          flexDirection: "row",
-          marginHorizontal: 10,
-          marginVertical: 5,
-          borderRadius: 8,
-        }}
-      >
+      <Pressable style={styles.container}>
         <Image source={_item.image} style={styles.image} />
-        <View
-          style={{
-            flexDirection: "column",
-            justifyContent: "space-between",
-            marginHorizontal: 10,
-            flex: 1,
-            paddingVertical: 14,
-          }}
-        >
-          <View>
+        <View style={styles.vewimage}>
+          <View style={styles.containerdesc}>
             <View>
               <Text style={styles.colorcustom}>{_item.brand}</Text>
               <Text style={[styles.colorcustom, styles.title]}>
                 {_item.name}
               </Text>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 4,
-              }}
-            >
+            <View style={styles.reveiw}>
               <StarRating
                 rating={_item.reviews}
                 onChange={() => {}}
@@ -96,6 +80,8 @@ export default function Product(item: Readonly<ProductProps>) {
               borderRadius: 8,
               alignItems: "center",
               margin: 10,
+              width: 100,
+              height: "auto",
             }}
             onPress={handleAddToCart}
           >
@@ -122,6 +108,37 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
+    width: "100%",
+    height: "auto",
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  containerdesc: {
+    alignItems: "flex-start",
+    width: "100%",
+    height: "auto",
+    flexDirection: "column",
+    alignContent: "space-around",
+    display: "flex",
+  },
+  container: {
+    flexDirection: "row",
+    marginHorizontal: 10,
+    marginVertical: 5,
+    borderRadius: 8,
+    display: "flex",
+  },
+  vewimage: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    marginHorizontal: 10,
+    flex: 1,
+    paddingVertical: 14,
+  },
+  reveiw: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
 });
 

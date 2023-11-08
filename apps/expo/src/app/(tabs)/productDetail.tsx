@@ -17,6 +17,10 @@ export default function ProductDetail() {
       <Header />
       <Text style={styles.title}>{_item.name}</Text>
       <Text>{_item.price}</Text>
+      <Text>{_item.quantity}</Text>
+      <Text>{_item.description}</Text>
+      
+      
     </View>
   );
 }
