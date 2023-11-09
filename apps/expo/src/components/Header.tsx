@@ -8,7 +8,18 @@ import { CartContext } from "./context";
 
 export default function Header(props: any) {
   console.log(props);
-  const { cart } = useContext(CartContext);
+  const { cart, quantity } = useContext(CartContext);
+
+  const isLogged = true;
+  const isRepartidor = false;
+
+  const ruta = isLogged
+    ? isRepartidor
+      ? "/(repartidor)/profile"
+      : "/(tabs)/profile"
+    : "/(auth)/login";
+
+  const cartRuta = isRepartidor ? "/(repartidor)/cart" : "/(tabs)/cart";
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -28,7 +39,7 @@ export default function Header(props: any) {
           </Text>
         </Link>
         <View style={styles.options}>
-          <Link href="/(auth)/login">
+          <Link href={ruta}>
             <TouchableOpacity
               style={{
                 paddingTop: 5,
@@ -37,7 +48,8 @@ export default function Header(props: any) {
               <Ionicons name="ios-person-circle-outline" size={26} />
             </TouchableOpacity>
           </Link>
-          <Link href="/(tabs)/cart">
+
+          <Link href={cartRuta}>
             <TouchableOpacity
               style={{
                 paddingRight: 10,
@@ -61,7 +73,7 @@ export default function Header(props: any) {
                     textAlign: "center",
                   }}
                 >
-                  {cart.length}
+                  {quantity < 99 ? quantity : "9+"}
                 </Text>
               )}
             </TouchableOpacity>

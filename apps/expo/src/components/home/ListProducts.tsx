@@ -11,7 +11,7 @@ export default function ListProducts() {
     return {
       _id: item.prod_id,
       name: item.prod_name,
-      image: item.prod_image,
+      image: require("../../assets/carrousel-test/ibu.png"),
       price: item.prod_price,
       brand: item.prod_brand,
       reviews: item.prod_reviews,

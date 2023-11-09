@@ -1,8 +1,9 @@
-import { StyleSheet, TextInput, Image } from "react-native";
-
-import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
+import { Image, StyleSheet, TextInput } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
+
+import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
+
 export default function LoginAuth() {
   return (
     <SafeAreaView style={styles.container}>

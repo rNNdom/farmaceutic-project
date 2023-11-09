@@ -1,11 +1,6 @@
-import { StyleSheet } from "react-native";
-import Header from "../../components/Header";
+import { Image, StyleSheet } from "react-native";
+
 import { Text, View } from "../../components/Themed";
-import { Image } from "react-native";
-import StarRating from "react-native-star-rating-widget";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { useContext } from "react";
-import { CartContext } from "../context";
 
 export default function ProductOnCart(item: any) {
   const _item = item.item;
@@ -44,7 +39,7 @@ export default function ProductOnCart(item: any) {
           alignItems: "flex-end",
         }}
       >
-        <Text style={styles.margin}>Cantidad: {_item.quantity}</Text>
+        <Text style={styles.margin}>Cantidad: {_item.onCartQuantity}</Text>
       </View>
     </View>
   );

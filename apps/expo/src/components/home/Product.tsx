@@ -27,12 +27,6 @@ export interface ProductProps {
 }
 
 export default function Product(item: Readonly<ProductProps>) {
-  const { addToCart } = useContext(CartContext);
-
-  function handleAddToCart() {
-    addToCart(item.item);
-  }
-
   const _item = item.item;
   return (
     <Link
@@ -62,31 +56,7 @@ export default function Product(item: Readonly<ProductProps>) {
               <Text>{_item.reviewsCount}</Text>
             </View>
           </View>
-
           <Text style={styles.money}>{formatMoney(_item.price)}</Text>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "flex-end",
-            alignItems: "flex-end",
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#1969a3",
-              paddingVertical: 10,
-              paddingHorizontal: 20,
-              borderRadius: 8,
-              alignItems: "center",
-              margin: 10,
-              width: 100,
-              height: "auto",
-            }}
-            onPress={handleAddToCart}
-          >
-            <Text style={{ color: "#fff" }}>Agregar</Text>
-          </TouchableOpacity>
         </View>
       </Pressable>
     </Link>
@@ -142,7 +112,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function formatMoney(number: number) {
+export function formatMoney(number: number) {
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
     currency: "CLP",

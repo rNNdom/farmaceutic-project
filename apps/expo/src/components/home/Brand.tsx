@@ -1,8 +1,8 @@
 import * as React from "react";
-import { View } from "../../components/Themed";
-import { Image } from "react-native";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+
+import { View } from "../../components/Themed";
 
 function Brand(item: any) {
   const _item = item.item;
