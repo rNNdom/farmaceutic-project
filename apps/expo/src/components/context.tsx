@@ -12,7 +12,9 @@ export const CartProvider = ({ children }: any) => {
   const [quantity, setQuantity] = useState<number>(0);
 
   const addToCart = (element: any, _quantity: number) => {
-    const index = cart.findIndex((item: any) => item._id === element._id);
+    const index = cart.findIndex(
+      (item: any) => item.prod_id === element.prod_id,
+    );
     if (index !== -1) {
       const _cart = [...cart];
       _cart[index].onCartQuantity += _quantity;
@@ -22,7 +24,6 @@ export const CartProvider = ({ children }: any) => {
     }
     element.onCartQuantity = _quantity;
     setQuantity(quantity + _quantity);
-
     setCart([...cart, element]);
   };
 

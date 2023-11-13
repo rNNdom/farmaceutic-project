@@ -6,8 +6,7 @@ import { Link } from "expo-router";
 import { Ionicons, SafeAreaView, Text, View } from "../components/Themed";
 import { CartContext } from "./context";
 
-export default function Header(props: any) {
-  console.log(props);
+export default function Header(_props: any) {
   const { cart, quantity } = useContext(CartContext);
 
   const isLogged = true;
@@ -58,21 +57,7 @@ export default function Header(props: any) {
             >
               <Ionicons name="ios-cart-outline" size={26} />
               {cart.length > 0 && (
-                <Text
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    backgroundColor: "#1969a3",
-                    color: "#fff",
-                    paddingHorizontal: 7,
-                    paddingVertical: 2,
-                    borderRadius: 50,
-                    fontSize: 10,
-                    // minWidth: 16,
-                    textAlign: "center",
-                  }}
-                >
+                <Text style={styles.text}>
                   {quantity < 99 ? quantity : "9+"}
                 </Text>
               )}
@@ -80,7 +65,7 @@ export default function Header(props: any) {
           </Link>
         </View>
       </View>
-      {props.showSearch && (
+      {_props.showSearch && (
         <View style={styles.input}>
           <TextInput placeholder="Buscar" maxLength={40} />
           <Ionicons name="ios-search-outline" size={20} />
@@ -115,5 +100,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  text: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    backgroundColor: "#1969a3",
+    color: "#fff",
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 50,
+    fontSize: 10,
+    // minWidth: 16,
+    textAlign: "center",
   },
 });

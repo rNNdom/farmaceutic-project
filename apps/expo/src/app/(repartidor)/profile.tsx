@@ -4,10 +4,10 @@ import Header from "../../components/Header";
 import { Ionicons, Text, View } from "../../components/Themed";
 
 export default function Profile() {
-  const name = "Huacho ql loco repartidor";
+  const name = "Juan Perez";
   const status = "En camino";
   const date = "12/12/2021";
-  const image = require("../../assets/carrousel-test/ibu.png");
+  const image = require("~/assets/carrousel-test/Ibuprofeno_10.png");
   return (
     <View
       style={{

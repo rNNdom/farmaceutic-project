@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
@@ -7,47 +7,49 @@ import Header from "../../components/Header";
 import ProductOnCart from "../../components/home/ProductOnCart";
 import { Text, View } from "../../components/Themed";
 
+interface CartItemProps {
+  data: any[];
+  emptyCart: () => void;
+}
+
 const EmptyComponent = () => {
   return (
     <View style={styles.empty}>
-      <Text style={{ fontSize: 20, fontWeight: "500", margin: 10 }}>
-        No hay productos en el carrito.
-      </Text>
+      <Text style={styles.emptyText}>No hay productos en el carrito.</Text>
     </View>
   );
 };
 
-const CartItem = (data: any) => {
-  const total = data.data.reduce((acc: any, item: any) => {
-    return acc + item.price * item.quantity;
+const calculateTotal = (data: any[]) => {
+  return data.reduce((acc: any, item: any) => {
+    return acc + item.prod_price * item.onCartQuantity;
   }, 0);
+};
+
+const PayButton = ({ onPress }: { onPress: () => void }) => (
+  <TouchableOpacity onPress={onPress} style={styles.pay}>
+    <Text style={styles.payText}>Pagar</Text>
+  </TouchableOpacity>
+);
+
+const CartItem = ({ data, emptyCart }: CartItemProps) => {
+  const total = useMemo(() => calculateTotal(data), [data]);
+
   return (
     <>
       <FlatList
-        data={data.data}
-        renderItem={({ item }) => <ProductOnCart item={item} />}
-        keyExtractor={(item: any) => item._id.toString()}
+        data={data}
+        renderItem={({ item }) => <ProductOnCart {...item} />}
+        keyExtractor={(item: any) => item.prod_id}
       />
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginHorizontal: 10,
-          marginVertical: 10,
-        }}
-      >
-        <Text style={{ fontSize: 20, fontWeight: "500", margin: 10 }}>
-          Total: {formatMoney(total)}
-        </Text>
-        <TouchableOpacity onPress={data.emptyCart} style={styles.vaciar}>
-          <Text style={{ color: "red" }}>Vaciar Carrito</Text>
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalText}>Total: {formatMoney(total)}</Text>
+        <TouchableOpacity onPress={emptyCart} style={styles.vaciar}>
+          <Text style={styles.vaciarText}>Vaciar Carrito</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={() => {}} style={styles.pay}>
-        <Text style={{ color: "white" }}>Pagar</Text>
-      </TouchableOpacity>
+      <PayButton onPress={() => {}} />
     </>
   );
 };
@@ -76,16 +78,39 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: "center",
   },
+  payText: {
+    color: "white",
+  },
   empty: {
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
     backgroundColor: "transparent",
   },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: "500",
+    margin: 10,
+  },
   vaciar: {
     padding: 10,
     borderRadius: 8,
     alignItems: "flex-end",
+  },
+  vaciarText: {
+    color: "red",
+  },
+  totalContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+  totalText: {
+    fontSize: 20,
+    fontWeight: "500",
+    margin: 10,
   },
 });
 

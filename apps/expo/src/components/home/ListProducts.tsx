@@ -1,28 +1,13 @@
-import React, { useState } from "react";
-import { StyleSheet } from "react-native";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import React from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 
-import _Product from "../../utils/MOCK_DATA.json";
+import useProductRepositories from "~/hooks/useProductRepositories";
 import ListCatHeader from "./ListCatHeader";
-import Product from "./Product";
+import ProductShort from "./Product";
 
 export default function ListProducts() {
-  const data = _Product.map((item) => {
-    return {
-      _id: item.prod_id,
-      name: item.prod_name,
-      image: require("../../assets/carrousel-test/ibu.png"),
-      price: item.prod_price,
-      brand: item.prod_brand,
-      reviews: item.prod_reviews,
-      reviewsCount: item.prod_reviews,
-      dateExpiration: item.prod_date_expiration,
-      datePackage: item.prod_date_package,
-      status: item.prod_status,
-      quantity: item.prod_quantity,
-      description: item.prod_description,
-    };
-  });
+  const { data, loading } = useProductRepositories();
 
   const types = [
     {
@@ -46,17 +31,26 @@ export default function ListProducts() {
       key: "cuidado-facial",
     },
   ];
+
   return (
-    <FlatList
-      data={data}
-      ListHeaderComponent={
-        <>
-          <ListCatHeader data={types} />
-        </>
-      }
-      renderItem={({ item }) => <Product item={item} />}
-      keyExtractor={(item) => item._id.toString()}
-    />
+    <>
+      {loading ? (
+        <View style={styles.loading}>
+          <ActivityIndicator />
+        </View>
+      ) : (
+        <FlatList
+          data={data}
+          ListHeaderComponent={
+            <>
+              <ListCatHeader data={types} />
+            </>
+          }
+          renderItem={({ item }) => <ProductShort {...item} />}
+          keyExtractor={(item) => item.prod_id}
+        />
+      )}
+    </>
   );
 }
 
@@ -70,6 +64,11 @@ const styles = StyleSheet.create({
     height: 1,
     width: "80%",
   },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   home: {
     flex: 1,
     backgroundColor: "#f5f5f5",
@@ -77,6 +76,7 @@ const styles = StyleSheet.create({
   current: {
     fontSize: 14,
     fontWeight: "500",
+    backgroundColor: "#000",
     marginHorizontal: 18,
     marginVertical: 8,
     opacity: 0.5,

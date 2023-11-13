@@ -1,65 +1,48 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
-import { View, Text, Ionicons } from "../../components/Themed";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { FlatList, StyleSheet } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+import { Product } from "~/hooks/useProductRepositories";
+import { Ionicons, Text, View } from "../../components/Themed";
 import Brand from "./Brand";
 
-function NewBrands() {
-  const dataImages = [
-    {
-      name: "paracetamol",
-      image: require("../../assets/carrousel-test/para.png"),
-    },
-    {
-      name: "ibuprofeno",
-      image: require("../../assets/carrousel-test/ibu.png"),
-    },
-    {
-      name: "amoxicilina",
-      image: require("../../assets/carrousel-test/amox.png"),
-    },
-  ];
+const NewBrands = ({ data }: { data: Product[] }) => {
+  let selectedCategories: { [key: string]: boolean } = {};
+  const _item = data
+    .filter((product) => {
+      // Si la categoría del producto ya ha sido seleccionada, excluye el producto
+      if (selectedCategories[product.prod_brand]) {
+        return false;
+      }
+
+      // Marca la categoría del producto como seleccionada
+      selectedCategories[product.prod_brand] = true;
+
+      // Incluye el producto
+      return true;
+    })
+    .slice(0, 4);
+
   return (
     <View style={styles.main}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "transparent",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "bold",
-          }}
-        >
-          Nuevas marcas
-        </Text>
-        <TouchableOpacity
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Nuevas marcas</Text>
+        <TouchableOpacity style={styles.headerButton}>
           <Text>Ver todas</Text>
           <Ionicons name="chevron-forward-outline" size={20} />
         </TouchableOpacity>
       </View>
-      <ScrollView horizontal>
-        <View style={styles.app}>
-          <Brand item={dataImages[0]} />
-          <Brand item={dataImages[0]} />
-          <Brand item={dataImages[0]} />
-          <Brand item={dataImages[0]} />
-          <Brand item={dataImages[0]} />
-        </View>
-      </ScrollView>
+      <View style={styles.app}>
+        <FlatList
+          horizontal
+          data={_item}
+          renderItem={({ item }) => <Brand key={item.prod_id} {...item} />}
+          keyExtractor={(item) => item.prod_id}
+        />
+      </View>
     </View>
   );
-}
+};
 
 export default NewBrands;
 
@@ -74,5 +57,20 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: "transparent",
     flexDirection: "row",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  headerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
 });

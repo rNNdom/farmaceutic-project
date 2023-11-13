@@ -1,3 +1,4 @@
+
 [
   {
     "prod_id": 1,
@@ -5,11 +6,13 @@
     "prod_date_expiration": "2001/01/28",
     "prod_date_package": "2003/01/28",
     "prod_status": "en stock",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
-    "prod_reviews": 2.3,
+    "prod_image": "Loratadina_10mg",
+    "prod_reviews": 7,
     "prod_brand": "PharmaVida",
     "prod_price": 29263,
     "prod_quantity": 20,
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Loratadina 10mg",
     "prod_description": "Este producto debe ser prescrito bajo receta médica. La información publicada, es para uso exclusivo de profesionales legalmente habilitados para prescribir o dispensar productos farmacéuticos de conformidad con las normas del “Reglamento del Sistema Nacional de Control de los Productos Farmacéuticos de Uso Humano”. Cualquier usuario que desee información acerca de los productos de Laboratorio Chile S.A. deberá consultar a su médico. Laboratorio Chile S.A. no se hace responsable por el uso indebido de la información contenida en este catálogo."
   },
   {
@@ -18,12 +21,14 @@
     "prod_date_expiration": "2060/02/27",
     "prod_date_package": "2062/02/27",
     "prod_status": "en proceso",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
+    "prod_image": "Atorvastatina_10mg",
     "prod_reviews": 1.4,
     "prod_brand": "MediFarma",
     "prod_price": 37730,
     "prod_quantity": 88,
-    "prod_description": "Amoxicilina 500mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Atorvastatina 20mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   },
   {
     "prod_id": 3,
@@ -31,12 +36,14 @@
     "prod_date_expiration": "2085/03/23",
     "prod_date_package": "2087/03/23",
     "prod_status": "en stock",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
-    "prod_reviews": 0.7,
+    "prod_image": "Omeprazol_20mg",
+    "prod_reviews": 3.1,
     "prod_brand": "PharmaVida",
     "prod_price": 24606,
     "prod_quantity": 60,
-    "prod_description": "Diazepam 5mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Omeprazol 20mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   },
   {
     "prod_id": 4,
@@ -44,12 +51,14 @@
     "prod_date_expiration": "2059/01/08",
     "prod_date_package": "2061/01/08",
     "prod_status": "en stock",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
+    "prod_image": "Omeprazol_20mg",
     "prod_reviews": 3.2,
     "prod_brand": "MediFarma",
     "prod_price": 34392,
     "prod_quantity": 57,
-    "prod_description": "Paracetamol 500mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Omeprazol 20mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   },
   {
     "prod_id": 5,
@@ -57,12 +66,14 @@
     "prod_date_expiration": "2033/08/30",
     "prod_date_package": "2035/08/30",
     "prod_status": "pausado",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
+    "prod_image": "Diazepam_5mg",
     "prod_reviews": 1.2,
     "prod_brand": "MediCare",
     "prod_price": 13838,
     "prod_quantity": 77,
-    "prod_description": "Cetirizina 10mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Diazepam 5mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   },
   {
     "prod_id": 6,
@@ -70,12 +81,14 @@
     "prod_date_expiration": "2005/05/05",
     "prod_date_package": "2007/05/05",
     "prod_status": "cancelado",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
+    "prod_image": "Ibuprofeno_200mg",
     "prod_reviews": 3.2,
     "prod_brand": "MediSalud",
     "prod_price": 22838,
     "prod_quantity": 94,
-    "prod_description": "Paracetamol 500mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Ibuprofeno 200mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   },
   {
     "prod_id": 7,
@@ -83,12 +96,14 @@
     "prod_date_expiration": "2030/01/28",
     "prod_date_package": "2032/01/28",
     "prod_status": "en tránsito",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
-    "prod_reviews": 2.7,
+    "prod_image": "Ibuprofeno_200mg",
+    "prod_reviews": 6,
     "prod_brand": "FarmaciaExpress",
     "prod_price": 28840,
     "prod_quantity": 63,
-    "prod_description": "Ibuprofeno 200mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Ibuprofeno 200mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   },
   {
     "prod_id": 8,
@@ -96,12 +111,14 @@
     "prod_date_expiration": "2063/02/19",
     "prod_date_package": "2065/02/19",
     "prod_status": "en tránsito",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
+    "prod_image": "Omeprazol_20mg",
     "prod_reviews": 3.3,
     "prod_brand": "PharmaVida",
     "prod_price": 28304,
     "prod_quantity": 89,
-    "prod_description": "Cetirizina 10mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Omeprazol 20mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   },
   {
     "prod_id": 9,
@@ -109,12 +126,14 @@
     "prod_date_expiration": "2096/10/15",
     "prod_date_package": "2098/10/15",
     "prod_status": "vendido",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
-    "prod_reviews": 2.9,
+    "prod_image": "Omeprazol_20mg",
+    "prod_reviews": 4,
     "prod_brand": "MediCare",
     "prod_price": 15557,
     "prod_quantity": 87,
-    "prod_description": "Metformina 850mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Omeprazol 20mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   },
   {
     "prod_id": 10,
@@ -122,11 +141,13 @@
     "prod_date_expiration": "2038/05/01",
     "prod_date_package": "2040/05/01",
     "prod_status": "en espera",
-    "prod_image": "../../assets/carrousel-test/ibu.png",
-    "prod_reviews": 1.6,
+    "prod_image": "Atorvastatina_10mg",
+    "prod_reviews": 5,
     "prod_brand": "VidaSana",
     "prod_price": 45726,
     "prod_quantity": 77,
-    "prod_description": "Diazepam 5mg"
+    "prod_tablet": "30 comprimidos",
+    "prod_detail": "Atorvastatina 20mg",
+    "prod_description": "Cada medicamento contiene un principio activo específico, una sustancia responsable de producir el efecto terapéutico deseado en el organismo. Detallamos cuidadosamente el principio activo de cada producto para que los usuarios estén informados sobre la base científica de su acción."
   }
 ]
