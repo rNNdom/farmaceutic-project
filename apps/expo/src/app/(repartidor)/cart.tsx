@@ -32,7 +32,7 @@ const CartItem = (data: any) => {
   );
 };
 
-export default function CatalogoScreen() {
+export default function CatalogoScreens() {
   const fakedata = [
     {
       _id: 1,
@@ -98,7 +98,6 @@ export default function CatalogoScreen() {
 
   return (
     <>
-      <Header showSearch />
       {fakedata.length === 0 ? (
         <EmptyComponent />
       ) : (

@@ -7,7 +7,7 @@ import ListCatHeader from "./ListCatHeader";
 import ProductShort from "./Product";
 
 export default function ListProducts() {
-  const { data, loading } = useProductRepositories();
+  const { productrepo, loading } = useProductRepositories(null);
 
   const types = [
     {
@@ -40,7 +40,7 @@ export default function ListProducts() {
         </View>
       ) : (
         <FlatList
-          data={data}
+          data={productrepo}
           ListHeaderComponent={
             <>
               <ListCatHeader data={types} />

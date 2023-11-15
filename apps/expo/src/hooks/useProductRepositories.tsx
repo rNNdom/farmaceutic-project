@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
-const API_MOCKAROO = "https://my.api.mockaroo.com/prod.json?key=a3bc5410";
-const MY_API = "http://192.168.83.44:5500/src/utils/MOCK_DATAcopy.json";
+const API_MOCKAROO = "https://my.api.mockaroo.com/prod";
+const MY_API = "http://192.168.171.44:5500/src/utils/MOCK_PROD.json";
+const MACKAROO_KEY = "a3bc5410";
 
 export interface Product {
   prod_id: string;
@@ -24,16 +25,37 @@ interface ProductRepo {
   products: Product[];
 }
 
-const useProductRepositories = () => {
+const useProductRepositories = (props: any) => {
   const [loading, setLoading] = useState<boolean>(true); // [1]
 
-  const [productrepo, setproductrepo] = useState<ProductRepo | null>(null);
+  const [productrepo, setproductrepo] = useState<Product[] | null>(null);
 
   const fetchProduct = async () => {
     try {
-      const response = await globalThis.fetch(API_MOCKAROO);
-      const json: ProductRepo = await response.json();
-      setproductrepo(json);
+      // const params = new URLSearchParams({
+      //   id: `${props}`,
+      // });
+
+      // const response = await globalThis.fetch(
+      //   `${API_MOCKAROO}?${params.toString()}`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       "X-API-Key": `${MACKAROO_KEY}`,
+      //     },
+      //   },
+      // );
+
+      const response = await globalThis.fetch(MY_API);
+      const json: Product[] = await response.json();
+      if (props == null) {
+        const data = json;
+        setproductrepo(data);
+      } else {
+        const data = json?.filter((item) => props.includes(item.prod_id));
+        console.log(props);
+        setproductrepo(data);
+      }
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch product", error);
@@ -44,8 +66,8 @@ const useProductRepositories = () => {
   useEffect(() => {
     fetchProduct();
   }, []);
-  const data = productrepo;
-  return { data, loading };
+
+  return { productrepo, loading };
 };
 
 export default useProductRepositories;

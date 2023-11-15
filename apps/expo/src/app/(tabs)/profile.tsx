@@ -1,10 +1,16 @@
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
+import { useRoute } from "@react-navigation/native";
 
+import useProfileRepositories from "~/hooks/useProfileRepositories";
+import useUserRepositories, { User } from "~/hooks/useUserRepositories";
 import Header from "../../components/Header";
 import { Ionicons, Text, View } from "../../components/Themed";
 
 export default function Profile() {
+  const _item = useRoute().params as User;
+  const { profile } = useProfileRepositories(_item.usr_profile);
+
   const name = "Juan Perez";
   const status = "En camino";
   const date = "12/12/2021";
@@ -24,7 +30,9 @@ export default function Profile() {
           paddingBottom: 18,
         }}
       >
-        <Text style={[styles.title, styles.colorcustom]}>Hola, {name}</Text>
+        <Text style={[styles.title, styles.colorcustom]}>
+          Hola, {profile?.prf_name}
+        </Text>
       </View>
 
       <View style={styles.card}>
@@ -93,7 +101,12 @@ export default function Profile() {
         }}
       >
         <View style={styles.separator} />
-        <Link href="/(tabs)/myOrders" asChild style={styles.settingcard}>
+        <Link
+          href={{
+            pathname: "/(tabs)/myOrders",
+            params: { usr_id: _item.usr_id, usr_vip: _item.usr_vip },
+          }}
+        >
           <TouchableOpacity style={[styles.container, styles.settingcard]}>
             <View
               style={[
@@ -122,7 +135,13 @@ export default function Profile() {
           </TouchableOpacity>
         </Link>
         <View style={styles.separator} />
-        <Link href="/(tabs)/myProfile">
+        <Link
+          href={{
+            pathname: "/(tabs)/myProfile",
+            params: { ..._item, ...profile },
+          }}
+          asChild
+        >
           <TouchableOpacity style={[styles.container, styles.settingcard]}>
             <View
               style={[

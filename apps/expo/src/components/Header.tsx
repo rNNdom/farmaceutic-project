@@ -3,30 +3,35 @@ import { StyleSheet } from "react-native";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
+import useUserRepositories from "~/hooks/useUserRepositories";
 import { Ionicons, SafeAreaView, Text, View } from "../components/Themed";
 import { CartContext } from "./context";
 
 export default function Header(_props: any) {
   const { cart, quantity } = useContext(CartContext);
-
+  const { user } = useUserRepositories(2);
   const isLogged = true;
-  const isRepartidor = false;
+  const isRepartidor = user?.usr_role;
+  const showSearch = _props.showSearch && isRepartidor == 1;
 
   const ruta = isLogged
-    ? isRepartidor
+    ? isRepartidor === 2
       ? "/(repartidor)/profile"
       : "/(tabs)/profile"
     : "/(auth)/login";
 
-  const cartRuta = isRepartidor ? "/(repartidor)/cart" : "/(tabs)/cart";
+  const cartRuta = isRepartidor === 2 ? "/(repartidor)/cart" : "/(tabs)/cart";
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Link href="/(tabs)/diplayer">
-          <TouchableOpacity>
-            <Ionicons name="ios-menu" size={28} />
-          </TouchableOpacity>
-        </Link>
+        {isRepartidor == 1 && (
+          <Link href="/(tabs)/diplayer">
+            <TouchableOpacity>
+              <Ionicons name="ios-menu" size={28} />
+            </TouchableOpacity>
+          </Link>
+        )}
+
         <Link href="/(tabs)">
           <Text
             style={{
@@ -38,7 +43,13 @@ export default function Header(_props: any) {
           </Text>
         </Link>
         <View style={styles.options}>
-          <Link href={ruta}>
+          <Link
+            href={{
+              pathname: ruta,
+              params: { ...user },
+            }}
+            asChild
+          >
             <TouchableOpacity
               style={{
                 paddingTop: 5,
@@ -47,25 +58,26 @@ export default function Header(_props: any) {
               <Ionicons name="ios-person-circle-outline" size={26} />
             </TouchableOpacity>
           </Link>
-
-          <Link href={cartRuta}>
-            <TouchableOpacity
-              style={{
-                paddingRight: 10,
-                paddingTop: 5,
-              }}
-            >
-              <Ionicons name="ios-cart-outline" size={26} />
-              {cart.length > 0 && (
-                <Text style={styles.text}>
-                  {quantity < 99 ? quantity : "9+"}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </Link>
+          {isRepartidor == 1 && (
+            <Link href={cartRuta}>
+              <TouchableOpacity
+                style={{
+                  paddingRight: 10,
+                  paddingTop: 5,
+                }}
+              >
+                <Ionicons name="ios-cart-outline" size={26} />
+                {cart.length > 0 && (
+                  <Text style={styles.text}>
+                    {quantity < 99 ? quantity : "9+"}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </Link>
+          )}
         </View>
       </View>
-      {_props.showSearch && (
+      {showSearch && (
         <View style={styles.input}>
           <TextInput placeholder="Buscar" maxLength={40} />
           <Ionicons name="ios-search-outline" size={20} />

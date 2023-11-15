@@ -2,26 +2,38 @@ import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import useProductRepositories from "~/hooks/useProductRepositories";
+import useUserRepositories from "~/hooks/useUserRepositories";
 import Header from "../../components/Header";
 import CarouselComponent from "../../components/home/CarouselHome";
 import NewBrands from "../../components/home/NewBrands";
 import RecomendedComponent from "../../components/home/RecomendProd";
 import ViewCategories from "../../components/home/ViewCategories";
 import { Text } from "../../components/Themed";
+import CatalogoScreens from "../(repartidor)/cart";
 
 export default function CatalogoScreen() {
-  const { data } = useProductRepositories();
+  const { productrepo } = useProductRepositories(null);
+  const { user } = useUserRepositories(2);
 
   return (
     <>
       <Header showSearch />
 
       <ScrollView style={styles.home}>
-        <Text style={styles.current}>Inicio</Text>
-        {data && <CarouselComponent data={data} />}
-        {data && <RecomendedComponent data={data} />}
-        {data && <ViewCategories data={data} />}
-        {data && <NewBrands data={data} />}
+        {user?.usr_role == 1 ? (
+          <>
+            <Text style={styles.current}>Inicio</Text>
+            {productrepo && <CarouselComponent data={productrepo} />}
+            {productrepo && <RecomendedComponent data={productrepo} />}
+            {productrepo && <ViewCategories data={productrepo} />}
+            {productrepo && <NewBrands data={productrepo} />}
+          </>
+        ) : (
+          <>
+            <Text style={styles.current}>Inicio</Text>
+            <CatalogoScreens />
+          </>
+        )}
       </ScrollView>
     </>
   );

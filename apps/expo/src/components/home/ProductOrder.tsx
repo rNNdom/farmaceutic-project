@@ -1,17 +1,22 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 
+import useOrderDetRepositories from "~/hooks/useOrderDetRepositories";
+import useProfileRepositories from "~/hooks/useProfileRepositories";
+import useUserRepositories from "~/hooks/useUserRepositories";
 import { Text, View } from "../Themed";
 
-export default function ProductOnDelivery(item: any) {
-  const _item = item.item;
-  const image = require("~/assets/carrousel-test/Ibuprofeno_10.png");
-
+export default function ProductOnDelivery(props: any) {
+  const _item = props.data;
+  const customer = props.user;
+  const { orderdet } = useOrderDetRepositories(_item.order_details);
+  const { user } = useUserRepositories(_item.order_delivery);
+  const { profile } = useProfileRepositories(user?.usr_profile);
   return (
     <Link
       href={{
         pathname: "/(tabs)/productOrderDetails",
-        params: _item,
+        params: { data: orderdet?.order_det_prod as number[] },
       }}
       asChild
     >
@@ -19,12 +24,10 @@ export default function ProductOnDelivery(item: any) {
         <View style={[styles.container]}>
           <View style={[styles.row]}>
             <View style={[styles.column, styles.buttonRow]}>
-              {_item.order_customer.is_vip && (
-                <Text style={styles.vip}>Cliente VIP</Text>
-              )}
+              {customer.is_vip && <Text style={styles.vip}>Cliente VIP</Text>}
             </View>
             <View style={[styles.column, styles.buttonRow]}>
-              {_item.order_details.order_recipe ? (
+              {orderdet?.order_recipe ? (
                 <View style={styles.greenCircle}></View>
               ) : (
                 <View style={styles.redCircle}></View>
@@ -39,13 +42,11 @@ export default function ProductOnDelivery(item: any) {
                 <View>
                   <Text style={[styles.title]}>Repartidor</Text>
                   <Text style={[styles.text]}>
-                    {_item.order_delivery.usr_name}
+                    {profile?.prf_name} {profile?.prf_lastname}
                   </Text>
                 </View>
                 <Text style={[styles.title]}>Direccción</Text>
-                <Text style={[styles.text]}>
-                  {_item.order_details.order_location}
-                </Text>
+                <Text style={[styles.text]}>{orderdet?.order_location}</Text>
               </View>
             </View>
           </View>
@@ -64,7 +65,7 @@ export default function ProductOnDelivery(item: any) {
             ]}
           >
             <Text style={styles.money}>
-              {formatMoney(_item.order_details.order_det_total)}
+              {formatMoney(orderdet?.order_det_total as number)}
             </Text>
           </View>
         </View>
@@ -180,3 +181,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+function useProfilebyIdRepositories(order_delivery: any): { user: any } {
+  throw new Error("Function not implemented.");
+}
