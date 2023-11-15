@@ -1,8 +1,9 @@
-import { StyleSheet, TextInput, Image } from "react-native";
-
-import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
+import { Image, StyleSheet, TextInput } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
+
+import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
+
 export default function LoginAuth() {
   return (
     <SafeAreaView style={styles.container}>
@@ -79,7 +80,7 @@ export default function LoginAuth() {
           <View style={styles.input}>
             <Ionicons name="ios-person-outline" size={20} />
             <TextInput
-              placeholder="Correo Elec"
+              placeholder="Correo Electronico"
               maxLength={40}
               style={{
                 flex: 1,
@@ -92,7 +93,7 @@ export default function LoginAuth() {
             gap: 10,
           }}
         >
-          <Text>Contrasenia</Text>
+          <Text>Contraseñaia</Text>
           <View style={styles.input}>
             <Ionicons name="lock-closed-outline" size={20} />
             <TextInput
@@ -116,7 +117,7 @@ export default function LoginAuth() {
           paddingVertical: 12,
         }}
       >
-        Olvidaste tu contrasenia?
+        Olvidaste tu contraseñaia?
       </Text>
       <View
         style={{

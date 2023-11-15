@@ -1,13 +1,7 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import Header from "../../components/Header";
-import { Text, View } from "../../components/Themed";
-import CarouselComponent from "../../components/home/CarouselHome";
-import RecomendedComponent from "../../components/home/RecomendProd";
-import ViewCategories from "../../components/home/ViewCategories";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
-import NewBrands from "../../components/home/NewBrands";
+import { FlatList } from "react-native-gesture-handler";
 
-import Product from "./Product";
+import { Text } from "../../components/Themed";
 
 export default function ListCatHeader(data: any) {
   return (

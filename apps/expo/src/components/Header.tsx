@@ -3,20 +3,35 @@ import { StyleSheet } from "react-native";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
+import useUserRepositories from "~/hooks/useUserRepositories";
 import { Ionicons, SafeAreaView, Text, View } from "../components/Themed";
 import { CartContext } from "./context";
 
-export default function Header(props: any) {
-  console.log(props);
-  const { cart } = useContext(CartContext);
+export default function Header(_props: any) {
+  const { cart, quantity } = useContext(CartContext);
+  const { user } = useUserRepositories(2);
+  const isLogged = true;
+  const isRepartidor = user?.usr_role;
+  const showSearch = _props.showSearch && isRepartidor == 1;
+
+  const ruta = isLogged
+    ? isRepartidor === 2
+      ? "/(repartidor)/profile"
+      : "/(tabs)/profile"
+    : "/(auth)/login";
+
+  const cartRuta = isRepartidor === 2 ? "/(repartidor)/cart" : "/(tabs)/cart";
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Link href="/(tabs)/diplayer">
-          <TouchableOpacity>
-            <Ionicons name="ios-menu" size={28} />
-          </TouchableOpacity>
-        </Link>
+        {isRepartidor == 1 && (
+          <Link href="/(tabs)/diplayer">
+            <TouchableOpacity>
+              <Ionicons name="ios-menu" size={28} />
+            </TouchableOpacity>
+          </Link>
+        )}
+
         <Link href="/(tabs)">
           <Text
             style={{
@@ -28,7 +43,13 @@ export default function Header(props: any) {
           </Text>
         </Link>
         <View style={styles.options}>
-          <Link href="/(auth)/login">
+          <Link
+            href={{
+              pathname: ruta,
+              params: { ...user },
+            }}
+            asChild
+          >
             <TouchableOpacity
               style={{
                 paddingTop: 5,
@@ -37,38 +58,26 @@ export default function Header(props: any) {
               <Ionicons name="ios-person-circle-outline" size={26} />
             </TouchableOpacity>
           </Link>
-          <Link href="/(tabs)/cart">
-            <TouchableOpacity
-              style={{
-                paddingRight: 10,
-                paddingTop: 5,
-              }}
-            >
-              <Ionicons name="ios-cart-outline" size={26} />
-              {cart.length > 0 && (
-                <Text
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    backgroundColor: "#1969a3",
-                    color: "#fff",
-                    paddingHorizontal: 7,
-                    paddingVertical: 2,
-                    borderRadius: 50,
-                    fontSize: 10,
-                    // minWidth: 16,
-                    textAlign: "center",
-                  }}
-                >
-                  {cart.length}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </Link>
+          {isRepartidor == 1 && (
+            <Link href={cartRuta}>
+              <TouchableOpacity
+                style={{
+                  paddingRight: 10,
+                  paddingTop: 5,
+                }}
+              >
+                <Ionicons name="ios-cart-outline" size={26} />
+                {cart.length > 0 && (
+                  <Text style={styles.text}>
+                    {quantity < 99 ? quantity : "9+"}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </Link>
+          )}
         </View>
       </View>
-      {props.showSearch && (
+      {showSearch && (
         <View style={styles.input}>
           <TextInput placeholder="Buscar" maxLength={40} />
           <Ionicons name="ios-search-outline" size={20} />
@@ -103,5 +112,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  text: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    backgroundColor: "#1969a3",
+    color: "#fff",
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 50,
+    fontSize: 10,
+    // minWidth: 16,
+    textAlign: "center",
   },
 });

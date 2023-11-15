@@ -1,76 +1,74 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
-import { View, Text, Ionicons } from "../../components/Themed";
-import CatItem from "./CatItem";
+import { FlatList, StyleSheet } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
-function ViewCategories() {
-  const dataImages = [
-    {
-      name: "paracetamol",
-      image: require("../../assets/carrousel-test/para.png"),
-    },
-    {
-      name: "ibuprofeno",
-      image: require("../../assets/carrousel-test/ibu.png"),
-    },
-    {
-      name: "amoxicilina",
-      image: require("../../assets/carrousel-test/amox.png"),
-    },
-  ];
+import { Product } from "~/hooks/useProductRepositories";
+import { Ionicons, Text, View } from "../../components/Themed";
+import CatItem from "./CatItem";
+
+const ViewCategories = ({ data }: { data: Product[] }) => {
+  let selectedCategories: { [key: string]: boolean } = {};
+
+  const _item = data
+    .filter((product) => {
+      // Si la categoría del producto ya ha sido seleccionada, excluye el producto
+      if (selectedCategories[product.prod_category]) {
+        return false;
+      }
+
+      // Marca la categoría del producto como seleccionada
+      selectedCategories[product.prod_category] = true;
+
+      // Incluye el producto
+      return true;
+    })
+    .slice(0, 4);
+
   return (
     <View style={styles.main}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "bold",
-          }}
-        >
-          Categorias
-        </Text>
-        <TouchableOpacity
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Categorias</Text>
+        <TouchableOpacity style={styles.headerButton}>
           <Text>Ver todas</Text>
           <Ionicons name="chevron-forward-outline" size={20} />
         </TouchableOpacity>
       </View>
-      <ScrollView horizontal>
-        <View style={styles.app}>
-          <CatItem item={dataImages[0]} />
-          <CatItem item={dataImages[0]} />
-          <CatItem item={dataImages[0]} />
-          <CatItem item={dataImages[0]} />
-          <CatItem item={dataImages[0]} />
-        </View>
-      </ScrollView>
+      <View style={styles.app}>
+        <FlatList
+          horizontal
+          data={_item}
+          renderItem={({ item }) => <CatItem key={item.prod_id} {...item} />}
+          keyExtractor={(item) => item.prod_id}
+        />
+      </View>
     </View>
   );
-}
+};
 
 export default ViewCategories;
 
 const styles = StyleSheet.create({
   main: {
     padding: 10,
-    // backgroundColor: "transparent",
   },
   app: {
     gap: 10,
     paddingVertical: 10,
     backgroundColor: "transparent",
     flexDirection: "row",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  headerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
 });

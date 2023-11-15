@@ -1,36 +1,15 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
+import { useRoute } from "@react-navigation/native";
 
+import ProductShort from "~/components/home/Product";
 import useProductRepositories from "~/hooks/useProductRepositories";
-import ListCatHeader from "./ListCatHeader";
-import ProductShort from "./Product";
+import Header from "~/components/Header";
 
-export default function ListProducts() {
-  const { productrepo, loading } = useProductRepositories(null);
+export default function ProductOrderDetail() {
+  const _item = useRoute().params as any;
 
-  const types = [
-    {
-      name: "colonias",
-      key: "colonias",
-    },
-    {
-      name: "corporal",
-      key: "corporal",
-    },
-    {
-      name: "Cosmetica Natural",
-      key: "cosmetica-natural",
-    },
-    {
-      name: "Cuidado Capilar",
-      key: "cuidado-capilar",
-    },
-    {
-      name: "Cuidado Facial",
-      key: "cuidado-facial",
-    },
-  ];
+  const { productrepo, loading } = useProductRepositories(_item.data);
 
   return (
     <>
@@ -41,11 +20,9 @@ export default function ListProducts() {
       ) : (
         <FlatList
           data={productrepo}
-          ListHeaderComponent={
-            <>
-              <ListCatHeader data={types} />
-            </>
-          }
+          ListHeaderComponent={<>
+          <Header />
+          </>}
           renderItem={({ item }) => <ProductShort {...item} />}
           keyExtractor={(item) => item.prod_id}
         />
