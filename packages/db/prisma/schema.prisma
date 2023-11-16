@@ -5,13 +5,77 @@ generator client {
 }
 
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
+    provider = "mysql"
+    url      = env("DATABASE_URL")
 }
 
-model Post {
-    id      String @id @default(cuid())
-    title   String
-    content String
+model User {
+    usr_id         Int     @id @default(autoincrement())
+    usr_user       String
+    usr_pass       String
+    usr_role       Int
+    Role           Role    @relation(fields: [usr_role], references: [rol_id])
+    usr_profile    Int
+    Profile        Profile @relation(fields: [usr_profile], references: [prf_id])
+    usr_vip        Boolean
+    Order_Customer Order[] @relation(name: "Order_Customer")
+    Order_Delivery Order[] @relation(name: "Order_Delivery")
+}
+
+model Role {
+    rol_id         Int    @id @default(autoincrement())
+    rol_type       String
+    rol_privileges String
+    Users          User[]
+}
+
+model Product {
+    prod_id          Int           @id @default(autoincrement())
+    prod_name        String
+    prod_date_expir  DateTime
+    prod_date_pack   DateTime
+    prod_status      String
+    prod_image       String
+    prod_reviews     Int
+    prod_brand       String
+    prod_price       Int
+    prod_description String
+    prod_quantity    String
+    prod_tablet      String
+    prod_detail      String
+    prod_category    String
+    OrderDetail      OrderDetail[]
+}
+
+model Order {
+    order_id          Int         @id @default(autoincrement())
+    order_date_of_ord DateTime
+    order_customer    Int
+    order_details     Int
+    order_delivery    Int
+    User              User        @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
+    OrderDetail       OrderDetail @relation(fields: [order_details], references: [order_det_id])
+    DeliveryUser      User        @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
+}
+
+model OrderDetail {
+    order_det_id          Int      @id @default(autoincrement())
+    order_det_prod        Int
+    order_det_start_date  DateTime
+    order_det_finish_date DateTime
+    order_det_update_date DateTime
+    order_det_quantity    Int
+    order_det_total       Int
+    order_location        String
+    order_det_recipe      Boolean
+    Product               Product  @relation(fields: [order_det_prod], references: [prod_id])
+    Order                 Order[]
+}
+
+model Profile {
+    prf_id       Int    @id @default(autoincrement())
+    prf_name     String
+    prf_lastname String
+    prf_mail     String
+    Users        User[]
 }
