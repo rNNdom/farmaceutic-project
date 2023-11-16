@@ -1,12 +1,13 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-generator client {
-    provider = "prisma-client-js"
+datasource db {
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
-datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+generator client {
+    provider = "prisma-client-js"
 }
 
 model User {
@@ -20,6 +21,9 @@ model User {
     usr_vip        Boolean
     Order_Customer Order[] @relation(name: "Order_Customer")
     Order_Delivery Order[] @relation(name: "Order_Delivery")
+
+    @@index([usr_role])
+    @@index([usr_profile])
 }
 
 model Role {
@@ -56,6 +60,10 @@ model Order {
     User              User        @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
     OrderDetail       OrderDetail @relation(fields: [order_details], references: [order_det_id])
     DeliveryUser      User        @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
+
+    @@index([order_details])
+    @@index([order_customer])
+    @@index([order_delivery])
 }
 
 model OrderDetail {
@@ -70,6 +78,8 @@ model OrderDetail {
     order_det_recipe      Boolean
     Product               Product  @relation(fields: [order_det_prod], references: [prod_id])
     Order                 Order[]
+
+    @@index([order_det_prod])
 }
 
 model Profile {
