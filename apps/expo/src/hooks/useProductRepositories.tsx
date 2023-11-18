@@ -53,7 +53,6 @@ const useProductRepositories = (props: any) => {
         setproductrepo(data);
       } else {
         const data = json?.filter((item) => props.includes(item.prod_id));
-        console.log(props);
         setproductrepo(data);
       }
       setLoading(false);

@@ -1,3 +1,4 @@
+//get dotenv to use .env file
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 datasource db {
@@ -12,12 +13,11 @@ generator client {
 
 model User {
     usr_id         Int     @id @default(autoincrement())
-    usr_user       String
+    usr_email      String  @unique
     usr_pass       String
-    usr_role       Int
-    Role           Role    @relation(fields: [usr_role], references: [rol_id])
+    usr_role       Role    @default(USER)
     usr_profile    Int
-    Profile        Profile @relation(fields: [usr_profile], references: [prf_id])
+    profile        Profile @relation(fields: [usr_profile], references: [prf_id])
     usr_vip        Boolean
     Order_Customer Order[] @relation(name: "Order_Customer")
     Order_Delivery Order[] @relation(name: "Order_Delivery")
@@ -26,11 +26,16 @@ model User {
     @@index([usr_profile])
 }
 
-model Role {
-    rol_id         Int    @id @default(autoincrement())
-    rol_type       String
-    rol_privileges String
-    Users          User[]
+// model Role {
+//     rol_id         Int    @id @default(autoincrement())
+//     rol_type       String
+//     rol_privileges String
+//     Users          User[]
+// }
+enum Role {
+    ADMIN
+    USER
+    DELIVER
 }
 
 model Product {
@@ -86,6 +91,6 @@ model Profile {
     prf_id       Int    @id @default(autoincrement())
     prf_name     String
     prf_lastname String
-    prf_mail     String
+    prf_phone    String
     Users        User[]
 }

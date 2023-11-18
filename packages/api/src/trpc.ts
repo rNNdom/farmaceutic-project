@@ -6,7 +6,9 @@
  * tl;dr - this is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
+import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { verify } from "jsonwebtoken";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -31,8 +33,12 @@ import { prisma } from "@acme/db";
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const createInnerTRPCContext = () => {
+type CreateContextOptions = {
+  userId: string | null;
+};
+const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
+    userId: opts.userId,
     prisma,
   };
 };
@@ -42,12 +48,30 @@ const createInnerTRPCContext = () => {
  * process every request that goes through your tRPC endpoint
  * @link https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: { req?: Request }) => {
-  const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+  const { req, res } = opts;
 
-  console.log(">>> tRPC Request from", source, "by");
+  function getUserIdFromHeader() {
+    if (req.headers) {
+      const jwtToken = req.headers.get("authorization")?.split(" ")[1];
+  
+      try {
+        const decoded = verify(
+          jwtToken as string,
+          process.env.ACCESS_JWT_TOKEN as string,
+        );
+        const { userId } = decoded as { userId: string };
+        return userId;
+      } catch (e) {
+        console.log(e);
+      }
+    }
 
-  return createInnerTRPCContext();
+    return null;
+  }
+  const userId = getUserIdFromHeader();
+
+  return createInnerTRPCContext({ userId: userId });
 };
 
 /**
@@ -92,6 +116,27 @@ export const createTRPCRouter = t.router;
  */
 export const publicProcedure = t.procedure;
 
+const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.userId) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  const user = await ctx.prisma.user.findUnique({
+    where: {
+      usr_id: parseInt(ctx.userId),
+    },
+  });
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      userId: ctx.userId,
+      role: user?.usr_role,
+    },
+  });
+});
+
+export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+//AQUI CREO NUEVOS MIDDLEWARES PARA VERIFICAR ROLES
 /**
  * Reusable middleware that enforces users are logged in before running the
  * procedure
