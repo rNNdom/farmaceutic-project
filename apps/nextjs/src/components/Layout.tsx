@@ -3,10 +3,9 @@
 import React from "react";
 import { Inter } from "next/font/google";
 import { usePathname } from "next/navigation";
-import { LayoutPanelLeft, Users } from "lucide-react";
+import { LayoutPanelLeft, User, Users } from "lucide-react";
 
 import { api } from "~/utils/api";
-import LogIn from "./LogIn";
 import { Sidebar } from "./Sidebar";
 
 const NavItems = [
@@ -32,7 +31,13 @@ const NavItems = [
   },
   {
     key: "account",
-    label: <>User</>,
+    label: (
+      <>
+        <User size={25} strokeWidth={1.5} />
+        Perfil
+      </>
+    ),
+    ref: "/account",
   },
 ];
 const fontSans = Inter({
@@ -44,20 +49,23 @@ const publicRoutes = ["/auth"];
 
 function LayoutComponent({ children }: { children: React.ReactNode }) {
   const checkSession = api.auth.checkSession.useMutation();
-  const [setState, useSetState] = React.useState(false);
   const pathname = usePathname();
   const isPublicRoute = publicRoutes.includes(pathname);
 
   React.useEffect(() => {
-    if (setState) {
-      checkSession.mutate();
-      useSetState((setState) => !setState);
-    }
-  }, [setState]);
+    checkSession.mutate();
+  }, []);
 
+  if (checkSession.isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center text-2xl font-semibold">
+        Loading...
+      </div>
+    );
+  }
   return (
     <body className={["font-sans", fontSans.variable].join(" ")}>
-      {checkSession.isSuccess || isPublicRoute ? (
+      {
         <div className="flex h-screen w-screen ">
           {checkSession.isSuccess ? (
             <section className="w-72 border-r">
@@ -66,13 +74,7 @@ function LayoutComponent({ children }: { children: React.ReactNode }) {
           ) : null}
           <main className="flex-grow overflow-auto">{children}</main>
         </div>
-      ) : (
-        <div className="flex h-screen w-screen ">
-          <main className="flex flex-grow items-center justify-center overflow-auto ">
-            <LogIn setUseState={useSetState} />
-          </main>
-        </div>
-      )}
+      }
     </body>
   );
 }

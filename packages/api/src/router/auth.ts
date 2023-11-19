@@ -93,4 +93,13 @@ export const authRouter = createTRPCRouter({
       userId,
     };
   }),
+  getSession: protectedProcedure.query(({ ctx }) => {
+    return {
+      error: false,
+      user: {
+        id: ctx.userId,
+        role: ctx.role,
+      },
+    };
+  }),
 });

@@ -1,5 +1,3 @@
-
-
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +5,6 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { api } from "~/utils/api";
-import { setToken } from "~/app/providers";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import {
@@ -24,10 +21,8 @@ const formSchema = z.object({
   email: z.string().email("El correo electrónico no es válido."),
   pass: z.string().min(8, "La contraseña debe tener al menos 8 caracteres."),
 });
-type LoginProps = {
-  setUseState: React.Dispatch<React.SetStateAction<boolean>>;
-};
-export default function LogIn({ setUseState }: LoginProps) {
+
+export default function LogIn() {
   const userLogin = api.auth.login.useMutation();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,13 +36,14 @@ export default function LogIn({ setUseState }: LoginProps) {
     userLogin.mutate(values);
   }
   useEffect(() => {
-    if (userLogin.isSuccess) {
-      setToken(userLogin.data.token);
-      setUseState(true);
+    const token = localStorage.getItem("@token");
+    if (userLogin.isSuccess && !token) {
+      console.log("inside");
+      localStorage.setItem("@token", userLogin.data.token);
     }
     userLogin.isError && console.log(userLogin.error.message);
   }, [userLogin.isSuccess, userLogin.isError]);
-
+  console.log("outside");
   const handleButtonClick = () => {
     router.push("/auth");
   };

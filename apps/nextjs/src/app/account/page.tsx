@@ -1,9 +1,13 @@
+"use client";
+
 import React from "react";
 
+import { api } from "~/utils/api";
 import ProfileInfo from "../../components/ProfileInfo";
 import { Card, CardContent, CardHeader } from "../../components/ui/card";
 
 function ProfilePage() {
+
   return (
     <div className="flex justify-center p-10">
       <Card className="flex w-6/12 flex-col">

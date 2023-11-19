@@ -31,6 +31,7 @@ const formSchema = z.object({
 
 export default function SignUp() {
   const router = useRouter();
+  const getSession = api.auth.getSession.useQuery();
   const userLogin = api.auth.register.useMutation();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,9 +62,13 @@ export default function SignUp() {
     userLogin.isSuccess && router.push("/");
   }, [userLogin.isSuccess, userLogin.isError]);
 
+  if (getSession.isSuccess) {
+    return router.push("/");
+  }
+
   return (
     <div className="flex h-screen items-center justify-center">
-      <Card className="flex w-1/3  p-10">
+      <Card className="flex w-1/3 p-10">
         <Form {...form}>
           <div className="grid w-full items-center gap-4">
             <h1 className="flex justify-center text-xl font-semibold">

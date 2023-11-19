@@ -16,10 +16,7 @@ const getBaseUrl = () => {
   return `http://localhost:${env.PORT}`; // dev SSR should use localhost
 };
 
-export let token = "a";
-export const setToken = (newToken: string) => {
-  token = newToken;
-};
+const token = localStorage.getItem("@token");
 
 export function TRPCReactProvider(props: {
   children: React.ReactNode;
