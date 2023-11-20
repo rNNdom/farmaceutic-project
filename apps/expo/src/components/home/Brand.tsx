@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
-import { Product } from "~/hooks/useProductRepositories";
+import { Product } from "~/hooks/useProduct";
 import { View } from "../../components/Themed";
 
 function Brand(data: Product) {
