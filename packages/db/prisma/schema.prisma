@@ -26,16 +26,17 @@ model User {
     @@index([usr_profile])
 }
 
-// model Role {
-//     rol_id         Int    @id @default(autoincrement())
-//     rol_type       String
-//     rol_privileges String
-//     Users          User[]
-// }
 enum Role {
     ADMIN
     USER
     DELIVER
+}
+
+enum OrderStatus {
+    PENDING
+    DELIVERING
+    DELIVERED
+    CANCELED
 }
 
 model Product {
@@ -45,11 +46,11 @@ model Product {
     prod_date_pack   DateTime
     prod_status      String
     prod_image       String
-    prod_reviews     Int
+    // prod_reviews     Int
     prod_brand       String
     prod_price       Int
     prod_description String
-    prod_quantity    String
+    prod_quantity    Int
     prod_tablet      String
     prod_detail      String
     prod_category    String
@@ -58,10 +59,12 @@ model Product {
 
 model Order {
     order_id          Int         @id @default(autoincrement())
-    order_date_of_ord DateTime
+    order_date_of_ord DateTime    @default(now())
+    order_status      OrderStatus @default(PENDING)
     order_customer    Int
     order_details     Int
     order_delivery    Int
+    order_location    String
     User              User        @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
     OrderDetail       OrderDetail @relation(fields: [order_details], references: [order_det_id])
     DeliveryUser      User        @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
@@ -72,17 +75,13 @@ model Order {
 }
 
 model OrderDetail {
-    order_det_id          Int      @id @default(autoincrement())
-    order_det_prod        Int
-    order_det_start_date  DateTime
-    order_det_finish_date DateTime
-    order_det_update_date DateTime
-    order_det_quantity    Int
-    order_det_total       Int
-    order_location        String
-    order_det_recipe      Boolean
-    Product               Product  @relation(fields: [order_det_prod], references: [prod_id])
-    Order                 Order[]
+    order_det_id       Int      @id @default(autoincrement())
+    order_det_prod     Int
+    order_det_quantity Int
+    order_det_total    Int
+    order_det_recipe   Boolean?
+    product            Product  @relation(fields: [order_det_prod], references: [prod_id])
+    Order              Order[]
 
     @@index([order_det_prod])
 }

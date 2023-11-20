@@ -11,6 +11,7 @@ export const userRouter = createTRPCRouter({
     .query(({ ctx, input }) => {
       return ctx.prisma.user.findUnique({ where: { usr_id: input.id } });
     }),
+  
 });
 
 

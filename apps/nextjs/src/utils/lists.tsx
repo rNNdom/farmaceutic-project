@@ -1,8 +1,16 @@
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "../components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, LayoutPanelLeft, User, Users } from "lucide-react";
+
 import { Payment } from "~/components/TablePaymentsData";
 import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 
 export const NavItems = [
   {
@@ -236,5 +244,33 @@ export const columns: ColumnDef<Payment>[] = [
         </DropdownMenu>
       );
     },
+  },
+];
+
+export const profileFormData = [
+  {
+    name: "name",
+    labelName: "Nombre",
+    type: "text",
+  },
+  {
+    name: "lastname",
+    labelName: "Apellido",
+    type: "text",
+  },
+  {
+    name: "email",
+    labelName: "Correo electrónico",
+    type: "email",
+  },
+  {
+    name: "pass",
+    labelName: "Contraseña",
+    type: "password",
+  },
+  {
+    name: "phone",
+    labelName: "Teléfono",
+    type: "text",
   },
 ];

@@ -1,11 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { api } from "~/utils/api";
+import { profileFormData } from "~/utils/lists";
+import { setToken } from "~/app/providers";
+import Loading from "./Loading";
 import { Button } from "./ui/button";
 import {
   Form,
@@ -30,99 +33,101 @@ export default function ProfileInfo() {
   const getProfile = api.profile.getProfile.useQuery({
     id: Number(userSession.data?.user.id),
   });
+  const updateProfile = api.profile.updateProfile.useMutation()
   const [disabled, setDisabled] = React.useState(true);
-  const formData = [
-    {
-      value: getProfile.data?.prf_name,
-      name: "prf_name",
-      labelName: "Nombre",
-      type: "text",
-    },
-    {
-      value: getProfile.data?.prf_lastname,
-      name: "prf_lastname",
-      labelName: "Apellido",
-      type: "text",
-    },
-    {
-      value: getProfile.data?.usr_email,
-      name: "usr_email",
-      labelName: "Correo electrónico",
-      type: "email",
-    },
-    {
-      value: getProfile.data?.usr_pass,
-      name: "usr_pass",
-      labelName: "Contraseña",
-      type: "password",
-    },
-    {
-      value: getProfile.data?.prf_phone,
-      name: "prf_phone",
-      labelName: "Teléfono",
-      type: "text",
-    },
-  ];
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      lastname: "",
-      email: "",
-      pass: "",
-      phone: "",
+      name: getProfile.data?.prf_name || "",
+      lastname: getProfile.data?.prf_lastname || "",
+      email: getProfile.data?.usr_email || "",
+      pass: getProfile.data?.usr_pass || "",
+      phone: getProfile.data?.prf_phone || "",
     },
   });
+  React.useEffect(() => {
+    if (getProfile.isSuccess) {
+      form.reset({
+        name: getProfile.data?.prf_name,
+        lastname: getProfile.data?.prf_lastname,
+        email: getProfile.data?.usr_email,
+        pass: getProfile.data?.usr_pass,
+        phone: getProfile.data?.prf_phone,
+      });
+    }
+  }, [getProfile.data]);
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    updateProfile.mutate({
+      id: Number(userSession.data?.user.id),
+      name: values.name,
+      lastname: values.lastname,
+      email: values.email,
+      pass: values.pass,
+      phone: values.phone,
+    })
+
   }
   return (
-    <Form {...form}>
-      <div className="grid w-full items-center gap-4">
-        <h1 className="flex justify-center text-xl font-semibold">
-          Información de perfil
-        </h1>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1.5">
-          {formData.map((data) => {
-            return (
-              <FormField
-                key={data.name}
-                control={form.control}
-                name={data.name as keyof z.infer<typeof formSchema>}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{data.labelName}</FormLabel>
-                    <FormControl>
-                      <Input type={data.type} {...field} disabled={disabled} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+    <div className="grid w-full items-center gap-4">
+      {getProfile.isLoading || !getProfile.isSuccess ? (
+        <Loading />
+      ) : (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1.5">
+            {profileFormData.map((data) => {
+              return (
+                <FormField
+                  key={data.name}
+                  control={form.control}
+                  name={data.name as keyof z.infer<typeof formSchema>}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{data.labelName}</FormLabel>
+                      <FormControl>
+                        <Input type={data.type} {...field} disabled={disabled} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              );
+            })}
+            <div className="flex justify-between pt-10">
+              {disabled ? (
+                <Button
+                  type="submit"
+                  className="bg-sky-400"
+                  onClick={() => setDisabled(!disabled)}
+                >
+                  Editar
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  className="bg-sky-400"
+                  onClick={() => setDisabled(!disabled)}
+                >
+                  Guardar
+                </Button>
                 )}
-              />
-            );
-          })}
-          <div className="flex justify-between pt-10">
-            {disabled ? (
+                {updateProfile.isError && (
+                <p className="text-red-500 ">{updateProfile.error.message}</p>
+              )}
               <Button
                 type="button"
                 className="bg-sky-400"
-                onClick={() => setDisabled(!disabled)}
+                onClick={() => {
+                  setToken("");
+                  sessionStorage.clear();
+                  window.location.reload();
+                }}
               >
-                Editar
+                Cerrar Sesión
               </Button>
-            ) : (
-              <Button
-                type="submit"
-                className="bg-sky-400"
-                onClick={() => setDisabled(!disabled)}
-              >
-                Guardar
-              </Button>
-            )}
-            <Button className="bg-sky-400">Cerrar Sesión</Button>
-          </div>
-        </form>
-      </div>
-    </Form>
+            </div>
+          </form>
+        </Form>
+      )}
+    </div>
   );
 }

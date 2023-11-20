@@ -54,10 +54,10 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   function getUserIdFromHeader() {
     if (req.headers) {
       const jwtToken = req.headers.get("authorization")?.split(" ")[1];
-  
+      console.log(jwtToken);
       try {
         const decoded = verify(
-          jwtToken as string,
+          jwtToken,
           process.env.ACCESS_JWT_TOKEN as string,
         );
         const { userId } = decoded as { userId: string };

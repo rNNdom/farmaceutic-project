@@ -23,21 +23,42 @@ export const profileRouter = createTRPCRouter({
   updateProfile: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.number(),
         name: z.string(),
         lastname: z.string(),
+        email: z.string().email(),
+        pass: z.string(),
         phone: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const profile = await ctx.prisma.profile.update({
+      const user = await ctx.prisma.user.findUnique({
+        where: { usr_id: input.id },
+      });
+      const updateUser = await ctx.prisma.user.update({
         where: { usr_id: input.id },
         data: {
-          usr_name: input.name,
-          usr_lastname: input.lastname,
-          usr_phone: input.phone,
+          usr_email: input.email,
+          usr_pass: input.pass,
         },
       });
-      return profile;
+      const updateProfile = await ctx.prisma.profile.update({
+        where: { prf_id: user?.usr_profile },
+        data: {
+          prf_name: input.name,
+          prf_lastname: input.lastname,
+          prf_phone: input.phone,
+        },
+      });
+
+      if (!updateUser || !updateProfile) {
+        throw new Error("No se pudo actualizar el usuario");
+      }
+
+      return {
+        user: updateUser,
+        profile: updateProfile,
+      }
+      
     }),
 });

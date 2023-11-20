@@ -29,7 +29,7 @@ export interface Payment {
   amount: number;
   deliveredTo: string;
   date: string;
-  status: "pending" | "processing" | "accepted" | "failed";
+  status: "pending" | "delivering" | "delivered" | "canceled";
 }
 
 
