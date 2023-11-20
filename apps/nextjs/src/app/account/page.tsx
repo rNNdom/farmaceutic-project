@@ -1,5 +1,6 @@
-import React from "react";
+"use client";
 
+import withAuth from "~/components/withAuth";
 import ProfileInfo from "../../components/ProfileInfo";
 import { Card, CardContent, CardHeader } from "../../components/ui/card";
 
@@ -18,4 +19,4 @@ function ProfilePage() {
   );
 }
 
-export default ProfilePage;
+export default withAuth(ProfilePage);

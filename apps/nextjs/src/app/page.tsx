@@ -1,8 +1,11 @@
+"use client";
+
+import { lazy, Suspense } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+
+import { columns, payments } from "~/utils/lists";
+import withAuth from "~/components/withAuth";
 import { Overview } from "../components/overview";
-import TablePaymentsData, {
-  columns,
-  payments,
-} from "../components/TablePaymentsData";
 import {
   Card,
   CardContent,
@@ -12,7 +15,9 @@ import {
 } from "../components/ui/card";
 import { Tabs, TabsContent } from "../components/ui/tabs";
 
-export default function DashboardPage() {
+const TablePaymentsData = lazy(() => import("../components/TablePaymentsData"));
+
+function DashboardPage() {
   return (
     <>
       <div className=" flex-grow flex-col md:flex">
@@ -114,7 +119,12 @@ export default function DashboardPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8 pt-0">
-                    <TablePaymentsData columns={columns} data={payments} />
+                    <Suspense fallback={null}>
+                      <TablePaymentsData
+                        columns={columns as ColumnDef<unknown, unknown>[]}
+                        data={payments}
+                      />
+                    </Suspense>
                   </CardContent>
                 </Card>
               </div>
@@ -125,3 +135,4 @@ export default function DashboardPage() {
     </>
   );
 }
+export default withAuth(DashboardPage);

@@ -1,0 +1,74 @@
+"use client";
+
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
+import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
+import superjson from "superjson";
+
+import { api } from "~/utils/api";
+import { env } from "~/env.mjs";
+
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") return ""; // browser should use relative url
+  if (env.VERCEL_URL) return env.VERCEL_URL; // SSR should use vercel url
+
+  return `http://localhost:${env.PORT}`; // dev SSR should use localhost
+};
+
+export let token = "a";
+export const setToken = (newToken: string) => {
+  token = newToken;
+};
+const tokenFromLocalStorage = sessionStorage.getItem("@token");
+if (tokenFromLocalStorage) {
+  token = tokenFromLocalStorage;
+}
+console.log("desde providers", token);
+export function TRPCReactProvider(props: {
+  children: React.ReactNode;
+  headers?: Headers;
+}) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 5 * 1000,
+          },
+        },
+      }),
+  );
+
+  const [trpcClient] = useState(() =>
+    api.createClient({
+      transformer: superjson,
+      links: [
+        loggerLink({
+          enabled: (opts) =>
+            process.env.NODE_ENV === "development" ||
+            (opts.direction === "down" && opts.result instanceof Error),
+        }),
+        unstable_httpBatchStreamLink({
+          url: `${getBaseUrl()}/api/trpc`,
+          headers() {
+            const headers = new Map(props.headers);
+            headers.set("x-trpc-source", "nextjs-react");
+            headers.set("Authorization", `Bearer ${token}`);
+            return Object.fromEntries(headers);
+          },
+        }),
+      ],
+    }),
+  );
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryStreamedHydration transformer={superjson}>
+          {props.children}
+        </ReactQueryStreamedHydration>
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}

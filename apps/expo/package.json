@@ -13,7 +13,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@clerk/clerk-expo": "^0.19.14",
     "@expo/metro-config": "^0.10.7",
     "@expo/vector-icons": "^13.0.0",
     "@react-navigation/native": "^6.0.2",
