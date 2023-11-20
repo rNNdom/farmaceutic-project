@@ -2,15 +2,15 @@ import { Image, StyleSheet, View } from "react-native";
 import StarRating from "react-native-star-rating-widget";
 import { Link } from "expo-router";
 
+import { Product } from "~/utils/interface";
 import { Pressable, Text } from "../../components/Themed";
-import { Product } from "~/hooks/useProductRepositories";
 
 const ProductShort = (data: Product) => {
   return (
     <Link
       href={{
         pathname: "/(tabs)/productDetail",
-        params: data
+        params: data,
       }}
       asChild
     >

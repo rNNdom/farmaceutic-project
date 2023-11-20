@@ -3,7 +3,8 @@ import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Carousel from "react-native-reanimated-carousel";
 import { Link } from "expo-router";
-import { Product } from "~/hooks/useProductRepositories";
+import { Product } from "~/utils/interface";
+
 
 const CarouselComponent = ({ data }: { data: Product[] }) => {
   const width = Dimensions.get("window").width;
