@@ -16,8 +16,10 @@ const getBaseUrl = () => {
   return `http://localhost:${env.PORT}`; // dev SSR should use localhost
 };
 
-const token = localStorage.getItem("@token");
-
+export let token = "a";
+export const setToken = (newToken: string) => {
+  token = newToken;
+};
 export function TRPCReactProvider(props: {
   children: React.ReactNode;
   headers?: Headers;
@@ -47,10 +49,7 @@ export function TRPCReactProvider(props: {
           headers() {
             const headers = new Map(props.headers);
             headers.set("x-trpc-source", "nextjs-react");
-            headers.set(
-              "Authorization",
-              `Bearer ${token}`,
-            );
+            headers.set("Authorization", `Bearer ${token}`);
             return Object.fromEntries(headers);
           },
         }),

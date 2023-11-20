@@ -1,10 +1,15 @@
+"use client";
+
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSetAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { api } from "~/utils/api";
+import { setToken } from "~/app/providers";
+import { isLogged } from "~/atoms";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import {
@@ -25,6 +30,7 @@ const formSchema = z.object({
 export default function LogIn() {
   const userLogin = api.auth.login.useMutation();
   const router = useRouter();
+  const setState = useSetAtom(isLogged);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,19 +42,19 @@ export default function LogIn() {
     userLogin.mutate(values);
   }
   useEffect(() => {
-    const token = localStorage.getItem("@token");
-    if (userLogin.isSuccess && !token) {
-      console.log("inside");
-      localStorage.setItem("@token", userLogin.data.token);
+    if (userLogin.isSuccess) {
+      setToken(userLogin.data.token);
+      setState(true);
+      router.push("/");
     }
     userLogin.isError && console.log(userLogin.error.message);
   }, [userLogin.isSuccess, userLogin.isError]);
-  console.log("outside");
+
   const handleButtonClick = () => {
-    router.push("/auth");
+    router.push("/auth/sign-up");
   };
   return (
-    <Card className="w-1/3 p-10">
+    <Card className="w-1/4 p-10">
       <Form {...form}>
         <div className="grid w-full items-center gap-4">
           <h1 className="flex justify-center text-xl font-semibold">

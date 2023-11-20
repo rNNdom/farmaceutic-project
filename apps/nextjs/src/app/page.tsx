@@ -1,3 +1,5 @@
+"use client"
+import withAuth from "~/components/withAuth";
 import { Overview } from "../components/overview";
 import TablePaymentsData, {
   columns,
@@ -12,7 +14,7 @@ import {
 } from "../components/ui/card";
 import { Tabs, TabsContent } from "../components/ui/tabs";
 
-export default function DashboardPage() {
+function DashboardPage() {
   return (
     <>
       <div className=" flex-grow flex-col md:flex">
@@ -125,3 +127,4 @@ export default function DashboardPage() {
     </>
   );
 }
+export default withAuth(DashboardPage);

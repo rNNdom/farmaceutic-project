@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -63,7 +63,7 @@ export default function SignUp() {
   }, [userLogin.isSuccess, userLogin.isError]);
 
   if (getSession.isSuccess) {
-    return router.push("/");
+    return redirect("/");
   }
 
   return (

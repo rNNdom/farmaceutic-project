@@ -1,13 +1,10 @@
 "use client";
 
-import React from "react";
-
-import { api } from "~/utils/api";
+import withAuth from "~/components/withAuth";
 import ProfileInfo from "../../components/ProfileInfo";
 import { Card, CardContent, CardHeader } from "../../components/ui/card";
 
 function ProfilePage() {
-
   return (
     <div className="flex justify-center p-10">
       <Card className="flex w-6/12 flex-col">
@@ -22,4 +19,4 @@ function ProfilePage() {
   );
 }
 
-export default ProfilePage;
+export default withAuth(ProfilePage);
