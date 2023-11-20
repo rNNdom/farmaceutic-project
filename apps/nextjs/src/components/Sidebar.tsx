@@ -1,5 +1,7 @@
 import { NotionLogoIcon } from "@radix-ui/react-icons";
+import { useAtom } from "jotai";
 
+import { isLogged } from "~/atoms";
 import { SidebarOptions } from "./SidebarOptions";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -11,9 +13,12 @@ export type NavItems = {
   ref?: string;
 }[][number];
 
-export function Sidebar({ navItems }: SidebarProps) {
+export function Sidebar() {
+  const [value] = useAtom(isLogged);
+  if (!value) return null;
+
   return (
-    <div className="w-full space-y-4 py-4">
+    <div className="w-72 space-y-4 border-r py-4">
       <div className="flex flex-row border-b px-3 py-2">
         <NotionLogoIcon width={20} height={20}></NotionLogoIcon>
         <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
@@ -24,7 +29,7 @@ export function Sidebar({ navItems }: SidebarProps) {
         <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
           Panel de trabajo
         </h2>
-        <SidebarOptions navItems={navItems} />
+        <SidebarOptions />
       </div>
     </div>
   );

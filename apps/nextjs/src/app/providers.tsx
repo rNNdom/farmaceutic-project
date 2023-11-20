@@ -20,6 +20,11 @@ export let token = "a";
 export const setToken = (newToken: string) => {
   token = newToken;
 };
+const tokenFromLocalStorage = sessionStorage.getItem("@token");
+if (tokenFromLocalStorage) {
+  token = tokenFromLocalStorage;
+}
+console.log("desde providers", token);
 export function TRPCReactProvider(props: {
   children: React.ReactNode;
   headers?: Headers;

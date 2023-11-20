@@ -44,6 +44,7 @@ export default function LogIn() {
   useEffect(() => {
     if (userLogin.isSuccess) {
       setToken(userLogin.data.token);
+      sessionStorage.setItem("@token", userLogin.data.token);
       setState(true);
       router.push("/");
     }

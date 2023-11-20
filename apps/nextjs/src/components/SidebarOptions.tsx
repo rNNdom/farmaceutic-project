@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 
+import { NavItems } from "~/utils/lists";
 import { Button } from "./ui/button";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,9 +15,7 @@ export type NavItems = {
   ref?: string;
 }[][number];
 
-export const SidebarOptions = (
-  { navItems }: SidebarProps = { className: "", navItems: [] },
-) => {
+export const SidebarOptions = () => {
   const [activeButton, setActiveButton] = React.useState("");
 
   const handleActive = (key: string) => {
@@ -26,7 +25,7 @@ export const SidebarOptions = (
   return (
     <div className={"h-full"}>
       <div className="flex h-full flex-col space-y-6 pl-2 pr-10 pt-6">
-        {navItems.map((item) => (
+        {NavItems.map((item) => (
           <div key={item.key}>
             <Link href={item.ref as string}>
               <Button
