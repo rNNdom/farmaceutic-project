@@ -53,7 +53,10 @@ const useProductRepositories = (props: any) => {
         setproductrepo(data);
       } else {
         const data = json?.filter((item) => props.includes(item.prod_id));
+<<<<<<< HEAD
         console.log(props);
+=======
+>>>>>>> parent of 57baeea (chore: delete useProductRepositories.tsx)
         setproductrepo(data);
       }
       setLoading(false);
@@ -71,3 +74,7 @@ const useProductRepositories = (props: any) => {
 };
 
 export default useProductRepositories;
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 57baeea (chore: delete useProductRepositories.tsx)
