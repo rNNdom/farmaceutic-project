@@ -67,7 +67,7 @@ model Order {
     order_location    String
     User              User        @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
     OrderDetail       OrderDetail @relation(fields: [order_details], references: [order_det_id])
-    DeliveryUser      User        @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
+    DeliveryUser      User?       @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
 
     @@index([order_details])
     @@index([order_customer])

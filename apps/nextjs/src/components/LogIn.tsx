@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email("El correo electrónico no es válido."),
@@ -51,9 +52,9 @@ export default function LogIn() {
     userLogin.isError && console.log(userLogin.error.message);
   }, [userLogin.isSuccess, userLogin.isError]);
 
-  const handleButtonClick = () => {
-    router.push("/auth/sign-up");
-  };
+  // const handleButtonClick = () => {
+  //   router.push("/auth/sign-up");
+  // };
   return (
     <Card className="w-1/4 p-10">
       <Form {...form}>
@@ -103,12 +104,12 @@ export default function LogIn() {
 
           <div className="flex flex-col justify-between gap-3 pt-10">
             <p className="flex justify-center">¿No tiene cuenta?</p>
-            <a
+            <Link href="/auth/sign-up"
               className="flex cursor-pointer justify-center text-sky-400"
-              onClick={handleButtonClick}
+   
             >
               Crear cuenta
-            </a>
+            </Link>
           </div>
         </div>
       </Form>
