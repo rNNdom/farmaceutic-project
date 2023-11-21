@@ -3,28 +3,28 @@ import { StyleSheet } from "react-native";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
-import useProfile from "~/hooks/useProfile";
-import useUser from "~/hooks/useUser";
+import useUserRepositories from "~/hooks/useUserRepositories";
 import { Ionicons, SafeAreaView, Text, View } from "../components/Themed";
 import { CartContext } from "./context";
 
 export default function Header(_props: any) {
   const { cart, quantity } = useContext(CartContext);
-  // const { loggedIn, isClient, isDeliver } = useUser(2);
-  const { loggedIn, isClient, isDeliver } = useUser(1);
-  const showSearch = _props.showSearch && isClient();
+  const { user } = useUserRepositories(2);
+  const isLogged = true;
+  const isRepartidor = user?.usr_role;
+  const showSearch = _props.showSearch && isRepartidor == 1;
 
-  const ruta = loggedIn
-    ? isClient()
-      ? "/(tabs)/profile"
-      : "/(repartidor)/profile"
+  const ruta = isLogged
+    ? isRepartidor === 2
+      ? "/(repartidor)/profile"
+      : "/(tabs)/profile"
     : "/(auth)/login";
 
-  const cartRuta = isDeliver() ? "/(repartidor)/cart" : "/(tabs)/cart";
+  const cartRuta = isRepartidor === 2 ? "/(repartidor)/cart" : "/(tabs)/cart";
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        {isClient() && (
+        {isRepartidor == 1 && (
           <Link href="/(tabs)/diplayer">
             <TouchableOpacity>
               <Ionicons name="ios-menu" size={28} />
@@ -43,7 +43,13 @@ export default function Header(_props: any) {
           </Text>
         </Link>
         <View style={styles.options}>
-          <Link href={ruta} asChild>
+          <Link
+            href={{
+              pathname: ruta,
+              params: { ...user },
+            }}
+            asChild
+          >
             <TouchableOpacity
               style={{
                 paddingTop: 5,
@@ -52,7 +58,7 @@ export default function Header(_props: any) {
               <Ionicons name="ios-person-circle-outline" size={26} />
             </TouchableOpacity>
           </Link>
-          {isClient() && (
+          {isRepartidor == 1 && (
             <Link href={cartRuta}>
               <TouchableOpacity
                 style={{

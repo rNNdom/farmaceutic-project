@@ -1,10 +1,12 @@
-import { StyleSheet } from "react-native";
+import { useContext } from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import ProductOnDelivery from "~/components/home/ProductOnDelivery";
-import useOrder from "~/hooks/useOrder";
-import { Text, View } from "../../components/Themed";
-import useUser from "~/hooks/useUser";
 
+import ProductOnDelivery from "~/components/home/ProductOnDelivery";
+import { CartContext } from "../../components/context";
+import Header from "../../components/Header";
+import ProductOnCart from "../../components/home/ProductOnCart";
+import { Text, View } from "../../components/Themed";
 
 const EmptyComponent = () => {
   return (
@@ -25,22 +27,81 @@ const CartItem = (data: any) => {
         paddingBottom: 25,
       }}
       renderItem={({ item }) => <ProductOnDelivery item={item} />}
-      keyExtractor={(item: any) => item.order_id.toString()}
+      keyExtractor={(item: any) => item._id.toString()}
     />
   );
 };
 
 export default function CatalogoScreens() {
-  const { userData } = useUser(1);
-
-  const {order} = useOrder(["all", userData?.usr_id]);
+  const fakedata = [
+    {
+      _id: 1,
+      priority: 1,
+      require_recipe: true,
+      date: "2021-06-01T00:00:00.000Z",
+      name_client: "Juan Perez",
+      address: "Calle falsa 123",
+      is_vip: false,
+      total: 10000,
+    },
+    {
+      _id: 2,
+      priority: 1,
+      require_recipe: false,
+      date: "2021-06-01T00:00:00.000Z",
+      name_client: "Juan sad",
+      address: "Calle falsa 123",
+      is_vip: false,
+      total: 10000,
+    },
+    {
+      _id: 3,
+      priority: 1,
+      require_recipe: false,
+      date: "2021-06-01T00:00:00.000Z",
+      name_client: "Juan asdasd",
+      address: "Calle falsa 123",
+      is_vip: false,
+      total: 10000,
+    },
+    {
+      _id: 4,
+      priority: 1,
+      require_recipe: false,
+      date: "2021-06-01T00:00:00.000Z",
+      name_client: "Juan ssss",
+      address: "Calle falsa 123",
+      is_vip: true,
+      total: 10000,
+    },
+    {
+      _id: 5,
+      priority: 1,
+      require_recipe: false,
+      date: "2021-06-01T00:00:00.000Z",
+      name_client: "Juan ssss",
+      address: "Calle falsa 123",
+      is_vip: true,
+      total: 10000,
+    },
+    {
+      _id: 6,
+      priority: 1,
+      require_recipe: false,
+      date: "2021-06-01T00:00:00.000Z",
+      name_client: "Juan ssss",
+      address: "Calle falsa 123",
+      is_vip: true,
+      total: 10000,
+    },
+  ];
 
   return (
     <>
-      {order?.length === 0 ? (
+      {fakedata.length === 0 ? (
         <EmptyComponent />
       ) : (
-        <CartItem data={order} />
+        <CartItem data={fakedata} />
       )}
     </>
   );

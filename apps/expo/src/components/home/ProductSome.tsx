@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
-import { Product } from "~/hooks/useProduct";
+import { Product } from "~/hooks/useProductRepositories";
 import {
   Pressable,
   Text as ThemedText,
@@ -25,16 +25,8 @@ const ProductViewer = (_props: Product) => {
         <ThemedView style={styles.main}>
           <Image source={{ uri: _item.prod_image }} style={styles.image} />
           <View style={styles.containertext}>
-            <Text
-              style={[styles.textBrand]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {_item.prod_brand}
-            </Text>
-            <Text style={[styles.text]} numberOfLines={1} ellipsizeMode="tail">
-              {_item.prod_name}
-            </Text>
+            <Text style={[styles.textBrand]} numberOfLines={1} ellipsizeMode='tail'>{_item.prod_brand}</Text>
+            <Text style={[styles.text]} numberOfLines={1} ellipsizeMode='tail'>{_item.prod_name}</Text>
           </View>
         </ThemedView>
       </TouchableOpacity>

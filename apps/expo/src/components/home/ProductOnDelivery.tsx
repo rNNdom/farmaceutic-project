@@ -2,8 +2,6 @@ import { SetStateAction, useCallback, useEffect, useMemo, useState } from "react
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 
-import { OrderDetails, Profile, User } from "~/utils/interface";
-import { getOrderDet, getProfile, getUser } from "~/utils/service";
 import { Text, View } from "../../components/Themed";
 
 const calculatePriority = (customer: User | undefined, orderDate: Date) => {

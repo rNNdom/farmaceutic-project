@@ -1,8 +1,8 @@
 import * as React from "react";
 import { FlatList, StyleSheet } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
-import { Product } from "~/utils/interface";
+import { Product } from "~/hooks/useProductRepositories";
 import { Ionicons, Text, View } from "../../components/Themed";
 import CatItem from "./CatItem";
 
