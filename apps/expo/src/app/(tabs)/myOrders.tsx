@@ -3,12 +3,13 @@ import { useRoute } from "@react-navigation/native";
 
 import Header from "~/components/Header";
 import ProductOrder from "~/components/home/ProductOrder";
+import useOrderRepositories, { ORDER } from "~/hooks/useOrderRepositories";
+import { Profile } from "~/hooks/useProfileRepositories";
 import { Text, View } from "../../components/Themed";
-import useOrder from "~/hooks/useOrder";
 
 export default function MyOrders() {
   const _item = useRoute().params as any;
-  const { order } = useOrder(_item.usr_id);
+  const { order } = useOrderRepositories(_item.usr_id);
 
   return (
     <>

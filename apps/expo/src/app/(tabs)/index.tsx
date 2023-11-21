@@ -1,8 +1,8 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import useProduct from "~/hooks/useProduct";
-import useUser from "~/hooks/useUser";
+import useProductRepositories from "~/hooks/useProductRepositories";
+import useUserRepositories from "~/hooks/useUserRepositories";
 import Header from "../../components/Header";
 import CarouselComponent from "../../components/home/CarouselHome";
 import NewBrands from "../../components/home/NewBrands";
@@ -12,38 +12,29 @@ import { Text } from "../../components/Themed";
 import CatalogoScreens from "../(repartidor)/cart";
 
 export default function CatalogoScreen() {
-  const { product } = useProduct(null);
-  // const { isClient, loading } = useUser(2);
-  const { isClient, loading } = useUser(1);
+  const { productrepo } = useProductRepositories(null);
+  const { user } = useUserRepositories(2);
 
   return (
     <>
-      {loading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator />
-        </View>
-      ) : (
-        <>
-          <Header showSearch />
+      <Header showSearch />
 
-          <ScrollView style={styles.home}>
-            {isClient() ? (
-              <>
-                <Text style={styles.current}>Inicio</Text>
-                {product && <CarouselComponent data={product} />}
-                {product && <RecomendedComponent data={product} />}
-                {product && <ViewCategories data={product} />}
-                {product && <NewBrands data={product} />}
-              </>
-            ) : (
-              <>
-                <Text style={styles.current}>Inicio</Text>
-                <CatalogoScreens />
-              </>
-            )}
-          </ScrollView>
-        </>
-      )}
+      <ScrollView style={styles.home}>
+        {user?.usr_role == 1 ? (
+          <>
+            <Text style={styles.current}>Inicio</Text>
+            {productrepo && <CarouselComponent data={productrepo} />}
+            {productrepo && <RecomendedComponent data={productrepo} />}
+            {productrepo && <ViewCategories data={productrepo} />}
+            {productrepo && <NewBrands data={productrepo} />}
+          </>
+        ) : (
+          <>
+            <Text style={styles.current}>Inicio</Text>
+            <CatalogoScreens />
+          </>
+        )}
+      </ScrollView>
     </>
   );
 }
@@ -59,10 +50,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 18,
     marginVertical: 8,
     opacity: 0.5,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

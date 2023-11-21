@@ -1,32 +1,15 @@
-import { useEffect, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
+import { useRoute } from "@react-navigation/native";
 
-import { Profile } from "~/utils/interface";
-import { getProfile } from "~/utils/service";
-import useUser from "~/hooks/useUser";
+import useProfileRepositories from "~/hooks/useProfileRepositories";
+import useUserRepositories, { User } from "~/hooks/useUserRepositories";
 import Header from "../../components/Header";
 import { Ionicons, Text, View } from "../../components/Themed";
 
-export default function Profilesr() {
-  const { userData } = useUser(2);
-  const [profile, setProfile] = useState<Profile>();
-
-  const fetchProfile = async () => {
-    try {
-      const response = await getProfile();
-      const data = response.find(
-        (item: Profile) => item.prf_id == userData?.usr_id,
-      );
-      setProfile(data);
-    } catch (error) {
-      console.error("Failed to fetch profile", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchProfile();
-  }, [userData]);
+export default function Profile() {
+  const _item = useRoute().params as User;
+  const { profile } = useProfileRepositories(_item.usr_profile);
 
   const name = "Juan Perez";
   const status = "En camino";
@@ -121,7 +104,7 @@ export default function Profilesr() {
         <Link
           href={{
             pathname: "/(tabs)/myOrders",
-            params: { usr_id: userData?.usr_id, usr_vip: userData?.usr_vip },
+            params: { usr_id: _item.usr_id, usr_vip: _item.usr_vip },
           }}
         >
           <TouchableOpacity style={[styles.container, styles.settingcard]}>
@@ -155,7 +138,7 @@ export default function Profilesr() {
         <Link
           href={{
             pathname: "/(tabs)/myProfile",
-            params: { ...userData, ...profile },
+            params: { ..._item, ...profile },
           }}
           asChild
         >

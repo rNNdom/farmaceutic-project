@@ -1,41 +1,9 @@
-import { useEffect, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
-import { OrderDetails, Profile, User } from "~/utils/interface";
-import { getOrderDet, getProfile, getUser } from "~/utils/service";
 import { Text, View } from "../../components/Themed";
 
 export default function ProductOnDelivery(item: any) {
   const _item = item.item;
-  const [orderdet, setOrderdet] = useState<OrderDetails>();
-  const [customer, setCustomer] = useState<
-    { customer: User | undefined; prof: Profile | undefined } | undefined
-  >();
-
-  useEffect(() => {
-    const fetchOrderdet = async () => {
-      try {
-        const responseuser = await getUser();
-        const responseProf = await getProfile();
-        const response = await getOrderDet();
-        const datauser = responseuser.find(
-          (item: User) => item.usr_id == _item.order_customer,
-        );
-        const data = response.find(
-          (item: OrderDetails) => item.order_det_id === _item.order_id,
-        );
-        const dataProf = responseProf.find(
-          (item: Profile) => item.prf_id == datauser.usr_profile,
-        );
-        setOrderdet(data);
-        setCustomer({ customer: datauser, prof: dataProf });
-      } catch (error) {
-        console.error("Failed to fetch orderdet", error);
-      }
-    };
-    fetchOrderdet();
-  }, [_item]);
-
   const image = require("~/assets/carrousel-test/Ibuprofeno_10.png");
   return (
     <View style={styles.container}>
@@ -46,20 +14,20 @@ export default function ProductOnDelivery(item: any) {
             <View>
               {/* <Text style={styles.colorcustom}>{_item.brand}</Text> */}
               <Text style={[styles.colorcustom, styles.title]}>
-                Prioridad: {orderdet?.priority}
+                Prioridad: {_item.priority}
               </Text>
-              {orderdet?.order_recipe && (
+              {_item.require_recipe && (
                 <Text style={[styles.colorcustom, styles.title]}>
                   Requiere receta
                 </Text>
               )}
-              <Text style={styles.date}>{orderdet?.order_det_start_date}</Text>
-              <Text style={[styles.title]}>{customer?.prof?.prf_name} {customer?.prof?.prf_lastname}</Text>
-              <Text style={styles.address}>{orderdet?.order_location}</Text>
-              {customer?.customer?.usr_vip && <Text style={styles.vip}>Cliente VIP</Text>}
+              <Text style={styles.date}>{_item.date}</Text>
+              <Text style={[styles.title]}>{_item.name_client}</Text>
+              <Text style={styles.address}>{_item.address}</Text>
+              {_item.is_vip && <Text style={styles.vip}>Cliente VIP</Text>}
             </View>
           </View>
-          <Text style={styles.money}>{formatMoney(orderdet?.order_det_total)}</Text>
+          <Text style={styles.money}>{formatMoney(_item.total)}</Text>
         </View>
       </View>
       <View style={styles.buttonRow}>
