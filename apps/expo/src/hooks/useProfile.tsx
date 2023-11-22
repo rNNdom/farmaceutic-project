@@ -4,7 +4,7 @@ import { Profile } from "~/utils/interface";
 import { getProfile } from "~/utils/service";
 
 const useProfile = (props: any) => {
-  const [profile, setProfile] = useState<Profile>();
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   const fetchProfile = async () => {
     try {

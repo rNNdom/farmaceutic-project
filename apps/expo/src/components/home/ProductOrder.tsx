@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 
+
+
 import { Profile, User } from "~/utils/interface";
 import { getProfile, getUser } from "~/utils/service";
 import useOrderDet from "~/hooks/useOrderDet";
 import { Text, View } from "../Themed";
+
 
 export default function ProductOnDelivery(props: any) {
   const _item = props.data;
@@ -119,6 +122,15 @@ const colors = {
   detailsButton: "#2c7379",
   acceptButton: "#f0a62f",
   white: "white",
+};
+
+const cicle = {
+  position: "absolute",
+  top: 0,
+  right: 0,
+  width: 20,
+  height: 20,
+  borderRadius: 10,
 };
 
 const styles = StyleSheet.create({

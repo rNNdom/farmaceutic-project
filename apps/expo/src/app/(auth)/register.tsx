@@ -62,7 +62,7 @@ export default function RegisterAuth() {
             gap: 10,
           }}
         >
-          <Text>Contrasenia</Text>
+          <Text>Contraseña</Text>
           <View style={styles.input}>
             <Ionicons name="lock-closed-outline" size={20} />
             <TextInput
