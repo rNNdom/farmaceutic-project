@@ -6,7 +6,7 @@ import { getUser } from "~/utils/service";
 const useUser = (props: any) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<User | null>(null);
   const userRole = userData?.usr_role === 1 ? "Client" : "Deliver";
 
   const isClient = () => {
@@ -23,6 +23,7 @@ const useUser = (props: any) => {
     setUserData(data);
     setLoading(false);
   };
+
 
   useEffect(() => {
     fetchUser();

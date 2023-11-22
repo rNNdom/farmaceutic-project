@@ -10,19 +10,6 @@ const useProduct = (props: any) => {
 
   const fetchProduct = async () => {
     try {
-      // const params = new URLSearchParams({
-      //   id: `${props}`,
-      // });
-
-      // const response = await globalThis.fetch(
-      //   `${API_MOCKAROO}?${params.toString()}`,
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       "X-API-Key": `${MACKAROO_KEY}`,
-      //     },
-      //   },
-      // );
 
       const response = await getProduct();
       if (props == null) {

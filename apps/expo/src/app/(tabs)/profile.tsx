@@ -4,12 +4,14 @@ import { Link } from "expo-router";
 
 import { Profile } from "~/utils/interface";
 import { getProfile } from "~/utils/service";
+import useProfile from "~/hooks/useProfile";
 import useUser from "~/hooks/useUser";
 import Header from "../../components/Header";
 import { Ionicons, Text, View } from "../../components/Themed";
 
 export default function Profilesr() {
   const { userData } = useUser(2);
+  // const { profile } = useProfile(userData?.usr_profile);
   const [profile, setProfile] = useState<Profile>();
 
   const fetchProfile = async () => {
@@ -123,6 +125,7 @@ export default function Profilesr() {
             pathname: "/(tabs)/myOrders",
             params: { usr_id: userData?.usr_id, usr_vip: userData?.usr_vip },
           }}
+          asChild
         >
           <TouchableOpacity style={[styles.container, styles.settingcard]}>
             <View
@@ -130,6 +133,7 @@ export default function Profilesr() {
                 styles.container,
                 {
                   gap: 12,
+                  flexDirection: "row",
                 },
               ]}
             >
@@ -141,13 +145,15 @@ export default function Profilesr() {
               <Text style={[styles.settingtext, styles.colorcustom]}>
                 Mis Pedidos
               </Text>
-              <Ionicons
-                name="chevron-forward-outline"
-                size={26}
-                style={{
-                  opacity: 0.3,
-                }}
-              />
+              <View style={styles.arrowicon}>
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={26}
+                  style={{
+                    opacity: 0.3,
+                  }}
+                />
+              </View>
             </View>
           </TouchableOpacity>
         </Link>
@@ -176,18 +182,20 @@ export default function Profilesr() {
               <Text style={[styles.settingtext, styles.colorcustom]}>
                 Mis Datos
               </Text>
+              <View style={styles.arrowicon}>
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={26}
+                  style={{
+                    opacity: 0.3,
+                  }}
+                />
+              </View>
             </View>
-            <Ionicons
-              name="chevron-forward-outline"
-              size={26}
-              style={{
-                opacity: 0.3,
-              }}
-            />
           </TouchableOpacity>
         </Link>
         <View style={styles.separator} />
-        <Link href="/(tabs)/myProfile">
+        <Link href="/(tabs)/myProfile" asChild>
           <TouchableOpacity style={[styles.container, styles.settingcard]}>
             <View style={[styles.container, { gap: 12 }]}>
               <Ionicons
@@ -198,18 +206,20 @@ export default function Profilesr() {
               <Text style={[styles.settingtext, styles.colorcustom]}>
                 Mis Direcciones
               </Text>
+              <View style={styles.arrowicon}>
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={26}
+                  style={{
+                    opacity: 0.3,
+                  }}
+                />
+              </View>
             </View>
-            <Ionicons
-              name="chevron-forward-outline"
-              size={26}
-              style={{
-                opacity: 0.3,
-              }}
-            />
           </TouchableOpacity>
         </Link>
         <View style={styles.separator} />
-        <Link href="/(tabs)/myProfile">
+        <Link href="/(tabs)/myProfile" asChild>
           <TouchableOpacity style={[styles.container, styles.settingcard]}>
             <View style={[styles.container, { gap: 12 }]}>
               <Ionicons
@@ -220,14 +230,16 @@ export default function Profilesr() {
               <Text style={[styles.settingtext, styles.colorcustom]}>
                 Ayuda
               </Text>
+              <View style={styles.arrowicon}>
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={26}
+                  style={{
+                    opacity: 0.3,
+                  }}
+                />
+              </View>
             </View>
-            <Ionicons
-              name="chevron-forward-outline"
-              size={26}
-              style={{
-                opacity: 0.3,
-              }}
-            />
           </TouchableOpacity>
         </Link>
         <View style={styles.separator} />
@@ -318,10 +330,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 8,
     paddingHorizontal: 12,
+    alignItems: "flex-end",
+    width: "100%",
   },
   settingtext: {
     fontSize: 18,
     fontWeight: "400",
     textAlign: "center",
+  },
+  arrowicon: {
+    position: "absolute",
+    right: 0,
+    marginRight: 12,
   },
 });

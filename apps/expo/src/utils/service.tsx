@@ -1,4 +1,4 @@
-const URL_API = "http://192.168.238.61:5500/src/utils";
+const URL_API = "http://192.168.115.44:5500/src/utils";
 
 export const getOrders = async () => {
   try {
@@ -24,6 +24,7 @@ export const getUser = async () => {
   try {
     const response = await globalThis.fetch(`${URL_API}/MOCK_USER.json`);
     const json = await response.json();
+
     return json;
   } catch (error) {
     console.error("Failed to fetch product", error);
