@@ -9,14 +9,21 @@
     "db:generate": "pnpm with-env prisma generate",
     "db:push": "pnpm with-env prisma db push --skip-generate",
     "dev": "pnpm with-env prisma studio --port 5556",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "seed": "tsx prisma/seed.tsx"
   },
   "dependencies": {
     "@prisma/client": "^5.1.1"
   },
+  "prisma": {
+    "seed": "tsx --esm prisma/seed.tsx"
+  },
   "devDependencies": {
+    "@types/node": "^18.17.1",
     "dotenv-cli": "^7.2.1",
     "prisma": "^5.1.1",
+    "ts-node": "^10.9.1",
+    "tsx": "^4.2.0",
     "typescript": "^5.1.6"
   }
 }

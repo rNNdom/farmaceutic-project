@@ -1,4 +1,5 @@
 "use client";
+import withAuth from "~/components/withAuth";
 import { DeliveriesTable } from "../../components/DeliveriesTable";
 import {
   Card,
@@ -39,4 +40,4 @@ function page() {
   );
 }
 
-export default page;
+export default withAuth(page);
