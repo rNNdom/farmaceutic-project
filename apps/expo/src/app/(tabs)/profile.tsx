@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
-import { useRoute } from "@react-navigation/native";
 
 import { Profile } from "~/utils/interface";
 import { getProfile } from "~/utils/service";
@@ -123,7 +123,7 @@ export default function Profilesr() {
         <Link
           href={{
             pathname: "/(tabs)/myOrders",
-            params: { usr_id: _item.usr_id, usr_vip: _item.usr_vip },
+            params: { usr_id: userData?.usr_id, usr_vip: userData?.usr_vip },
           }}
           asChild
         >
@@ -161,7 +161,7 @@ export default function Profilesr() {
         <Link
           href={{
             pathname: "/(tabs)/myProfile",
-            params: { ..._item, ...profile },
+            params: { ...userData, ...profile },
           }}
           asChild
         >

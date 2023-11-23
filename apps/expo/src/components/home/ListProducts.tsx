@@ -2,12 +2,12 @@ import React from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
-import useProductRepositories from "~/hooks/useProductRepositories";
+import useProduct from "~/hooks/useProduct";
 import ListCatHeader from "./ListCatHeader";
 import ProductShort from "./Product";
 
 export default function ListProducts() {
-  const { productrepo, loading } = useProductRepositories(null);
+  const { product, loading } = useProduct(null);
 
   const types = [
     {
@@ -40,7 +40,7 @@ export default function ListProducts() {
         </View>
       ) : (
         <FlatList
-          data={productrepo}
+          data={product}
           ListHeaderComponent={
             <>
               <ListCatHeader data={types} />

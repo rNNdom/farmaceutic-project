@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 
@@ -12,9 +13,26 @@ import { Text, View } from "../Themed";
 export default function ProductOnDelivery(props: any) {
   const _item = props.data;
   const customer = props.user;
-  const { orderdet } = useOrderDetRepositories(_item.order_details);
-  const { user } = useUserRepositories(_item.order_delivery);
-  const { profile } = useProfileRepositories(user?.usr_profile);
+  const { orderdet } = useOrderDet(_item.order_details);
+  const [profileDeliver, setProfileDeliver] = useState<Profile>();
+
+  const fetchDeliver = async () => {
+    const responseUser = await getUser();
+    const responseProfile = await getProfile();
+    const dataUser = responseUser.find(
+      (item: User) => item.usr_id === _item.order_delivery,
+    );
+    const dataProf = responseProfile.find(
+      (item: Profile) => item.prf_id === dataUser?.usr_profile,
+    );
+    setProfileDeliver(dataProf);
+  };
+
+  useEffect(() => {
+    if (_item.order_delivery) {
+      fetchDeliver();
+    }
+  }, [_item.order_delivery]);
   return (
     <Link
       href={{
@@ -45,7 +63,7 @@ export default function ProductOnDelivery(props: any) {
                 <View>
                   <Text style={[styles.title]}>Repartidor</Text>
                   <Text style={[styles.text]}>
-                    {profile?.prf_name} {profile?.prf_lastname}
+                    {profileDeliver?.prf_name} {profileDeliver?.prf_lastname}
                   </Text>
                 </View>
                 <Text style={[styles.title]}>Direccción</Text>

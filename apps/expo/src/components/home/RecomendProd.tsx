@@ -1,9 +1,9 @@
 import * as React from "react";
 import { StyleSheet } from "react-native";
 
-import { Product } from "~/hooks/useProductRepositories";
 import { View } from "../../components/Themed";
 import ProductViewer from "./ProductSome";
+import { Product } from "~/utils/interface";
 
 const Row = ({ children }: { children: React.ReactNode }) => (
   <View style={styles.row}>{children}</View>
