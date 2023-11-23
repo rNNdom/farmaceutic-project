@@ -29,10 +29,10 @@ const formSchema = z.object({
   phone: z.string().min(10, "El teléfono debe tener al menos 10 caracteres."),
 });
 
-export default function SignUp() {
+export default function SignUp () {
   const router = useRouter();
   const getSession = api.auth.getSession.useQuery();
-  const userLogin = api.auth.register.useMutation();
+  const userRegistry = api.auth.register.useMutation();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,8 +43,8 @@ export default function SignUp() {
       phone: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    userLogin.mutate(values);
+  function onSubmit (values: z.infer<typeof formSchema>) {
+    userRegistry.mutate(values);
   }
   const parseFormValues = (key: string): string => {
     const formValueMap: Record<string, string> = {
@@ -59,8 +59,8 @@ export default function SignUp() {
   };
 
   useEffect(() => {
-    userLogin.isSuccess && router.push("/");
-  }, [userLogin.isSuccess, userLogin.isError]);
+    userRegistry.isSuccess && router.push("/");
+  }, [userRegistry.isSuccess, userRegistry.isError]);
 
   if (getSession.isSuccess) {
     return redirect("/");
@@ -101,8 +101,8 @@ export default function SignUp() {
                 <Button className="w-fit bg-sky-400" type="submit">
                   Crear Cuenta
                 </Button>
-                {userLogin.isError && (
-                  <p className="text-red-500 ">{userLogin.error.message}</p>
+                {userRegistry.isError && (
+                  <p className="text-red-500 ">{userRegistry.error.message}</p>
                 )}
               </div>
             </form>

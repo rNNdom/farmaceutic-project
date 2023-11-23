@@ -39,22 +39,33 @@ enum OrderStatus {
     CANCELED
 }
 
+model ProductOrderDetail {
+    pod_id        Int         @id @default(autoincrement())
+    quantity      Int
+    productId     Int
+    orderDetailId Int
+    Product       Product     @relation(fields: [productId], references: [prod_id])
+    OrderDetail   OrderDetail @relation(fields: [orderDetailId], references: [order_det_id])
+
+    @@index([productId])
+    @@index([orderDetailId])
+}
+
 model Product {
-    prod_id          Int           @id @default(autoincrement())
-    prod_name        String
-    prod_date_expir  DateTime
-    prod_date_pack   DateTime
-    prod_status      String
-    prod_image       String
-    // prod_reviews     Int
-    prod_brand       String
-    prod_price       Int
-    prod_description String
-    prod_quantity    Int
-    prod_tablet      String
-    prod_detail      String
-    prod_category    String
-    OrderDetail      OrderDetail[]
+    prod_id            Int                  @id @default(autoincrement())
+    prod_name          String
+    prod_date_expir    DateTime
+    prod_date_pack     DateTime
+    prod_status        String
+    prod_image         String
+    prod_brand         String
+    prod_price         Int
+    prod_description   String
+    prod_quantity      Int
+    prod_tablet        String
+    prod_detail        String
+    prod_category      String
+    ProductOrderDetail ProductOrderDetail[]
 }
 
 model Order {
@@ -65,9 +76,9 @@ model Order {
     order_details     Int
     order_delivery    Int
     order_location    String
-    User              User        @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
+    user              User        @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
     OrderDetail       OrderDetail @relation(fields: [order_details], references: [order_det_id])
-    DeliveryUser      User?       @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
+    delivery_user     User?       @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
 
     @@index([order_details])
     @@index([order_customer])
@@ -75,15 +86,11 @@ model Order {
 }
 
 model OrderDetail {
-    order_det_id       Int      @id @default(autoincrement())
-    order_det_prod     Int
-    order_det_quantity Int
+    order_det_id       Int                  @id @default(autoincrement())
     order_det_total    Int
     order_det_recipe   Boolean?
-    product            Product  @relation(fields: [order_det_prod], references: [prod_id])
+    ProductOrderDetail ProductOrderDetail[]
     Order              Order[]
-
-    @@index([order_det_prod])
 }
 
 model Profile {

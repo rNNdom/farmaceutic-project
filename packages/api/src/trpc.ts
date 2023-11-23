@@ -133,9 +133,28 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
     },
   });
 });
-
+const enforceUserIsDelivery = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.userId) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  const user = await ctx.prisma.user.findUnique({
+    where: {
+      usr_id: parseInt(ctx.userId),
+    },
+  });
+  if (user?.usr_role !== "DELIVER") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      userId: ctx.userId,
+      role: user?.usr_role,
+    },
+  });
+});
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-
+export const protectedDeliveryProcedure = t.procedure.use(enforceUserIsDelivery)
 //AQUI CREO NUEVOS MIDDLEWARES PARA VERIFICAR ROLES
 /**
  * Reusable middleware that enforces users are logged in before running the

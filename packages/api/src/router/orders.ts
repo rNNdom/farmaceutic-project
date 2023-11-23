@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedDeliveryProcedure, protectedProcedure, publicProcedure } from "../trpc";
 
 export const orderRouter = createTRPCRouter({
   getOrder: publicProcedure
@@ -15,7 +15,7 @@ export const orderRouter = createTRPCRouter({
       });
       return order;
     }),
-  updateOrder: publicProcedure
+  updateOrder: protectedDeliveryProcedure
     .input(
       z.object({
         id: z.number(),
@@ -23,10 +23,16 @@ export const orderRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const deliverId = ctx.userId as string;
       const updateOrders = await ctx.prisma.order.update({
         where: { order_id: input.id },
         data: {
           order_status: input.status,
+          delivery_user: {
+            connect: {
+              usr_id: parseInt(deliverId),
+            },
+          },
         },
       });
 
@@ -57,38 +63,50 @@ export const orderRouter = createTRPCRouter({
         orders: deleteOrders,
       };
     }),
-  createOrders: publicProcedure
+  createOrder: publicProcedure
     .input(
       z.object({
-        prod_id: z.number(),
-        quantity: z.number(),
         total: z.number(),
+        recipe: z.boolean(),
         location: z.string(),
+        product: z.object({
+          quantity: z.number(),
+          prod_id: z.number(),
+        }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      //crear primero el orderDetail y dps el order
+      const userId = ctx.userId as string;
       const createOrderDetail = await ctx.prisma.orderDetail.create({
         data: {
-          product: {
-            connect: {
-              prod_id : input.prod_id,
-            }
-          },
-          order_det_quantity: input.quantity,
           order_det_total: input.total,
-    
+          order_det_recipe: input.recipe,
+          ProductOrderDetail: {
+            create: {
+              quantity: input.product.quantity,
+              Product: {
+                connect: {
+                  prod_id: input.product.prod_id,
+                },
+              },
+            },
+          },
         },
       });
+
       const createOrders = await ctx.prisma.order.create({
         data: {
-          OrderDetail: {
+          user: {
             connect: {
-              order_det_id : createOrderDetail.order_det_id,
-            }
+              usr_id: parseInt(userId),
+            },
           },
           order_location: input.location,
-          
+          OrderDetail: {
+            connect: {
+              order_det_id: createOrderDetail.order_det_id,
+            },
+          },
         },
       });
 

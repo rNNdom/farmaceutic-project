@@ -21,14 +21,13 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email("El correo electrónico no es válido."),
   pass: z.string().min(8, "La contraseña debe tener al menos 8 caracteres."),
 });
 
-export default function LogIn() {
+export default function LogIn () {
   const userLogin = api.auth.login.useMutation();
   const router = useRouter();
   const setState = useSetAtom(isLogged);
@@ -39,7 +38,7 @@ export default function LogIn() {
       pass: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit (values: z.infer<typeof formSchema>) {
     userLogin.mutate(values);
   }
   useEffect(() => {
@@ -104,12 +103,12 @@ export default function LogIn() {
 
           <div className="flex flex-col justify-between gap-3 pt-10">
             <p className="flex justify-center">¿No tiene cuenta?</p>
-            <Link href="/auth/sign-up"
+            <a href="/auth/sign-up"
               className="flex cursor-pointer justify-center text-sky-400"
-   
+
             >
               Crear cuenta
-            </Link>
+            </a>
           </div>
         </div>
       </Form>
