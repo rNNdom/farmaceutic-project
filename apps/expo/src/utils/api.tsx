@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import superjson from "superjson";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { AppRouter } from "@acme/api";
 
 /**
@@ -30,6 +30,7 @@ const getBaseUrl = () => {
   const debuggerHost = Constants.expoConfig?.hostUri;
   const localhost = debuggerHost?.split(":")[0];
 
+
   if (!localhost) {
     // return "https://your-production-url.com";
     throw new Error(
@@ -39,12 +40,24 @@ const getBaseUrl = () => {
   return `http://${localhost}:3000`;
 };
 
+
+export let token = "a"
+export const setToken = (newToken: string) => {
+  token = newToken
+}
+const tokenFromLocalStorage = AsyncStorage.getItem("@token")
+
+if (tokenFromLocalStorage) {
+  tokenFromLocalStorage.then((value) => {
+    token = value as string;
+  });
+}
 /**
  * A wrapper for your app that provides the TRPC context.
  * Use only in _app.tsx
  */
 
-export function TRPCProvider(props: { children: React.ReactNode }) {
+export function TRPCProvider (props: { children: React.ReactNode }) {
   const [queryClient] = React.useState(() => new QueryClient());
   const [trpcClient] = React.useState(() =>
     api.createClient({
@@ -52,9 +65,10 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
       links: [
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
-          headers() {
+          headers () {
             const headers = new Map<string, string>();
             headers.set("x-trpc-source", "expo-react");
+            headers.set("Authorization", `Bearer ${token}`);
             return Object.fromEntries(headers);
           },
         }),

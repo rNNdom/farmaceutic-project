@@ -3,8 +3,27 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
 import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
+import { useEffect, useState } from "react";
+import { api, setToken } from "~/utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function LoginAuth() {
+export default function LoginAuth () {
+  const userLogin = api.auth.login.useMutation()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const onSubmit = () => {
+    userLogin.mutate({
+      email: email,
+      pass: password,
+    })
+  }
+  useEffect(() => {
+    if (userLogin.isSuccess) {
+      setToken(userLogin.data.token);
+      AsyncStorage.setItem("@token", userLogin.data.token);
+    }
+    userLogin.isError && console.log(userLogin.error.message);
+  }, [userLogin.isSuccess, userLogin.isError]);
   return (
     <SafeAreaView style={styles.container}>
       <Text
@@ -17,7 +36,7 @@ export default function LoginAuth() {
       >
         Iniciar Sesion
       </Text>
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -40,7 +59,7 @@ export default function LoginAuth() {
           />
           <Text>Google</Text>
         </View>
-      </View>
+      </View> */}
       <View
         style={{
           flexDirection: "row",
@@ -81,7 +100,7 @@ export default function LoginAuth() {
             <Ionicons name="ios-person-outline" size={20} />
             <TextInput
               placeholder="Correo Electronico"
-              maxLength={40}
+              onChangeText={(text) => setEmail(text)}
               style={{
                 flex: 1,
               }}
@@ -98,7 +117,7 @@ export default function LoginAuth() {
             <Ionicons name="lock-closed-outline" size={20} />
             <TextInput
               placeholder="Contrasenia"
-              maxLength={40}
+              onChangeText={(text) => setPassword(text)}
               style={{
                 flex: 1,
               }}
@@ -125,6 +144,7 @@ export default function LoginAuth() {
         }}
       >
         <TouchableOpacity
+          onPress={onSubmit}
           style={[styles.btnPrincipal, styles.btncolorprincipal]}
         >
           <Text style={{ color: "white" }}>Iniciar Sesion</Text>
