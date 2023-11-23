@@ -2,14 +2,14 @@ import React from "react";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 
-import ProductShort from "~/components/home/Product";
-import useProductRepositories from "~/hooks/useProductRepositories";
 import Header from "~/components/Header";
+import ProductShort from "~/components/home/Product";
+import useProduct from "~/hooks/useProduct";
 
 export default function ProductOrderDetail() {
   const _item = useRoute().params as any;
 
-  const { productrepo, loading } = useProductRepositories(_item.data);
+  const { product, loading } = useProduct(_item.data);
 
   return (
     <>
@@ -19,10 +19,12 @@ export default function ProductOrderDetail() {
         </View>
       ) : (
         <FlatList
-          data={productrepo}
-          ListHeaderComponent={<>
-          <Header />
-          </>}
+          data={product}
+          ListHeaderComponent={
+            <>
+              <Header />
+            </>
+          }
           renderItem={({ item }) => <ProductShort {...item} />}
           keyExtractor={(item) => item.prod_id}
         />

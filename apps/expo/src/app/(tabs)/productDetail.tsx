@@ -1,14 +1,14 @@
-import React, {useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import StarRating from "react-native-star-rating-widget";
 import { useRoute } from "@react-navigation/native";
 
+import { Product } from "~/utils/interface";
 import { CartContext } from "~/components/context";
 import Header from "~/components/Header";
 import { formatMoney } from "~/components/home/Product";
 import { commonStyles, componentStyles } from "~/styles/mystyle";
-import { Product } from "~/hooks/useProductRepositories";
 import { Text, View } from "../../components/Themed";
 
 export default function ProductDetail() {

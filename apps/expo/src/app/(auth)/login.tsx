@@ -93,7 +93,7 @@ export default function LoginAuth() {
             gap: 10,
           }}
         >
-          <Text>Contraseñaia</Text>
+          <Text>Contraseña</Text>
           <View style={styles.input}>
             <Ionicons name="lock-closed-outline" size={20} />
             <TextInput
@@ -117,7 +117,7 @@ export default function LoginAuth() {
           paddingVertical: 12,
         }}
       >
-        Olvidaste tu contraseñaia?
+        Olvidaste tu contraseña?
       </Text>
       <View
         style={{

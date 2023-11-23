@@ -3,7 +3,7 @@ import { Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
-import { Product } from "~/hooks/useProductRepositories";
+import { Product } from "~/hooks/useProduct";
 import { Text, View } from "../../components/Themed";
 
 const CatItem = (data: Product) => {
@@ -20,7 +20,7 @@ const CatItem = (data: Product) => {
         <View style={styles.main}>
           <Image source={{ uri: data.prod_image }} style={styles.image} />
           <View style={styles.containertext}>
-            <Text style={styles.text} numberOfLines={1} ellipsizeMode='tail'>
+            <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
               {_item.prod_category}
             </Text>
           </View>
