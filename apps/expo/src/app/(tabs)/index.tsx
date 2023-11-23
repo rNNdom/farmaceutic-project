@@ -4,18 +4,19 @@ import { ScrollView } from "react-native-gesture-handler";
 import useProduct from "~/hooks/useProduct";
 import useUser from "~/hooks/useUser";
 import Header from "../../components/Header";
-import CarouselComponent from "../../components/home/CarouselHome";
+// import CarouselComponent from "../../components/home/CarouselHome";
 import NewBrands from "../../components/home/NewBrands";
 import RecomendedComponent from "../../components/home/RecomendProd";
 import ViewCategories from "../../components/home/ViewCategories";
 import { Text } from "../../components/Themed";
 import CatalogoScreens from "../(repartidor)/cart";
 
-export default function CatalogoScreen() {
+export default function CatalogoScreen () {
   const { product } = useProduct(null);
   // const { isClient, loading } = useUser(2);
-  const { isClient, loading } = useUser(1);
-
+  // const { isClient, loading } = useUser(1);
+  const loading = false;
+  const isClient = true;
   return (
     <>
       {loading ? (
@@ -27,10 +28,10 @@ export default function CatalogoScreen() {
           <Header showSearch />
 
           <ScrollView style={styles.home}>
-            {isClient() ? (
+            {isClient ? (
               <>
                 <Text style={styles.current}>Inicio</Text>
-                {product && <CarouselComponent data={product} />}
+                {/* {product && <CarouselComponent data={product} />} */}
                 {product && <RecomendedComponent data={product} />}
                 {product && <ViewCategories data={product} />}
                 {product && <NewBrands data={product} />}
