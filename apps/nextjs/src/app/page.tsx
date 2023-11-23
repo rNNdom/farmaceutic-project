@@ -8,8 +8,8 @@ import { Tabs, TabsContent } from "../components/ui/tabs";
 
 const GraphicsDetail = lazy(() => import("~/components/GraphicsDetail"));
 const Payments = lazy(() => import("~/components/Payments"));
-
-function DashboardPage() {
+//me gusta co
+function DashboardPage () {
   return (
     <>
       <div className=" flex-grow flex-col md:flex">
