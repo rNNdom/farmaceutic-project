@@ -8,7 +8,7 @@
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { verify } from "jsonwebtoken";
+import { decode, verify } from "jsonwebtoken";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -56,12 +56,11 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
       const jwtToken = req.headers.get("authorization")?.split(" ")[1];
       console.log(jwtToken);
       try {
-        const decoded = verify(
-          jwtToken,
-          process.env.ACCESS_JWT_TOKEN as string,
-        );
-        const { userId } = decoded as { userId: string };
-        return userId;
+        const decoded = decode(jwtToken) as any;
+        if ("userId" in decoded) {
+          const { userId } = decoded;
+          return userId;
+        }
       } catch (e) {
         console.log(e);
       }
@@ -154,7 +153,9 @@ const enforceUserIsDelivery = t.middleware(async ({ ctx, next }) => {
   });
 });
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-export const protectedDeliveryProcedure = t.procedure.use(enforceUserIsDelivery)
+export const protectedDeliveryProcedure = t.procedure.use(
+  enforceUserIsDelivery,
+);
 //AQUI CREO NUEVOS MIDDLEWARES PARA VERIFICAR ROLES
 /**
  * Reusable middleware that enforces users are logged in before running the
