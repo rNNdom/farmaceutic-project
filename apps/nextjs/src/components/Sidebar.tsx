@@ -1,12 +1,7 @@
 import { NotionLogoIcon } from "@radix-ui/react-icons";
-import { useAtom } from "jotai";
 
-import { isLogged } from "~/atoms";
 import { SidebarOptions } from "./SidebarOptions";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  navItems: NavItems[];
-}
 export type NavItems = {
   key: string;
   label: JSX.Element;
@@ -14,8 +9,7 @@ export type NavItems = {
 }[][number];
 
 export function Sidebar() {
-  const [value] = useAtom(isLogged);
-  if (!value) return null;
+
 
   return (
     <div className="w-72 space-y-4 border-r py-4">
