@@ -24,7 +24,6 @@ const tokenFromLocalStorage = sessionStorage.getItem("@token");
 if (tokenFromLocalStorage) {
   token = tokenFromLocalStorage;
 }
-console.log("desde providers", token);
 export function TRPCReactProvider(props: {
   children: React.ReactNode;
   headers?: Headers;

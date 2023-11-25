@@ -118,32 +118,18 @@ export const orderRouter = createTRPCRouter({
         total: z.number(),
         recipe: z.boolean(),
         location: z.string(),
-        product: z.object({
-          quantity: z.number(),
-          prod_id: z.number(),
-        }),
+        products: z.array(
+          z.object({
+            quantity: z.number(),
+            prod_id: z.number(),
+          }),
+        ),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId as string;
-      const createOrderDetail = await ctx.prisma.orderDetail.create({
-        data: {
-          order_det_total: input.total,
-          order_det_recipe: input.recipe,
-          ProductOrderDetail: {
-            create: {
-              quantity: input.product.quantity,
-              Product: {
-                connect: {
-                  prod_id: input.product.prod_id,
-                },
-              },
-            },
-          },
-        },
-      });
 
-      const createOrders = await ctx.prisma.order.create({
+      const createOrder = await ctx.prisma.order.create({
         data: {
           user: {
             connect: {
@@ -152,19 +138,33 @@ export const orderRouter = createTRPCRouter({
           },
           order_location: input.location,
           OrderDetail: {
-            connect: {
-              order_det_id: createOrderDetail.order_det_id,
+            create: {
+              order_det_total: input.total,
+              order_det_recipe: input.recipe,
+              ProductOrderDetail: {
+                createMany: {
+                  data: input.products.map((product) => ({
+                    Product: {
+                      connect: {
+                        prod_id: product.prod_id,
+                      },
+                    },
+                    quantity: product.quantity,
+                    productId: product.prod_id,
+                  })),
+                },
+              },
             },
           },
         },
       });
 
-      if (!createOrders) {
+      if (!createOrder) {
         throw new Error("No se pudo crear el pedido");
       }
 
       return {
-        orders: createOrders,
+        orders: createOrder,
       };
     }),
 });

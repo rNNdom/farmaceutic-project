@@ -1,6 +1,3 @@
-//get dotenv to use .env file
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 datasource db {
     provider     = "mysql"
     url          = env("DATABASE_URL")
@@ -82,12 +79,10 @@ model Order {
     order_date_of_ord DateTime      @default(now())
     order_status      OrderStatus   @default(PENDING)
     order_customer    Int
-    // order_details     Int
     order_delivery    Int
     order_location    String
     user              User          @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
     OrderDetail       OrderDetail[]
-    // OrderDetail       OrderDetail @relation(fields: [order_details], references: [order_det_id], onUpdate: Cascade, onDelete: Cascade)
     delivery_user     User?         @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
 
     @@index([order_customer])

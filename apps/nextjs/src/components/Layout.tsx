@@ -8,7 +8,7 @@ import { isLogged } from "~/atoms";
 import Loading from "./Loading";
 import { Sidebar } from "./Sidebar";
 
-function LayoutComponent({ children }: { children: React.ReactNode }) {
+function LayoutComponent ({ children }: { children: React.ReactNode }) {
   const checkSession = api.auth.checkSession.useMutation();
   const [value] = useAtom(isLogged);
   useLayoutEffect(() => {
@@ -18,10 +18,10 @@ function LayoutComponent({ children }: { children: React.ReactNode }) {
   }, [value]);
 
   return (
-    <div className="flex h-screen w-screen ">
+    <div className="flex min-h-screen w-screen ">
       {
         <>
-          <section className="">
+          <section className="border-r">
             <Sidebar />
           </section>
           {checkSession.isLoading && value ? (
