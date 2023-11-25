@@ -18,10 +18,10 @@ function LayoutComponent ({ children }: { children: React.ReactNode }) {
   }, [value]);
 
   return (
-    <div className="flex h-screen w-screen ">
+    <div className="flex min-h-screen w-screen ">
       {
         <>
-          <section className="">
+          <section className="border-r">
             <Sidebar />
           </section>
           {checkSession.isLoading && value ? (

@@ -1,6 +1,3 @@
-//get dotenv to use .env file
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 datasource db {
     provider     = "mysql"
     url          = env("DATABASE_URL")
@@ -12,15 +9,16 @@ generator client {
 }
 
 model User {
-    usr_id         Int     @id @default(autoincrement())
-    usr_email      String  @unique
+    usr_id         Int        @id @default(autoincrement())
+    usr_email      String     @unique
     usr_pass       String
-    usr_role       Role    @default(USER)
+    usr_role       Role       @default(USER)
     usr_profile    Int
-    profile        Profile @relation(fields: [usr_profile], references: [prf_id])
+    usr_status     UserStatus @default(NORMAL)
+    profile        Profile    @relation(fields: [usr_profile], references: [prf_id], onUpdate: Cascade, onDelete: Cascade)
     usr_vip        Boolean
-    Order_Customer Order[] @relation(name: "Order_Customer")
-    Order_Delivery Order[] @relation(name: "Order_Delivery")
+    Order_Customer Order[]    @relation(name: "Order_Customer")
+    Order_Delivery Order[]    @relation(name: "Order_Delivery")
 
     @@index([usr_role])
     @@index([usr_profile])
@@ -30,6 +28,13 @@ enum Role {
     ADMIN
     USER
     DELIVER
+}
+
+enum UserStatus {
+    DELIVERING
+    AVAILABLE
+    UNAVAILABLE
+    NORMAL
 }
 
 enum OrderStatus {
@@ -45,7 +50,7 @@ model ProductOrderDetail {
     productId     Int
     orderDetailId Int
     Product       Product     @relation(fields: [productId], references: [prod_id])
-    OrderDetail   OrderDetail @relation(fields: [orderDetailId], references: [order_det_id])
+    OrderDetail   OrderDetail @relation(fields: [orderDetailId], references: [order_det_id], onUpdate: Cascade, onDelete: Cascade)
 
     @@index([productId])
     @@index([orderDetailId])
@@ -53,34 +58,33 @@ model ProductOrderDetail {
 
 model Product {
     prod_id            Int                  @id @default(autoincrement())
-    prod_name          String
+    prod_name          String               @db.Text
     prod_date_expir    DateTime
     prod_date_pack     DateTime
-    prod_status        String
-    prod_image         String
-    prod_brand         String
+    prod_status        String               @db.Text
+    prod_image         String               @db.Text
+    prod_brand         String               @db.Text
     prod_price         Int
-    prod_description   String
+    prod_description   String               @db.Text
     prod_quantity      Int
-    prod_tablet        String
-    prod_detail        String
-    prod_category      String
+    prod_tablet        String               @db.Text
+    prod_detail        String               @db.Text
+    prod_category      String               @db.Text
+    prod_recipe        Boolean              @default(false)
     ProductOrderDetail ProductOrderDetail[]
 }
 
 model Order {
-    order_id          Int         @id @default(autoincrement())
-    order_date_of_ord DateTime    @default(now())
-    order_status      OrderStatus @default(PENDING)
+    order_id          Int           @id @default(autoincrement())
+    order_date_of_ord DateTime      @default(now())
+    order_status      OrderStatus   @default(PENDING)
     order_customer    Int
-    order_details     Int
     order_delivery    Int
     order_location    String
-    user              User        @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
-    OrderDetail       OrderDetail @relation(fields: [order_details], references: [order_det_id])
-    delivery_user     User?       @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
+    user              User          @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
+    OrderDetail       OrderDetail[]
+    delivery_user     User?         @relation(name: "Order_Delivery", fields: [order_delivery], references: [usr_id])
 
-    @@index([order_details])
     @@index([order_customer])
     @@index([order_delivery])
 }
@@ -90,7 +94,9 @@ model OrderDetail {
     order_det_total    Int
     order_det_recipe   Boolean?
     ProductOrderDetail ProductOrderDetail[]
-    Order              Order[]
+    Order              Order                @relation(fields: [order_det_id], references: [order_id], onUpdate: Cascade, onDelete: Cascade)
+
+    @@index([order_det_id])
 }
 
 model Profile {
