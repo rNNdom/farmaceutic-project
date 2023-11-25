@@ -15,6 +15,9 @@ export const productsRouter = createTRPCRouter({
       });
       return products;
     }),
+  getAllProducts: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.product.findMany();
+  }),
   updateProducts: publicProcedure
     .input(
       z.object({
@@ -79,45 +82,47 @@ export const productsRouter = createTRPCRouter({
         products: deleteProducts,
       };
     }),
-  createProducts: publicProcedure.input(
-    z.object({
-      name: z.string(),
-      date_exp: z.date(),
-      date_pack: z.date(),
-      status: z.string(),
-      image: z.string(),
-      brand: z.string(),
-      price: z.number(),
-      description: z.string(),
-      stock: z.number(),
-      tablet: z.string(),
-      detail: z.string(),
-      category: z.string(),
+  createProducts: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        date_exp: z.date(),
+        date_pack: z.date(),
+        status: z.string(),
+        image: z.string(),
+        brand: z.string(),
+        price: z.number(),
+        description: z.string(),
+        stock: z.number(),
+        tablet: z.string(),
+        detail: z.string(),
+        category: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const createProducts = await ctx.prisma.product.create({
+        data: {
+          prod_name: input.name,
+          prod_date_expir: input.date_exp,
+          prod_date_pack: input.date_pack,
+          prod_status: input.status,
+          prod_image: input.image,
+          prod_brand: input.brand,
+          prod_price: input.price,
+          prod_description: input.description,
+          prod_quantity: input.stock,
+          prod_tablet: input.tablet,
+          prod_detail: input.detail,
+          prod_category: input.category,
+        },
+      });
+
+      if (!createProducts) {
+        throw new Error("No se pudo ingresar el producto");
+      }
+
+      return {
+        products: createProducts,
+      };
     }),
-  ).mutation(async ({ ctx, input }) => {
-    const createProducts = await ctx.prisma.product.create({
-      data: {
-        prod_name: input.name,
-        prod_date_expir: input.date_exp,
-        prod_date_pack: input.date_pack,
-        prod_status: input.status,
-        prod_image: input.image,
-        prod_brand: input.brand,
-        prod_price: input.price,
-        prod_description: input.description,
-        prod_quantity: input.stock,
-        prod_tablet: input.tablet,
-        prod_detail: input.detail,
-        prod_category: input.category,
-      },
-    });
-
-    if (!createProducts) {
-      throw new Error("No se pudo ingresar el producto");
-    }
-
-    return {
-      products: createProducts,
-    };
-  }),
 });

@@ -1,7 +1,10 @@
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
-import Header from "../../components/Header";
+import Header from "~/components/Header";
 import { Ionicons, Text, View } from "../../components/Themed";
+import { deleteFromAsyncStorage } from "~/components/storage";
+import { setToken } from "~/utils/api";
+import { router } from "expo-router";
 
 export default function Profile() {
   const name = "Juan Perez";
@@ -212,6 +215,12 @@ export default function Profile() {
             alignItems: "center",
             paddingVertical: 8,
             paddingHorizontal: 12,
+          }}
+          onPress={() => {
+            setToken("");
+            deleteFromAsyncStorage("@token");
+            router.push("/");
+            window.location.reload();
           }}
         >
           <View

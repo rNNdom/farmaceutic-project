@@ -1,22 +1,22 @@
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-
-import useProduct from "~/hooks/useProduct";
-import useUser from "~/hooks/useUser";
-import Header from "../../components/Header";
-// import CarouselComponent from "../../components/home/CarouselHome";
+import Header from "~/components/Header";
 import NewBrands from "../../components/home/NewBrands";
 import RecomendedComponent from "../../components/home/RecomendProd";
 import ViewCategories from "../../components/home/ViewCategories";
 import { Text } from "../../components/Themed";
 import CatalogoScreens from "../(repartidor)/cart";
+import { api } from "~/utils/api";
+import { getContentFromAsyncStorage } from "~/components/storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function CatalogoScreen () {
-  const { product } = useProduct(null);
-  // const { isClient, loading } = useUser(2);
-  // const { isClient, loading } = useUser(1);
-  const loading = false;
-  const isClient = true;
+export default function CatalogoScreen() {
+  const getSession = api.auth.getSession.useQuery()
+  const role = getSession.data?.user.role
+  const loading = false
+  const isClient = (getSession.data === undefined || role === "USER") && role !== "DELIVER";
+
+
   return (
     <>
       {loading ? (
@@ -31,10 +31,9 @@ export default function CatalogoScreen () {
             {isClient ? (
               <>
                 <Text style={styles.current}>Inicio</Text>
-                {/* {product && <CarouselComponent data={product} />} */}
-                {product && <RecomendedComponent data={product} />}
-                {product && <ViewCategories data={product} />}
-                {product && <NewBrands data={product} />}
+                <RecomendedComponent />
+                <ViewCategories />
+                <NewBrands />
               </>
             ) : (
               <>

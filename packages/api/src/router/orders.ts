@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedDeliveryProcedure, protectedProcedure, publicProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  protectedDeliveryProcedure,
+  publicProcedure,
+} from "../trpc";
 
 export const orderRouter = createTRPCRouter({
   getOrder: publicProcedure
@@ -14,6 +18,51 @@ export const orderRouter = createTRPCRouter({
         where: { order_id: input.id },
       });
       return order;
+    }),
+  getAllOrder: publicProcedure
+    .input(
+      z.object({
+        idCustomer: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const order = await ctx.prisma.order.findMany({
+        where: { order_customer: input.idCustomer },
+        include: {
+          user: {
+            select: {
+              usr_vip: true,
+              usr_email: true,
+              profile: true,
+            },
+          },
+          delivery_user: {
+            select: {
+              profile: true,
+              usr_email: true,
+            },
+          },
+          OrderDetail: {
+            include: {
+              ProductOrderDetail: true,
+            },
+          },
+        },
+      });
+
+      return order;
+    }),
+  getLastOrder: publicProcedure
+    .input(
+      z.object({
+        idCustomer: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.order.findFirst({
+        where: { order_customer: input.idCustomer },
+        orderBy: { order_date_of_ord: "desc" },
+      });
     }),
   updateOrder: protectedDeliveryProcedure
     .input(
@@ -51,16 +100,16 @@ export const orderRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const deleteOrders = await ctx.prisma.order.delete({
+      const order = await ctx.prisma.order.delete({
         where: { order_id: input.id },
       });
 
-      if (!deleteOrders) {
+      if (!order) {
         throw new Error("No se pudo eliminar el pedido");
       }
 
       return {
-        orders: deleteOrders,
+        orders: order,
       };
     }),
   createOrder: publicProcedure
@@ -119,4 +168,3 @@ export const orderRouter = createTRPCRouter({
       };
     }),
 });
-  

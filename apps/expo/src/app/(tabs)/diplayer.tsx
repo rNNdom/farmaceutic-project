@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import Header from "../../components/Header";
+import Header from "~/components/Header";
 import ListProducts from "../../components/home/ListProducts";
 import { Text } from "../../components/Themed";
 

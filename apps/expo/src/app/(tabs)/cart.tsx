@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 import { CartContext } from "../../components/context";
-import Header from "../../components/Header";
+import Header from "~/components/Header";
 import ProductOnCart from "../../components/home/ProductOnCart";
 import { Text, View } from "../../components/Themed";
 
@@ -49,13 +49,14 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
         </TouchableOpacity>
       </View>
 
-      <PayButton onPress={() => {}} />
+      <PayButton onPress={() => { }} />
     </>
   );
 };
 
 export default function CatalogoScreen() {
   const { cart, emptyCart } = useContext(CartContext);
+  console.log(cart);
 
   return (
     <>

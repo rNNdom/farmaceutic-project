@@ -1,4 +1,4 @@
-const URL_API = "http://192.168.115.44:5500/src/utils";
+const URL_API = "http://192.168.115.44:5500/apps/expo/src/utils";
 
 export const getOrders = async () => {
   try {

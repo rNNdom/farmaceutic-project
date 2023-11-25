@@ -1,13 +1,13 @@
-import { Image, StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput, } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Link } from "expo-router";
-
+import { Link, useRouter } from "expo-router";
 import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
 import { useEffect, useState } from "react";
 import { api, setToken } from "~/utils/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setTokenAsyncStorage,setContentAsyncStorage } from "~/components/storage";
 
-export default function LoginAuth () {
+export default function LoginAuth() {
+  const router = useRouter();
   const userLogin = api.auth.login.useMutation()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,13 +17,22 @@ export default function LoginAuth () {
       pass: password,
     })
   }
+
+
   useEffect(() => {
     if (userLogin.isSuccess) {
       setToken(userLogin.data.token);
-      AsyncStorage.setItem("@token", userLogin.data.token);
+      setTokenAsyncStorage(userLogin.data.token, "@token")
+      setContentAsyncStorage([userLogin.data.user.usr_id, userLogin.data.user.usr_role, userLogin.data.user.usr_profile, userLogin.data.user.usr_vip], "@user")
+      router.replace("/(tabs)");
+
     }
     userLogin.isError && console.log(userLogin.error.message);
   }, [userLogin.isSuccess, userLogin.isError]);
+
+
+
+
   return (
     <SafeAreaView style={styles.container}>
       <Text
@@ -36,30 +45,6 @@ export default function LoginAuth () {
       >
         Iniciar Sesion
       </Text>
-      {/* <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 10,
-          marginVertical: 10,
-        }}
-      >
-        <View style={styles.optionlogin}>
-          <Image
-            source={require("../../assets/icons/fb.png")}
-            style={styles.icon}
-          />
-          <Text>Facebook</Text>
-        </View>
-        <View style={styles.optionlogin}>
-          <Image
-            source={require("../../assets/icons/google.png")}
-            style={styles.icon}
-          />
-          <Text>Google</Text>
-        </View>
-      </View> */}
       <View
         style={{
           flexDirection: "row",
@@ -69,14 +54,6 @@ export default function LoginAuth () {
           marginVertical: 10,
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            height: 1,
-            backgroundColor: "#1969a3",
-          }}
-        />
-        <Text style={{ textAlign: "center" }}>O</Text>
         <View
           style={{
             flex: 1,
@@ -116,7 +93,7 @@ export default function LoginAuth () {
           <View style={styles.input}>
             <Ionicons name="lock-closed-outline" size={20} />
             <TextInput
-              placeholder="Contrasenia"
+              placeholder="Contraseña"
               onChangeText={(text) => setPassword(text)}
               style={{
                 flex: 1,

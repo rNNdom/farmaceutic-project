@@ -3,7 +3,9 @@ import { StyleSheet } from "react-native";
 
 import { View } from "../../components/Themed";
 import ProductViewer from "./ProductSome";
-import { Product } from "~/utils/interface";
+import { Products } from "~/utils/interface";
+import { api } from "~/utils/api";
+import Loading from "../loading";
 
 const Row = ({ children }: { children: React.ReactNode }) => (
   <View style={styles.row}>{children}</View>
@@ -12,27 +14,39 @@ const Col = ({ children }: { children: React.ReactNode }) => (
   <View style={styles.col}>{children}</View>
 );
 
-const ProductList = ({ products }: { products: Product[] }) => (
-  <Col>
-    {products.map((item: Product) => (
-      <ProductViewer key={item.prod_id} item={item} />
-    ))}
-  </Col>
-);
+const ProductList = ({ products }: { products: any[] | undefined }) => {
+  return (
+    <Col>
+      {products?.map((item: React.JSX.IntrinsicAttributes & Products) => (
+        <ProductViewer key={item.prod_id} {...item} />
+      ))}
 
-const RecomendedComponent = ({ data }: { data: Product[] }) => {
-  const filteredProducts = data.filter((item) => item.prod_reviews > 3);
+    </Col>
+  )
+};
 
-  const firstTwoProducts = filteredProducts.slice(0, 2);
-  const nextTwoProducts = filteredProducts.slice(2, 4);
+const RecomendedComponent = () => {
+  const getProduct = api.product.getAllProducts.useQuery();
+
+
+  const firstTwoProducts = getProduct.data?.slice(0, 2);
+  const nextTwoProducts = getProduct.data?.slice(2, 4);
 
   return (
-    <View style={styles.app}>
-      <Row>
-        <ProductList products={firstTwoProducts} />
-        <ProductList products={nextTwoProducts} />
-      </Row>
-    </View>
+    <>
+      {getProduct.isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <View style={styles.app}>
+            <Row>
+              <ProductList products={firstTwoProducts} />
+              <ProductList products={nextTwoProducts} />
+            </Row>
+          </View>
+        </>
+      )}
+    </>
   );
 };
 
