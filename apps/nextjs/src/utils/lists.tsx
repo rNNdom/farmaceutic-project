@@ -33,7 +33,15 @@ export const NavItems = [
     ),
     ref: "/delivery",
   },
-
+  {
+    key: "user-management",
+    label: (
+      <>
+        <Users size={20} /> Administración de roles
+      </>
+    ),
+    ref: "/user-management",
+  },
   {
     key: "account",
     label: (
@@ -43,6 +51,7 @@ export const NavItems = [
     ),
     ref: "/account",
   },
+
 ];
 
 export const payments: Payment[] = [
