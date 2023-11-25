@@ -17,7 +17,7 @@ export default function ListCatHeader(data: any) {
         contentContainerStyle={{ alignItems: "center", gap: 10 }}
         renderItem={({ item }) => (
           <TouchableOpacity>
-            <Text style={styles.title}>{item.name}</Text>
+            <Text style={styles.title}>{item}</Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.key}

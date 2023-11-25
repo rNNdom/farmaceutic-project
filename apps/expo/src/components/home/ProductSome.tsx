@@ -2,17 +2,16 @@ import * as React from "react";
 import { Image, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
-
-import { Product } from "~/hooks/useProduct";
 import {
   Pressable,
   Text as ThemedText,
   View as ThemedView,
   View,
 } from "../../components/Themed";
+import { Products } from "~/utils/interface";
 
-const ProductViewer = (_props: Product) => {
-  const _item = _props.item;
+const ProductViewer = (_props: Products) => {
+  const _item = _props;
   return (
     <Link
       href={{

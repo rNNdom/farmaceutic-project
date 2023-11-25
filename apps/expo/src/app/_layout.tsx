@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import Constants from "expo-constants";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
-// ----------
 
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
@@ -33,7 +30,7 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+export default function RootLayout () {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...(FontAwesome.font as unknown as Record<string, unknown>),
@@ -60,66 +57,51 @@ export default function RootLayout() {
 
 // --------
 
-function RootLayoutNav() {
+function RootLayoutNav () {
   const colorScheme = useColorScheme();
   return (
-    <ClerkProvider
-      publishableKey={
-        Constants.expoConfig?.extra?.clerkPublishableKey as string
-      }
-    >
-      <TRPCProvider>
-        <SafeAreaProvider>
-          <SignedIn>
-            <Stack
-              screenOptions={{
-                headerStyle: {
-                  backgroundColor: "#f472b6",
-                },
-              }}
-            />
-          </SignedIn>
-          <SignedOut>
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-              <CartProvider>
-                <Stack>
-                  <Stack.Screen
-                    name="(tabs)"
-                    options={{
-                      headerShown: false,
-                      animation: "slide_from_right",
-                    }}
-                  />
-                  <Stack.Screen
-                    name="(auth)"
-                    options={{
-                      headerShown: false,
-                      animation: "slide_from_right",
-                    }}
-                  />
-                  <Stack.Screen
-                    name="modal"
-                    options={{
-                      presentation: "modal",
-                      animation: "slide_from_bottom",
-                    }}
-                  />
-                  <Stack.Screen
-                    name="(repartidor)"
-                    options={{
-                      headerShown: false,
-                      animation: "slide_from_right",
-                    }}
-                  />
-                </Stack>
-              </CartProvider>
-            </ThemeProvider>
-          </SignedOut>
-          <StatusBar />
-        </SafeAreaProvider>
-      </TRPCProvider>
-    </ClerkProvider>
+
+    <TRPCProvider>
+      <SafeAreaProvider>
+
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <CartProvider>
+            <Stack>
+              <Stack.Screen
+                name="(tabs)"
+                options={{
+                  headerShown: false,
+                  animation: "slide_from_right",
+                }}
+              />
+              <Stack.Screen
+                name="(auth)"
+                options={{
+                  headerShown: false,
+                  animation: "slide_from_right",
+                }}
+              />
+              <Stack.Screen
+                name="modal"
+                options={{
+                  presentation: "modal",
+                  animation: "slide_from_bottom",
+                }}
+              />
+              <Stack.Screen
+                name="(repartidor)"
+                options={{
+                  headerShown: false,
+                  animation: "slide_from_right",
+                }}
+              />
+            </Stack>
+          </CartProvider>
+        </ThemeProvider>
+        <StatusBar />
+      </SafeAreaProvider>
+    </TRPCProvider>
   );
 }

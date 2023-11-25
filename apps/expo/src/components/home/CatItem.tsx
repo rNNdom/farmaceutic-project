@@ -2,11 +2,10 @@ import * as React from "react";
 import { Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
-
-import { Product } from "~/hooks/useProduct";
 import { Text, View } from "../../components/Themed";
+import { Products } from "~/utils/interface";
 
-const CatItem = (data: Product) => {
+const CatItem = (data:Products) => {
   const _item = data;
   return (
     <Link

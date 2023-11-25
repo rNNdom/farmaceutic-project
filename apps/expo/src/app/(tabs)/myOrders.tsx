@@ -4,33 +4,51 @@ import { useRoute } from "@react-navigation/native";
 import Header from "~/components/Header";
 import ProductOrder from "~/components/home/ProductOrder";
 import { Text, View } from "../../components/Themed";
-import useOrder from "~/hooks/useOrder";
+import { api } from "~/utils/api";
+import {  useEffect, useState } from "react";
+import Loading from "~/components/loading";
 
 export default function MyOrders() {
   const _item = useRoute().params as any;
-  const { order } = useOrder(_item.usr_id);
+  const [isDeleted, setIsDeleted] = useState(false)
+  const getOrdert = api.orders.getAllOrder.useQuery({
+    idCustomer: Number(_item.usr_id),
+  })
+
+  useEffect(() => {
+    if (isDeleted) {
+      getOrdert.refetch()
+      setIsDeleted(false)
+    }
+  }, [getOrdert.isSuccess, getOrdert.isError, isDeleted, getOrdert.dataUpdatedAt])
 
   return (
     <>
       <Header showSearch />
-      {order?.length === 0 ? (
-        <EmptyComponent />
+      {getOrdert.isLoading ? (
+        <Loading />
       ) : (
-        <CartItem data={order} user={_item} />
+        <>
+          {getOrdert.data?.length === 0 ? (
+            <EmptyComponent />
+          ) : (
+            <CartItem setIsDeleted={setIsDeleted} data={getOrdert.data} />
+          )}
+        </>
       )}
     </>
   );
 }
 
-const CartItem = (data: any) => {
+const CartItem = ({data, setIsDeleted}) => {
   return (
     <FlatList
-      data={data.data}
+      data={data}
       ListFooterComponent={<View />}
       ListFooterComponentStyle={{
         paddingBottom: 25,
       }}
-      renderItem={({ item }) => <ProductOrder data={item} user={data.user} />}
+      renderItem={({ item }) => <ProductOrder setIsDeleted={setIsDeleted} {...item} />}
       keyExtractor={(item: any) => item.order_id}
     />
   );

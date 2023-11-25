@@ -2,10 +2,71 @@ import { StyleSheet, TextInput } from "react-native";
 
 import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { api, setToken } from "~/utils/api";
+import { useEffect, useState } from "react";
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { setTokenAsyncStorage } from "~/components/storage";
+
+type FormData = {
+  name: string;
+  lastname: string;
+  password: string;
+  email: string;
+  phone: string;
+};
+
 
 export default function RegisterAuth() {
+  const getSession = api.auth.getSession.useQuery();
+  const userRegitry = api.auth.register.useMutation();
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    defaultValues: {
+      name: "",
+      lastname: "",
+      password: "",
+      email: "",
+      phone: "",
+    }
+  });
+
+
+  const formatPhone = (phone: string) => {
+    if (/^\9+?\d{8}$/.test(phone)) {
+      return '+56' + phone;
+    } else if (/^\+(569)+\d{8}$/.test(phone)) {
+      return '+' + phone;
+    } else if (/^\d{8}$/.test(phone)) {
+      return '+569' + phone;
+    } else {
+      return phone;
+    }
+  };
+
+
+  const onSubmit = (data: FormData) => {
+    data.phone = formatPhone(data.phone);
+    userRegitry.mutate(data);
+  }
+
+  useEffect(() => {
+    if (userRegitry.isSuccess) {
+      setToken(userRegitry.data.token);
+      setTokenAsyncStorage(userRegitry.data.token, "@token")
+      router.replace("/(tabs)");
+
+    }
+    userRegitry.isError && console.log(userRegitry.error.message);
+  }, [userRegitry.isSuccess, userRegitry.isError]);
+
+
+
+
+
+
   return (
+
     <SafeAreaView style={styles.container}>
       <Text
         style={{
@@ -18,6 +79,9 @@ export default function RegisterAuth() {
         Crear una cuenta
       </Text>
 
+
+
+
       <View
         style={{
           gap: 15,
@@ -28,17 +92,74 @@ export default function RegisterAuth() {
             gap: 10,
           }}
         >
-          <Text>Nombres y Apellidos</Text>
+          <Text>Nombres</Text>
           <View style={styles.input}>
             <Ionicons name="ios-person-outline" size={20} />
-            <TextInput
-              placeholder="Nombres y Apellidos"
-              maxLength={40}
-              style={{
-                flex: 1,
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { value, onChange } }) => (
+                <TextInput
+                  placeholder="John"
+                  style={{
+                    flex: 1,
+                  }}
+                  value={value}
+                  onChangeText={(text) => onChange(text)}
+                />
+
+              )}
+              rules={{
+                required: "Nombre es requerido",
+                minLength: {
+                  value: 4,
+                  message: "Nombre debe tener al menos 4 caracteres",
+                },
+                maxLength: {
+                  value: 20,
+                  message: "Nombre debe tener menos de 20 caracteres",
+                },
               }}
             />
           </View>
+          {errors.name ? <Text style={{ color: 'red' }}>{errors.name.message}</Text> : null}
+        </View>
+        <View
+          style={{
+            gap: 10,
+          }}
+        >
+          <Text>Apellidos</Text>
+          <View style={styles.input}>
+            <Ionicons name="ios-person-outline" size={20} />
+            <Controller
+              control={control}
+              name="lastname"
+              render={({ field: { onChange, onBlur, value } }) => (
+
+                <TextInput
+                  placeholder="Doe"
+                  style={{
+                    flex: 1,
+                  }}
+                  value={value}
+                  onChangeText={(text) => onChange(text)}
+                />
+              )}
+              rules={{
+                required: "Apellido es requerido",
+                minLength: {
+                  value: 4,
+                  message: "Apellido debe tener al menos 4 caracteres",
+                },
+                maxLength: {
+                  value: 20,
+                  message: "Apellido debe tener menos de 20 caracteres",
+                },
+              }}
+            />
+          </View>
+          {errors.lastname ? <Text style={{ color: 'red' }}>{errors.lastname.message}</Text> : null}
         </View>
         <View
           style={{
@@ -48,14 +169,71 @@ export default function RegisterAuth() {
           <Text>Correo</Text>
           <View style={styles.input}>
             <Ionicons name="ios-person-outline" size={20} />
-            <TextInput
-              placeholder="Correo Elec"
-              maxLength={40}
-              style={{
-                flex: 1,
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+
+                <TextInput
+                  placeholder="Correo Electronico"
+                  style={{
+                    flex: 1,
+                  }}
+                  value={value}
+                  onChangeText={(text) => onChange(text)}
+                />
+              )}
+              rules={{
+                required: "Email es requerido",
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: "Email invalido",
+                },
               }}
             />
           </View>
+          {errors.email ? <Text style={{ color: 'red' }}>{errors.email.message}</Text> : null}
+        </View>
+        <View
+          style={{
+            gap: 10,
+          }}
+        >
+          <Text>Telefono</Text>
+          <View style={styles.input}>
+            <Ionicons name="ios-person-outline" size={20} />
+            <Controller
+              control={control}
+              name="phone"
+              render={({ field: { onChange, onBlur, value } }) => (
+
+                <TextInput
+                  placeholder="(+56) 912345678"
+                  style={{
+                    flex: 1,
+                  }}
+                  value={value}
+                  onChangeText={(text) => onChange(text)}
+                />
+              )}
+              rules={{
+                required: "Telefono es requerido",
+                minLength: {
+                  value: 8,
+                  message: "Telefono debe tener al menos 8 caracteres",
+                },
+                maxLength: {
+                  value: 11,
+                  message: "Telefono debe tener menos de 11 caracteres",
+                },
+                pattern: {
+                  value: /^\d{8,11}$/,
+                  message: "Telefono invalido",
+                },
+              }}
+            />
+          </View>
+          {errors.phone ? <Text style={{ color: 'red' }}>{errors.phone.message}</Text> : null}
         </View>
         <View
           style={{
@@ -65,14 +243,30 @@ export default function RegisterAuth() {
           <Text>Contraseña</Text>
           <View style={styles.input}>
             <Ionicons name="lock-closed-outline" size={20} />
-            <TextInput
-              placeholder="Contraseña"
-              maxLength={40}
-              style={{
-                flex: 1,
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+
+                <TextInput
+                  placeholder="Contraseña"
+                  style={{
+                    flex: 1,
+                  }}
+                  value={value}
+                  onChangeText={(text) => onChange(text)}
+                />
+              )}
+              rules={{
+                required: "Contraseña es requerida",
+                minLength: {
+                  value: 8,
+                  message: "Contraseña debe tener al menos 8 caracteres",
+                },
               }}
             />
           </View>
+          {errors.password ? <Text style={{ color: 'red' }}>{errors.password.message}</Text> : null}
         </View>
       </View>
 
@@ -87,10 +281,14 @@ export default function RegisterAuth() {
         }}
       >
         <TouchableOpacity
+          onPress={handleSubmit(onSubmit)}
           style={[styles.btnPrincipal, styles.btncolorprincipal]}
         >
           <Text style={{ color: "white" }}>Registrarse</Text>
         </TouchableOpacity>
+        {userRegitry.isError && (
+          <Text style={{ color: "red" }}>{userRegitry.error.message}</Text>
+        )}
         <View>
           <View
             style={{

@@ -1,39 +1,47 @@
-import { useEffect, useState } from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
-import { Link } from "expo-router";
+import {  StyleSheet, TouchableOpacity } from "react-native";
+import { Link, router } from "expo-router";
 
-import { Profile } from "~/utils/interface";
-import { getProfile } from "~/utils/service";
-import useProfile from "~/hooks/useProfile";
 import useUser from "~/hooks/useUser";
-import Header from "../../components/Header";
+import Header from "~/components/Header";
+import { setToken, api } from "~/utils/api";
 import { Ionicons, Text, View } from "../../components/Themed";
+import { deleteAllFromAsyncStorage } from "~/components/storage";
+
 
 export default function Profilesr() {
   const { userData } = useUser(2);
-  // const { profile } = useProfile(userData?.usr_profile);
-  const [profile, setProfile] = useState<Profile>();
+  const checkSession = api.auth.getSession.useQuery();
+  const getProfile = api.profile.getProfile.useQuery(
+    { id: Number(checkSession.data?.user.id) },
+  );
 
-  const fetchProfile = async () => {
-    try {
-      const response = await getProfile();
-      const data = response.find(
-        (item: Profile) => item.prf_id == userData?.usr_id,
-      );
-      setProfile(data);
-    } catch (error) {
-      console.error("Failed to fetch profile", error);
+  const profile = getProfile.data;
+  const lastOrder = api.orders.getLastOrder.useQuery(
+    { idCustomer: Number(profile?.usr_id) }
+  );
+  
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  const getStatusColor = (status: any) => {
+    switch (status) {
+      case 'PENDING':
+        return 'yellow';
+      case 'DELIVERING':
+        return '#1969a3'; // colorcustom
+      case 'DELIVERED':
+        return 'green';
+      case 'CANCELED':
+        return 'red';
+      default:
+        return '#1969a3'; // colorcustom
     }
   };
 
-  useEffect(() => {
-    fetchProfile();
-  }, [userData]);
-
-  const name = "Juan Perez";
-  const status = "En camino";
-  const date = "12/12/2021";
-  const image = require("~/assets/carrousel-test/Ibuprofeno_10.png");
   return (
     <View
       style={{
@@ -50,7 +58,7 @@ export default function Profilesr() {
         }}
       >
         <Text style={[styles.title, styles.colorcustom]}>
-          Hola, {profile?.prf_name}
+          Hola, {profile?.prf_name} {profile?.prf_lastname}
         </Text>
       </View>
 
@@ -62,6 +70,18 @@ export default function Profilesr() {
           }}
         >
           Ultimo pedido:
+          <Text
+            style={[
+              styles.settingtext,
+              {
+                fontWeight: "500",
+                gap: 12,
+                color: getStatusColor(lastOrder.data?.order_status),
+              }
+            ]}
+          >
+            {lastOrder.data?.order_status}
+          </Text>
         </Text>
         <View
           style={[
@@ -72,45 +92,61 @@ export default function Profilesr() {
           ]}
         >
           <View>
-            <Image source={image} style={styles.image} />
-          </View>
-          <View>
-            <Text
-              style={[
-                {
-                  fontWeight: "500",
-                },
-                styles.colorcustom,
-                styles.title,
-              ]}
-            >
-              {status}
-            </Text>
-            <Text
-              style={{
-                opacity: 0.5,
-              }}
-            >
-              Realizado {date}
-            </Text>
-            <TouchableOpacity style={[styles.container, styles.ordercard]}>
+            <View>
               <Text
                 style={{
-                  color: "#fff",
+                  opacity: 0.5,
+
                 }}
               >
-                Hacer seguimiento
+                Realizado: {lastOrder.data?.order_date_of_ord.toLocaleDateString("es-419", options)}
               </Text>
-              <Ionicons
-                name="chevron-forward-outline"
-                size={22}
+            </View>
+            <View style={[
+              styles.container,
+              {
+                gap: 12,
+                flexDirection: "row",
+              },
+            ]}>
+              <View >
+                <Ionicons
+                  name="time-outline"
+                  size={26}
+                  style={{
+                    opacity: 0.3,
+                  }}
+                />
+              </View>
+              <Text
                 style={{
-                  color: "#fff",
+                  opacity: 0.5,
+                  fontWeight: "bold"
                 }}
-              />
-            </TouchableOpacity>
+              >
+                {lastOrder.data?.order_date_of_ord.toLocaleTimeString("es-419")}
+              </Text>
+            </View>
           </View>
         </View>
+        <TouchableOpacity style={[styles.container, styles.ordercard]}>
+          <Text
+            style={{
+              color: "#fff",
+            }}
+          >
+            Hacer seguimiento
+          </Text>
+          <View style={styles.arrowicon}>
+            <Ionicons
+              name="chevron-forward-outline"
+              size={26}
+              style={{
+                opacity: 0.3,
+              }}
+            />
+          </View>
+        </TouchableOpacity>
       </View>
 
       <View
@@ -123,7 +159,7 @@ export default function Profilesr() {
         <Link
           href={{
             pathname: "/(tabs)/myOrders",
-            params: { usr_id: userData?.usr_id, usr_vip: userData?.usr_vip },
+            params: { ...profile },
           }}
           asChild
         >
@@ -243,7 +279,13 @@ export default function Profilesr() {
           </TouchableOpacity>
         </Link>
         <View style={styles.separator} />
-        <TouchableOpacity style={[styles.container, styles.settingcard]}>
+        <TouchableOpacity style={[styles.container, styles.settingcard]}
+          onPress={() => {
+            setToken("");
+            deleteAllFromAsyncStorage();
+            router.replace("/(tabs)");
+            window.location.reload();
+          }}>
           <View style={[styles.container, { gap: 12 }]}>
             <Ionicons
               name="log-out-outline"
@@ -276,8 +318,9 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   separator: {
-    height: 0.5,
+    height: 0.8,
     width: "100%",
+    marginVertical: 8,
     backgroundColor: "#1969a3",
   },
   home: {
@@ -325,6 +368,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 12,
     paddingHorizontal: 12,
+
   },
   settingcard: {
     justifyContent: "space-between",
@@ -342,5 +386,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     marginRight: 12,
+    backgroundColor: "transparent"
   },
 });

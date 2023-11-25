@@ -1,11 +1,10 @@
 import { Image, StyleSheet, View } from "react-native";
-import StarRating from "react-native-star-rating-widget";
 import { Link } from "expo-router";
 
-import { Product } from "~/utils/interface";
+import { Products } from "~/utils/interface";
 import { Pressable, Text } from "../../components/Themed";
 
-const ProductShort = (data: Product) => {
+const ProductShort = (data: Products) => {
   return (
     <Link
       href={{
@@ -23,15 +22,13 @@ const ProductShort = (data: Product) => {
               <Text style={[styles.colorcustom, styles.title]}>
                 {data.prod_name}
               </Text>
-            </View>
-            <View style={styles.reveiw}>
-              <StarRating
-                rating={data.prod_reviews}
-                onChange={() => {}}
-                starSize={20}
-                starStyle={{ marginHorizontal: 0 }}
-              />
-              <Text>{data.prod_reviews}</Text>
+              <View>
+                {data.prod_recipe && (
+                  <>
+                    <Text style={{ color: 'red' }}>Requiere receta medica</Text>
+                  </>
+                )}
+              </View>
             </View>
           </View>
           <Text style={styles.money}>{formatMoney(data.prod_price)}</Text>

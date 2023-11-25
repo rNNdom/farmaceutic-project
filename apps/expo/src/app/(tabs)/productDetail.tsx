@@ -1,10 +1,8 @@
 import React, { useContext, useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import StarRating from "react-native-star-rating-widget";
 import { useRoute } from "@react-navigation/native";
-
-import { Product } from "~/utils/interface";
+import { Products } from "~/utils/interface";
 import { CartContext } from "~/components/context";
 import Header from "~/components/Header";
 import { formatMoney } from "~/components/home/Product";
@@ -12,10 +10,10 @@ import { commonStyles, componentStyles } from "~/styles/mystyle";
 import { Text, View } from "../../components/Themed";
 
 export default function ProductDetail() {
-  const _item = useRoute().params as Product;
+  const _item = useRoute().params as Products;
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useContext(CartContext);
-
+  
   function handleAddToCart() {
     addToCart(_item, quantity);
   }
@@ -50,15 +48,6 @@ export default function ProductDetail() {
             <Text style={[componentStyles.colorcustom, componentStyles.brand]}>
               {_item.prod_brand}
             </Text>
-          </View>
-          <View style={[commonStyles.container, { gap: 7 }]}>
-            <StarRating
-              rating={_item.prod_reviews}
-              onChange={() => {}}
-              starSize={20}
-              starStyle={{ marginHorizontal: 0 }}
-            />
-            <Text>{_item.prod_reviews}</Text>
           </View>
         </View>
         <View
@@ -130,6 +119,13 @@ export default function ProductDetail() {
           >
             <Text style={{ color: "#fff" }}>Agregar al carrito</Text>
           </TouchableOpacity>
+          <View>
+            {_item.prod_recipe === "true" && (
+              <>
+                <Text style={[componentStyles.text, { color: 'red' }]}>Requiere receta medica</Text>
+              </>
+            )}
+          </View>
 
           <Text style={componentStyles.descriptionTitle}>Descripcion</Text>
           <Text style={componentStyles.productDetail}>
