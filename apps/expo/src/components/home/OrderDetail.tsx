@@ -6,7 +6,6 @@ import { Text, View } from "../../components/Themed";
 
 const OrderProductDetail = ({ item, quantity }: any) => {
 
-    console.log(item)
     const _item = item;
     return (
         <Link

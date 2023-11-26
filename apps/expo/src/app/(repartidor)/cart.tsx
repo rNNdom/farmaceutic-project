@@ -1,12 +1,13 @@
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import ProductOnDelivery from "~/components/home/ProductOnDelivery";
+import ProductOnDelivery, { calculatePriority } from "~/components/home/ProductOnDelivery";
 import useOrder from "~/hooks/useOrder";
 import { Text, View } from "../../components/Themed";
 import useUser from "~/hooks/useUser";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "~/components/userContext";
-import {  api } from "~/utils/api";
+import { api } from "~/utils/api";
+import Loading from "~/components/loading";
 
 
 const EmptyComponent = () => {
@@ -19,32 +20,50 @@ const EmptyComponent = () => {
   );
 };
 
-const CartItem = (data: any) => {
+const CartItem = ({ data, setIsChange }) => {
   return (
     <FlatList
-      data={data.data}
+      data={data}
       ListFooterComponent={<View />}
       ListFooterComponentStyle={{
         paddingBottom: 25,
       }}
-      renderItem={({ item }) => <ProductOnDelivery item={item} />}
-      keyExtractor={(item: any) => item.order_id.toString()}
+      renderItem={({ item }) => <ProductOnDelivery setIsChange={setIsChange} {...item} />}
+      keyExtractor={(item: any) => item.order_id}
     />
   );
 };
 
 export default function CatalogoScreens() {
-  const { user} = useContext(UserContext);
-  const { userData } = useUser(1);
+  const { user } = useContext(UserContext);
+  const [isChange, setIsChange] = useState(false)
+  const getOrdert = api.orders.getAllOrderforDeliver.useQuery({
+    idDeliver: Number(user?.usr_id)
+  })
 
-  const {order} = useOrder(["all", user?.usr_id]);
+  const sortedOrder = getOrdert.data?.sort((a, b) => calculatePriority(b.user.usr_vip, b.order_date_of_ord) - calculatePriority(a.user.usr_vip, a.order_date_of_ord))
+
+  useEffect(() => {
+    if (isChange) {
+      getOrdert.refetch()
+      setIsChange(false)
+    }
+  }, [getOrdert.isSuccess, getOrdert.isError, isChange, getOrdert.dataUpdatedAt])
+
+
 
   return (
     <>
-      {order?.length === 0 ? (
-        <EmptyComponent />
+      {getOrdert.isLoading ? (
+        <Loading />
       ) : (
-        <CartItem data={order} />
+        <>
+          {getOrdert.data?.length === 0 ? (
+            <EmptyComponent />
+          ) : (
+            <CartItem setIsChange={setIsChange} data={sortedOrder} />
+          )}
+        </>
       )}
     </>
   );

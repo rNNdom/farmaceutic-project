@@ -23,6 +23,7 @@ import {
   ErrorBoundary,
 } from "expo-router";
 
+
 export const unstable_settings = {
   initialRouteName: "(tabs)/index",
 };

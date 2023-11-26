@@ -19,7 +19,6 @@ const useProduct = (props: any) => {
         const data = response?.filter((item: Product) =>
           props.includes(item.prod_id),
         );
-        console.log(props);
         setProduct(data);
       }
       setLoading(false);

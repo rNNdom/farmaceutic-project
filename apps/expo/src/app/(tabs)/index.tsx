@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Header from "~/components/Header";
 import NewBrands from "../../components/home/NewBrands";
@@ -14,12 +14,11 @@ export default function CatalogoScreen() {
   const role = user?.usr_role
   const isClient = role !== "DELIVER";
 
-  console.log(isClient)
 
   return (
     <>
       <Header showSearch />
-      <ScrollView style={styles.home}>
+      <View style={styles.home}>
         {isClient ? (
           <>
             <Text style={styles.current}>Inicio</Text>
@@ -33,7 +32,7 @@ export default function CatalogoScreen() {
             <CatalogoScreens />
           </>
         )}
-      </ScrollView>
+      </View>
     </>
   );
 }

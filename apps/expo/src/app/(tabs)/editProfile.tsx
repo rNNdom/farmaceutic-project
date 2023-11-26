@@ -64,7 +64,6 @@ const EditProfile = () => {
 
   useEffect(() => {
     if (upProfile.isSuccess) {
-      console.log(upProfile.data)
       updateProfile({
         email: upProfile.data.user.usr_email,
         name: upProfile.data.profile.prf_name,

@@ -316,7 +316,6 @@ export default function Profilesr() {
                   deleteAllFromAsyncStorage();
                   emptyUser();
                   router.replace("/(tabs)");
-                  window.location.reload();
                 }}>
                 <View style={[styles.container, { gap: 12 }]}>
                   <Ionicons

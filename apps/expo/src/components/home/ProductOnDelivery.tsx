@@ -1,13 +1,14 @@
-import { SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import { SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 
-import { OrderDetails, Profile, User } from "~/utils/interface";
-import { getOrderDet, getProfile, getUser } from "~/utils/service";
-import { Text, View } from "../../components/Themed";
+import { Order } from "~/utils/interface";
+import { Ionicons, Text, View } from "../../components/Themed";
+import { api } from "~/utils/api";
+import { UserContext } from "../userContext";
 
-const calculatePriority = (customer: User | undefined, orderDate: Date) => {
-  if (customer?.usr_vip) {
+export const calculatePriority = (isVip: boolean, orderDate: Date) => {
+  if (isVip) {
     return 3;
   }
 
@@ -26,27 +27,6 @@ const calculatePriority = (customer: User | undefined, orderDate: Date) => {
   }
 };
 
-const fetchOrderdet = async (_item: { order_customer: number; order_id: number; }, setOrderdet: { (value: SetStateAction<OrderDetails | undefined>): void; (arg0: any): void; }, setCustomer: { (value: SetStateAction<{ customer: User | undefined; prof: Profile | undefined; } | undefined>): void; (arg0: { customer: any; prof: any; }): void; }) => {
-  try {
-    const responseuser = await getUser();
-    const responseProf = await getProfile();
-    const response = await getOrderDet();
-    const datauser = responseuser.find(
-      (item: User) => item.usr_id == _item.order_customer,
-    );
-    const data = response.find(
-      (item: OrderDetails) => item.order_det_id === _item.order_id,
-    );
-    const dataProf = responseProf.find(
-      (item: Profile) => item.prf_id == datauser.usr_profile,
-    );
-    setOrderdet(data);
-    setCustomer({ customer: datauser, prof: dataProf });
-  } catch (error) {
-    console.error("Failed to fetch orderdet", error);
-  }
-};
-
 const getPriorityText = (priority: number) => {
   switch (priority) {
     case 0:
@@ -62,13 +42,13 @@ const getPriorityText = (priority: number) => {
   }
 };
 
-export default function ProductOnDelivery(item: any) {
-  const _item = item.item;
-  const [orderdet, setOrderdet] = useState<OrderDetails>();
-  const [customer, setCustomer] = useState<
-    { customer: User | undefined; prof: Profile | undefined } | undefined
-  >();
+export default function ProductOnDelivery({ setIsChange, ...item }) {
   const [showText, setShowText] = useState(false);
+  const { user } = useContext(UserContext);
+  const order = item as Order;
+  const updateOrder = api.orders.updateOrder.useMutation();
+  const customer = order.user;
+  const orderdet = order.OrderDetail.at(0);
 
   const handlePress = () => {
     setShowText(!showText);
@@ -77,20 +57,58 @@ export default function ProductOnDelivery(item: any) {
   const priority = useMemo(
     () =>
       calculatePriority(
-        customer?.customer,
-        new Date(_item?.order_date_of_order),
+        customer.usr_vip,
+        new Date(order.order_date_of_ord),
       ),
-    [customer, _item],
+    [customer, item],
   );
 
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  const getStatusColor = (status: any) => {
+    switch (status) {
+      case 'PENDING':
+        return 'yellow';
+      case 'DELIVERING':
+        return '#1969a3'; // colorcustom
+      case 'DELIVERED':
+        return 'green';
+      case 'CANCELED':
+        return 'red';
+      default:
+        return '#1969a3'; // colorcustom
+    }
+  };
+
+  const upOrder = () => {
+    updateOrder.mutate({
+      idDeliver: Number(user?.usr_id),
+      idOrder: Number(order.order_id),
+      status: 'DELIVERING'
+    })
+  }
+
   useEffect(() => {
-    fetchOrderdet(_item, setOrderdet, setCustomer);
-  }, [_item]);
+    if (updateOrder.isSuccess) {
+      setIsChange(true)
+    }
+    updateOrder.isError && console.log(updateOrder.error.message)
+
+  }, [updateOrder.isSuccess, updateOrder.isError, priority])
+
 
   const image = require("~/assets/carrousel-test/default-user.png");
   return (
     <Link
-      href={{ pathname: "/(repartidor)/productOnDeliveryDetails" }}
+      href={{
+        pathname: "/(repartidor)/productOnDeliveryDetails",
+        params: { ...orderdet, ...customer }
+      }}
       asChild
     >
       <TouchableOpacity>
@@ -111,33 +129,93 @@ export default function ProductOnDelivery(item: any) {
                       </Text>
                     )}
                   </TouchableOpacity>
-                  {orderdet?.order_recipe && (
+                  <Text
+                    style={[
+                      styles.settingtext,
+                      {
+                        fontWeight: "500",
+                        gap: 12,
+                        color: getStatusColor(order.order_status),
+                      }
+                    ]}
+                  >
+                    {order.order_status}
+                  </Text>
+                  {orderdet?.order_det_recipe && (
                     <Text style={[styles.colorcustom, styles.title]}>
                       Requiere receta
                     </Text>
                   )}
-                  <Text style={styles.date}>{_item?.order_date_of_order}</Text>
+                  <View style={[
+                    {
+                      gap: 12,
+                      flexDirection: "row",
+                    },
+                  ]}>
+                    <View >
+                      <Ionicons
+                        name="calendar-sharp"
+                        size={15}
+                        style={{
+                          opacity: 0.3,
+                        }}
+                      />
+                    </View>
+                    <Text
+                      style={styles.date}
+                    >
+                      {order.order_date_of_ord.toLocaleDateString("es-419", options)}
+                    </Text>
+                  </View>
+                  <View style={[
+                    {
+                      gap: 12,
+                      flexDirection: "row",
+                    },
+                  ]}>
+                    <View >
+                      <Ionicons
+                        name="time-sharp"
+                        size={15}
+                        style={{
+                          opacity: 0.3,
+                        }}
+                      />
+                    </View>
+                    <Text
+                      style={styles.date}
+                    >
+                      {order.order_date_of_ord.toLocaleTimeString("es-419")}
+                    </Text>
+                  </View>
                   <Text style={[styles.title]}>
-                    {customer?.prof?.prf_name} {customer?.prof?.prf_lastname}
+                    {customer.profile.prf_name} {customer.profile.prf_lastname}
                   </Text>
-                  <Text style={styles.address}>{orderdet?.order_location}</Text>
-                  {customer?.customer?.usr_vip && (
+                  <Text style={styles.address}>{order.order_location}</Text>
+                  {customer.usr_vip && (
                     <Text style={styles.vip}>Cliente VIP</Text>
                   )}
                 </View>
               </View>
               <Text style={styles.money}>
-                {formatMoney(orderdet?.order_det_total)}
+                {formatMoney(Number(orderdet?.order_det_total))}
               </Text>
+              <View style={[styles.buttonRow, styles.margin]}>
+                <Link href={{
+                  pathname: "/(repartidor)/productOnDeliveryDetails",
+                  params: { ...orderdet, ...customer }
+                }} asChild
+                >
+                  <TouchableOpacity style={styles.detailsButton}>
+                    <Text style={styles.buttonText}>Detalles</Text>
+                  </TouchableOpacity>
+                </Link>
+
+                <TouchableOpacity onPress={upOrder} style={styles.acceptButton}>
+                  <Text style={styles.buttonText}>Aceptar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.detailsButton}>
-              <Text style={styles.buttonText}>Detalles</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.acceptButton}>
-              <Text style={styles.buttonText}>Aceptar</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </TouchableOpacity>
@@ -245,6 +323,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#2c7379",
     flex: 1,
     borderRadius: 8,
+  },
+  settingtext: {
+    fontSize: 18,
+    fontWeight: "400",
   },
   acceptButton: {
     alignItems: "center",
