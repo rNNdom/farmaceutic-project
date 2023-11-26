@@ -1,3 +1,5 @@
+import { $Enums, Role } from "../../../../packages/db";
+
 export interface Order {
   order_id: number;
   order_date_of_ord: Date;
@@ -22,28 +24,11 @@ export interface ProductOrderDetail {
   orderDetailId: number;
   Product: Product;
 }
-
-// export interface Product {
-//   prod_id: string;
-//   prod_name: string;
-//   prod_date_expiration: string;
-//   prod_date_package: string;
-//   prod_status: string;
-//   prod_image: string;
-//   prod_reviews: number;
-//   prod_brand: string;
-//   prod_price: number;
-//   prod_quantity: number;
-//   prod_tablet: string;
-//   prod_detail: string;
-//   prod_category: string;
-//   prod_description: string;
-// }
 export interface Product {
-  prod_id: string;
+  prod_id: number;
   prod_name: string;
-  prod_date_expir: string;
-  prod_date_pack: string;
+  prod_date_expir: Date;
+  prod_date_pack: Date;
   prod_status: string;
   prod_image: string;
   prod_brand: string;
@@ -71,6 +56,20 @@ export interface User {
   usr_role: string;
   usr_profile: number;
   usr_vip: boolean;
+  usr_status: string;
+  prf_id: number;
+  prf_name: string;
+  prf_lastname: string;
+  prf_mail: string;
+  prf_phone: string;
   profile: Profile;
+}
+export interface UserLogin {
+  usr_id: number;
+  usr_email: string;
+  usr_role: string;
+  usr_pass: string;
+  usr_vip: boolean;
+  usr_profile: number;
   usr_status: string;
 }

@@ -4,10 +4,11 @@ import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link, router } from "expo-router";
 import { api, setToken } from "~/utils/api";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { setTokenAsyncStorage } from "~/components/storage";
+import { setContentAsyncStorage } from "~/components/storage";
+import { UserContext } from "~/components/userContext";
 
 type FormData = {
   name: string;
@@ -19,7 +20,7 @@ type FormData = {
 
 
 export default function RegisterAuth() {
-  const getSession = api.auth.getSession.useQuery();
+  const { addToken, addUser } = useContext(UserContext);
   const userRegitry = api.auth.register.useMutation();
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -53,7 +54,9 @@ export default function RegisterAuth() {
   useEffect(() => {
     if (userRegitry.isSuccess) {
       setToken(userRegitry.data.token);
-      setTokenAsyncStorage(userRegitry.data.token, "@token")
+      addToken(userRegitry.data.token);
+      addUser(userRegitry.data.user);
+      setContentAsyncStorage(userRegitry.data.token, "@token")
       router.replace("/(tabs)");
 
     }
@@ -255,6 +258,7 @@ export default function RegisterAuth() {
                   }}
                   value={value}
                   onChangeText={(text) => onChange(text)}
+                  secureTextEntry
                 />
               )}
               rules={{

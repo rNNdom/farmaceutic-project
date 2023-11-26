@@ -4,6 +4,9 @@ import ProductOnDelivery from "~/components/home/ProductOnDelivery";
 import useOrder from "~/hooks/useOrder";
 import { Text, View } from "../../components/Themed";
 import useUser from "~/hooks/useUser";
+import { useContext } from "react";
+import { UserContext } from "~/components/userContext";
+import {  api } from "~/utils/api";
 
 
 const EmptyComponent = () => {
@@ -31,9 +34,10 @@ const CartItem = (data: any) => {
 };
 
 export default function CatalogoScreens() {
+  const { user} = useContext(UserContext);
   const { userData } = useUser(1);
 
-  const {order} = useOrder(["all", userData?.usr_id]);
+  const {order} = useOrder(["all", user?.usr_id]);
 
   return (
     <>

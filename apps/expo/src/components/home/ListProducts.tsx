@@ -1,5 +1,5 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import ListCatHeader from "./ListCatHeader";
 import ProductShort from "./Product";

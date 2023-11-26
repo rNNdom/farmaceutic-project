@@ -5,19 +5,17 @@ import { api } from "~/utils/api";
 import { Ionicons, SafeAreaView, Text, View } from "./Themed";
 import { CartContext } from "./context";
 import { styles } from "../styles/HeaderStyle";
+import { UserContext } from "./userContext";
 
 
 
 export default function Header(_props: any) {
     const { cart, quantity } = useContext(CartContext);
+    const { user, loggedIn } = useContext(UserContext);
     const [ruta, setRuta] = useState("/(auth)/login");
-    const getSession = api.auth.getSession.useQuery();
-    const role = getSession.data?.user.role;
-    const isClient = (getSession.data !== undefined && role === "USER") || (getSession.data === undefined);
-    const isDeliver = (getSession.data !== undefined && role === "DELIVER");
-    const loggedIn = getSession.data !== undefined;
-    // const showSearch = _props.showSearch && isClient;
-    const showSearch = false    
+    const isClient = user?.usr_role !== "DELIVER";
+    const isDeliver = user?.usr_role === "DELIVER";
+    const showSearch = false
 
     useEffect(() => {
         if (loggedIn && isClient) {
@@ -27,7 +25,8 @@ export default function Header(_props: any) {
         } else {
             setRuta("/(auth)/login");
         }
-    }, [getSession.isError, getSession.isSuccess, getSession.data]);
+    }, [user, loggedIn]);
+
 
     const cartRuta = isDeliver ? "/(repartidor)/cart" : "/(tabs)/cart";
 

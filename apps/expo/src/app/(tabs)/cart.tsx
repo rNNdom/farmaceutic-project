@@ -1,11 +1,13 @@
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { CartContext } from "../../components/context";
 import Header from "~/components/Header";
 import ProductOnCart from "../../components/home/ProductOnCart";
 import { Text, View } from "../../components/Themed";
-import {api} from "~/utils/api";
+import { api } from "~/utils/api";
+import { UserContext } from "~/components/userContext";
+import { useRouter } from "expo-router";
 
 
 interface CartItemProps {
@@ -35,7 +37,38 @@ const PayButton = ({ onPress }: { onPress: () => void }) => (
 
 const CartItem = ({ data, emptyCart }: CartItemProps) => {
   const total = useMemo(() => calculateTotal(data), [data]);
-  const getSesion = api.auth.checkSession.useMutation()
+  const { loggedIn, user } = useContext(UserContext);
+  const createOrder = api.orders.createOrder.useMutation();
+  const router = useRouter();
+
+  const onSubmit = () => {
+    if (loggedIn) {
+
+      const recipeRequired = data.some((item) => item.prod_recipe);
+      createOrder.mutate({
+        user_id: Number(user?.usr_id),
+        location: "Santiago",
+        recipe: recipeRequired,
+        total: Number(total),
+        products: data.map((item) => {
+          return {
+            prod_id: Number(item.prod_id),
+            quantity: Number(item.onCartQuantity),
+          };
+        }),
+      })
+      return
+    }
+    alert("Debe iniciar sesión para continuar");
+  };
+
+  useEffect(() => {
+    if (createOrder.isSuccess) {
+      emptyCart();
+      router.replace("/(tabs)/myOrders")
+    }
+    createOrder.isError && console.log(createOrder.error.message);
+  }, [createOrder.isSuccess, createOrder.isError]);
 
   return (
     <>
@@ -51,22 +84,17 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
         </TouchableOpacity>
       </View>
 
-      <PayButton onPress={() => onSubmit(data)} />
+      <PayButton onPress={() => onSubmit()} />
     </>
   );
+
 };
 
-const onSubmit = (data: any) => {
-  console.log(data);
-}
+
 
 
 export default function CatalogoScreen() {
   const { cart, emptyCart } = useContext(CartContext);
-  console.log(cart);
-
-
-
   return (
     <>
       <Header showSearch />

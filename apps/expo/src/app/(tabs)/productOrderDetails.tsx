@@ -32,7 +32,6 @@ const calculateTotal = (data: any[]) => {
 
 
 const CartItem = ({ prodDet, orderDet }: CartItemProps) => {
-  console.log("prodDet", prodDet);
   return (
     <>
       <FlatList
@@ -56,11 +55,6 @@ export default function OrderDetail() {
   const prodDet = getProducts.data?.map((item) => {
     return item
   })
-
-  // console.log("products", product);
-  // console.log("prodDet", prodDet);
-  // console.log("Order", _item);
-
 
   return (
     <>

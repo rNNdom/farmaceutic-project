@@ -30,7 +30,7 @@ const defineConfig = (): ExpoConfig => ({
     },
     package: "fama.app.pene",
     versionCode: 1,
-    userInterfaceStyle: "automatic",
+    userInterfaceStyle: "light",
   },
   extra: {
     eas: {

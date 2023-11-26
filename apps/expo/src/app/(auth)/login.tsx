@@ -2,12 +2,16 @@ import { StyleSheet, TextInput, } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link, useRouter } from "expo-router";
 import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { api, setToken } from "~/utils/api";
-import { setTokenAsyncStorage,setContentAsyncStorage } from "~/components/storage";
+import { setContentAsyncStorage } from "~/components/storage";
+import { UserContext } from "~/components/userContext";
+
+
 
 export default function LoginAuth() {
   const router = useRouter();
+  const { addUser, addToken } = useContext(UserContext);
   const userLogin = api.auth.login.useMutation()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,9 +25,11 @@ export default function LoginAuth() {
 
   useEffect(() => {
     if (userLogin.isSuccess) {
+      addToken(userLogin.data.token);
       setToken(userLogin.data.token);
-      setTokenAsyncStorage(userLogin.data.token, "@token")
-      setContentAsyncStorage([userLogin.data.user.usr_id, userLogin.data.user.usr_role, userLogin.data.user.usr_profile, userLogin.data.user.usr_vip], "@user")
+      setContentAsyncStorage(userLogin.data.token, "@token")
+      setContentAsyncStorage(userLogin.data.user, "@user")
+      addUser(userLogin.data.user);
       router.replace("/(tabs)");
 
     }

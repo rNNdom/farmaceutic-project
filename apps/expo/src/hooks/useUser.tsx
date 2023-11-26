@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { User } from "~/utils/interface";
 import { getUser } from "~/utils/service";
 
-const useUser = () => {
+const useUser = (props: any) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [userData, setUserData] = useState<User | null>(null);
@@ -17,7 +17,7 @@ const useUser = () => {
     return userRole === "DELIVER"
   };
 
-  const isAdmin=()=>{
+  const isAdmin = () => {
     return userRole === "ADMIN"
   }
 

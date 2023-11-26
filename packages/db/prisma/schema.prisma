@@ -79,7 +79,7 @@ model Order {
     order_date_of_ord DateTime      @default(now())
     order_status      OrderStatus   @default(PENDING)
     order_customer    Int
-    order_delivery    Int
+    order_delivery    Int?
     order_location    String
     user              User          @relation(name: "Order_Customer", fields: [order_customer], references: [usr_id])
     OrderDetail       OrderDetail[]

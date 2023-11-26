@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Header from "~/components/Header";
 import NewBrands from "../../components/home/NewBrands";
@@ -6,55 +6,34 @@ import RecomendedComponent from "../../components/home/RecomendProd";
 import ViewCategories from "../../components/home/ViewCategories";
 import { Text } from "../../components/Themed";
 import CatalogoScreens from "../(repartidor)/cart";
-import { api } from "~/utils/api";
-import { getContentFromAsyncStorage } from "~/components/storage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLayoutEffect, useState } from "react";
-import { User } from "~/utils/interface";
+import { useContext } from "react";
+import { UserContext } from "~/components/userContext";
 
 export default function CatalogoScreen() {
-  const getSession = api.auth.getSession.useQuery()
-  const [user, setUser] = useState([])
+  const { user } = useContext(UserContext);
+  const role = user?.usr_role
+  const isClient = role !== "DELIVER";
 
-  const role = getSession.data?.user.role
-  const loading = false
-  const isClient = (getSession.data === undefined || role === "USER") && role !== "DELIVER";
-
-
-  useLayoutEffect(() => {
-    getContentFromAsyncStorage("@user").then((res) => { setUser(res) });
-  }, [])
-
-  console.log("user", user[0]);
-
+  console.log(isClient)
 
   return (
     <>
-      {loading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator />
-        </View>
-      ) : (
-        <>
-          <Header showSearch />
-
-          <ScrollView style={styles.home}>
-            {isClient ? (
-              <>
-                <Text style={styles.current}>Inicio</Text>
-                <RecomendedComponent />
-                <ViewCategories />
-                <NewBrands />
-              </>
-            ) : (
-              <>
-                <Text style={styles.current}>Inicio</Text>
-                <CatalogoScreens />
-              </>
-            )}
-          </ScrollView>
-        </>
-      )}
+      <Header showSearch />
+      <ScrollView style={styles.home}>
+        {isClient ? (
+          <>
+            <Text style={styles.current}>Inicio</Text>
+            <RecomendedComponent />
+            <ViewCategories />
+            <NewBrands />
+          </>
+        ) : (
+          <>
+            <Text style={styles.current}>Inicio</Text>
+            <CatalogoScreens />
+          </>
+        )}
+      </ScrollView>
     </>
   );
 }
