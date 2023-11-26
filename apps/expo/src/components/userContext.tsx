@@ -5,6 +5,7 @@ export const UserContext = createContext({
   user: {} as User | null,
   addUser: (element: any) => {},
   emptyUser: () => {},
+  token: "",
 });
 
 export const UserProvider = ({ children }: any) => {

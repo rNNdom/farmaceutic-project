@@ -3,9 +3,9 @@ import { Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 import { Text, View } from "../../components/Themed";
-import { Products } from "~/utils/interface";
+import { Product } from "~/utils/interface";
 
-const CatItem = (data:Products) => {
+const CatItem = (data: Product) => {
   const _item = data;
   return (
     <Link

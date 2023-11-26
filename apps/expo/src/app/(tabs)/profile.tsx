@@ -9,7 +9,7 @@ import { deleteAllFromAsyncStorage } from "~/components/storage";
 
 
 export default function Profilesr() {
-  const { userData } = useUser(2);
+  // const { userData } = useUser(2);
   const checkSession = api.auth.getSession.useQuery();
   const getProfile = api.profile.getProfile.useQuery(
     { id: Number(checkSession.data?.user.id) },
@@ -197,7 +197,7 @@ export default function Profilesr() {
         <Link
           href={{
             pathname: "/(tabs)/myProfile",
-            params: { ...userData, ...profile },
+            params: { ...profile },
           }}
           asChild
         >

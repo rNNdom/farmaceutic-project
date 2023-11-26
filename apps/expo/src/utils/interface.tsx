@@ -20,25 +20,26 @@ export interface ProductOrderDetail {
   quantity: number;
   productId: number;
   orderDetailId: number;
+  Product: Product;
 }
 
+// export interface Product {
+//   prod_id: string;
+//   prod_name: string;
+//   prod_date_expiration: string;
+//   prod_date_package: string;
+//   prod_status: string;
+//   prod_image: string;
+//   prod_reviews: number;
+//   prod_brand: string;
+//   prod_price: number;
+//   prod_quantity: number;
+//   prod_tablet: string;
+//   prod_detail: string;
+//   prod_category: string;
+//   prod_description: string;
+// }
 export interface Product {
-  prod_id: string;
-  prod_name: string;
-  prod_date_expiration: string;
-  prod_date_package: string;
-  prod_status: string;
-  prod_image: string;
-  prod_reviews: number;
-  prod_brand: string;
-  prod_price: number;
-  prod_quantity: number;
-  prod_tablet: string;
-  prod_detail: string;
-  prod_category: string;
-  prod_description: string;
-}
-export interface Products {
   prod_id: string;
   prod_name: string;
   prod_date_expir: string;
@@ -65,10 +66,11 @@ export interface Profile {
 
 export interface User {
   usr_id: number;
-  usr_user: string;
+  usr_email: string;
   usr_pass: string;
-  usr_role: number;
+  usr_role: string;
   usr_profile: number;
   usr_vip: boolean;
   profile: Profile;
+  usr_status: string;
 }

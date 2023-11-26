@@ -8,6 +8,7 @@ const ProductOnCart = (item: any) => {
   // function handleRemove(){
   //   void:
   // }
+
   const _item = item;
   return (
     <View style={styles.container}>
@@ -23,14 +24,7 @@ const ProductOnCart = (item: any) => {
         </TouchableOpacity>
       </Link>
       <View style={styles.detailsContainer}>
-
-
         <View style={styles.containertext}>
-          {_item.prod_recipe === "true" && (
-            <>
-              <Text style={{ color: 'red' }}>Requiere receta medica</Text>
-            </>
-          )}
           <Text style={styles.colorcustom}>{_item.prod_brand}</Text>
           <Text style={[styles.colorcustom, styles.title]}>
             {_item.prod_name}

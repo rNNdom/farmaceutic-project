@@ -3,9 +3,9 @@ import { Image, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 import { View } from "../../components/Themed";
-import { Products } from "~/utils/interface";
+import { Product } from "~/utils/interface";
 
-function Brand(data: Products) {
+function Brand(data: Product) {
   const _item = data;
   return (
     <Link

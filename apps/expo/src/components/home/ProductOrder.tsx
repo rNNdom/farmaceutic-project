@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
-import { Order } from "~/utils/interface";
+import { Order, ProductOrderDetail } from "~/utils/interface";
 import { Ionicons, Text, View } from "../Themed";
 import { api } from "~/utils/api";
 
@@ -55,7 +55,7 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
     <Link
       href={{
         pathname: "/(tabs)/productOrderDetails",
-        params: { ...order },
+        params: { ...orderdet },
       }}
       asChild
     >
@@ -133,7 +133,7 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
               <View style={styles.row}>
                 <Link href={{
                   pathname: "/(tabs)/productOrderDetails",
-                  params: { ...order },
+                  params: { ...orderdet },
                 }}
                   asChild>
                   <TouchableOpacity style={styles.detailsButton}>

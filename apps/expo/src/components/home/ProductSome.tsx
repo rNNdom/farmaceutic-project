@@ -8,9 +8,9 @@ import {
   View as ThemedView,
   View,
 } from "../../components/Themed";
-import { Products } from "~/utils/interface";
+import { Product } from "~/utils/interface";
 
-const ProductViewer = (_props: Products) => {
+const ProductViewer = (_props: Product) => {
   const _item = _props;
   return (
     <Link

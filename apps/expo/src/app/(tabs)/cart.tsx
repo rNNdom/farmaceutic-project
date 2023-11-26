@@ -1,11 +1,12 @@
 import { useContext, useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-
 import { CartContext } from "../../components/context";
 import Header from "~/components/Header";
 import ProductOnCart from "../../components/home/ProductOnCart";
 import { Text, View } from "../../components/Themed";
+import {api} from "~/utils/api";
+
 
 interface CartItemProps {
   data: any[];
@@ -34,6 +35,7 @@ const PayButton = ({ onPress }: { onPress: () => void }) => (
 
 const CartItem = ({ data, emptyCart }: CartItemProps) => {
   const total = useMemo(() => calculateTotal(data), [data]);
+  const getSesion = api.auth.checkSession.useMutation()
 
   return (
     <>
@@ -49,14 +51,21 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
         </TouchableOpacity>
       </View>
 
-      <PayButton onPress={() => { }} />
+      <PayButton onPress={() => onSubmit(data)} />
     </>
   );
 };
 
+const onSubmit = (data: any) => {
+  console.log(data);
+}
+
+
 export default function CatalogoScreen() {
   const { cart, emptyCart } = useContext(CartContext);
   console.log(cart);
+
+
 
   return (
     <>

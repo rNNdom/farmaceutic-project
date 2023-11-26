@@ -19,6 +19,21 @@ export const orderRouter = createTRPCRouter({
       });
       return order;
     }),
+  getProdDetails: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const order = await ctx.prisma.productOrderDetail.findMany({
+        where: { orderDetailId: input.id },
+        include: {
+          Product: true,
+        },
+      });
+      return order;
+    }),
   getAllOrder: publicProcedure
     .input(
       z.object({
@@ -42,11 +57,7 @@ export const orderRouter = createTRPCRouter({
               usr_email: true,
             },
           },
-          OrderDetail: {
-            include: {
-              ProductOrderDetail: true,
-            },
-          },
+          OrderDetail: true,
         },
       });
 
@@ -58,6 +69,7 @@ export const orderRouter = createTRPCRouter({
         idCustomer: z.number(),
       }),
     )
+
     .query(async ({ ctx, input }) => {
       return await ctx.prisma.order.findFirst({
         where: { order_customer: input.idCustomer },

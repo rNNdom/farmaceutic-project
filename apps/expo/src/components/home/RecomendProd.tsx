@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 import { View } from "../../components/Themed";
 import ProductViewer from "./ProductSome";
-import { Products } from "~/utils/interface";
+import { Product } from "~/utils/interface";
 import { api } from "~/utils/api";
 import Loading from "../loading";
 
@@ -17,7 +17,7 @@ const Col = ({ children }: { children: React.ReactNode }) => (
 const ProductList = ({ products }: { products: any[] | undefined }) => {
   return (
     <Col>
-      {products?.map((item: React.JSX.IntrinsicAttributes & Products) => (
+      {products?.map((item: React.JSX.IntrinsicAttributes & Product) => (
         <ProductViewer key={item.prod_id} {...item} />
       ))}
 

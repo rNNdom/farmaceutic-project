@@ -9,12 +9,23 @@ import CatalogoScreens from "../(repartidor)/cart";
 import { api } from "~/utils/api";
 import { getContentFromAsyncStorage } from "~/components/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLayoutEffect, useState } from "react";
+import { User } from "~/utils/interface";
 
 export default function CatalogoScreen() {
   const getSession = api.auth.getSession.useQuery()
+  const [user, setUser] = useState([])
+
   const role = getSession.data?.user.role
   const loading = false
   const isClient = (getSession.data === undefined || role === "USER") && role !== "DELIVER";
+
+
+  useLayoutEffect(() => {
+    getContentFromAsyncStorage("@user").then((res) => { setUser(res) });
+  }, [])
+
+  console.log("user", user[0]);
 
 
   return (
