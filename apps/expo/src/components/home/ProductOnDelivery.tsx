@@ -1,13 +1,16 @@
-import { SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import { SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 
-import { OrderDetails, Profile, User } from "~/utils/interface";
-import { getOrderDet, getProfile, getUser } from "~/utils/service";
-import { Text, View } from "../../components/Themed";
+import { Order } from "~/utils/interface";
+import { Ionicons, Text, View } from "../../components/Themed";
+import { api } from "~/utils/api";
+import { UserContext } from "../userContext";
+import { CustomColors, CustomStyles, getCircleStyle, getStatusColor } from "~/styles/CustomStyles";
+import { DateOpctions, formatMoney } from "~/utils/formats";
 
-const calculatePriority = (customer: User | undefined, orderDate: Date) => {
-  if (customer?.usr_vip) {
+export const calculatePriority = (isVip: boolean, orderDate: Date) => {
+  if (isVip) {
     return 3;
   }
 
@@ -26,27 +29,6 @@ const calculatePriority = (customer: User | undefined, orderDate: Date) => {
   }
 };
 
-const fetchOrderdet = async (_item: { order_customer: number; order_id: number; }, setOrderdet: { (value: SetStateAction<OrderDetails | undefined>): void; (arg0: any): void; }, setCustomer: { (value: SetStateAction<{ customer: User | undefined; prof: Profile | undefined; } | undefined>): void; (arg0: { customer: any; prof: any; }): void; }) => {
-  try {
-    const responseuser = await getUser();
-    const responseProf = await getProfile();
-    const response = await getOrderDet();
-    const datauser = responseuser.find(
-      (item: User) => item.usr_id == _item.order_customer,
-    );
-    const data = response.find(
-      (item: OrderDetails) => item.order_det_id === _item.order_id,
-    );
-    const dataProf = responseProf.find(
-      (item: Profile) => item.prf_id == datauser.usr_profile,
-    );
-    setOrderdet(data);
-    setCustomer({ customer: datauser, prof: dataProf });
-  } catch (error) {
-    console.error("Failed to fetch orderdet", error);
-  }
-};
-
 const getPriorityText = (priority: number) => {
   switch (priority) {
     case 0:
@@ -62,13 +44,13 @@ const getPriorityText = (priority: number) => {
   }
 };
 
-export default function ProductOnDelivery(item: any) {
-  const _item = item.item;
-  const [orderdet, setOrderdet] = useState<OrderDetails>();
-  const [customer, setCustomer] = useState<
-    { customer: User | undefined; prof: Profile | undefined } | undefined
-  >();
+export default function ProductOnDelivery({ setIsChange, ...item }) {
   const [showText, setShowText] = useState(false);
+  const { user } = useContext(UserContext);
+  const order = item as Order;
+  const updateOrder = api.orders.updateOrder.useMutation();
+  const customer = order.user;
+  const orderdet = order.OrderDetail.at(0);
 
   const handlePress = () => {
     setShowText(!showText);
@@ -77,67 +59,125 @@ export default function ProductOnDelivery(item: any) {
   const priority = useMemo(
     () =>
       calculatePriority(
-        customer?.customer,
-        new Date(_item?.order_date_of_order),
+        customer.usr_vip,
+        new Date(order.order_date_of_ord),
       ),
-    [customer, _item],
+    [customer, item],
   );
 
+  const options = DateOpctions();
+
+
+
+  const upOrder = () => {
+    updateOrder.mutate({
+      idDeliver: Number(user?.usr_id),
+      idOrder: Number(order.order_id),
+      status: 'DELIVERING'
+    })
+  }
+
   useEffect(() => {
-    fetchOrderdet(_item, setOrderdet, setCustomer);
-  }, [_item]);
+    if (updateOrder.isSuccess) {
+      setIsChange(true)
+    }
+    updateOrder.isError && console.log(updateOrder.error.message)
+
+  }, [updateOrder.isSuccess, updateOrder.isError, priority])
+
 
   const image = require("~/assets/carrousel-test/default-user.png");
   return (
     <Link
-      href={{ pathname: "/(repartidor)/productOnDeliveryDetails" }}
+      href={{
+        pathname: "/(repartidor)/productOnDeliveryDetails",
+        params: { ...orderdet, ...customer }
+      }}
       asChild
     >
       <TouchableOpacity>
-        <View style={styles.container}>
-          <View style={styles.row}>
-            <Image source={image} style={styles.image} />
-            <View style={styles.column}>
+        <View className="flex-row mx-1 my-1 rounded-md content-center">
+          <View className="flex-row mx-1 my-1 rounded-md content-center items-center">
+            <Image source={image} className="w-28 h-28" />
+            <View className="flex-col justify-between mx-3 my-4 flex-auto">
               <View>
                 <View>
                   <TouchableOpacity
                     onPress={handlePress}
-                    style={styles.pressableArea}
-                  >
+                    className="absolute top-0 right-0 w-6 h-6 justify-center items-center z-10">
                     <View style={getCircleStyle(priority)} />
                     {showText && (
-                      <Text style={styles.priorityText}>
+                      <Text className="absolute -top-5 -right-1 w-32 h-5" style={CustomStyles.priorityText}>
                         {getPriorityText(priority)}
                       </Text>
                     )}
                   </TouchableOpacity>
-                  {orderdet?.order_recipe && (
-                    <Text style={[styles.colorcustom, styles.title]}>
+                  <Text className="text-xl font-bold"
+                    style={{ color: getStatusColor(order.order_status), }}
+                  >
+                    {order.order_status}
+                  </Text>
+                  {orderdet?.order_det_recipe && (
+                    <Text className="text-sm font-medium" style={CustomStyles.recipeTetx}>
                       Requiere receta
                     </Text>
                   )}
-                  <Text style={styles.date}>{_item?.order_date_of_order}</Text>
-                  <Text style={[styles.title]}>
-                    {customer?.prof?.prf_name} {customer?.prof?.prf_lastname}
+                  <View className="gap-3 flex-row mt-1">
+                    <View >
+                      <Ionicons
+                        name="calendar-sharp"
+                        size={15}
+                        style={{
+                          opacity: 0.3,
+                        }}
+                      />
+                    </View>
+                    <Text className="opacity-50 text-xs">
+                      {order.order_date_of_ord.toLocaleDateString(options.localDate, options.options)}
+                    </Text>
+                  </View>
+                  <View className="gap-3 mt-1 mb-auto flex-row">
+                    <View >
+                      <Ionicons
+                        name="time-sharp"
+                        size={15}
+                        style={{
+                          opacity: 0.3,
+                        }}
+                      />
+                    </View>
+                    <Text className="opacity-50 text-xs">
+                      {order.order_date_of_ord.toLocaleTimeString(options.localDate)}
+                    </Text>
+                  </View>
+                  <Text className="text-lg font-medium" style={CustomStyles.textBrand}>
+                    {customer.profile.prf_name} {customer.profile.prf_lastname}
                   </Text>
-                  <Text style={styles.address}>{orderdet?.order_location}</Text>
-                  {customer?.customer?.usr_vip && (
-                    <Text style={styles.vip}>Cliente VIP</Text>
+                  <Text className="text-xs font-bold">{order.order_location}</Text>
+                  {customer.usr_vip && (
+                    <Text style={CustomStyles.isVip}>Cliente VIP</Text>
                   )}
                 </View>
               </View>
-              <Text style={styles.money}>
-                {formatMoney(orderdet?.order_det_total)}
+              <Text style={CustomStyles.textMoney}>
+                {formatMoney(Number(orderdet?.order_det_total))}
               </Text>
+              <View className="flex-row justify-between mx-1 gap-3 mt-2 content-center items-center flex-initial">
+                <Link href={{
+                  pathname: "/(repartidor)/productOnDeliveryDetails",
+                  params: { ...orderdet, ...customer }
+                }} asChild
+                >
+                  <TouchableOpacity className="items-center py-3 flex-1 rounded-md" style={CustomStyles.detailButtton}>
+                    <Text style={CustomStyles.buttontext}>Detalles</Text>
+                  </TouchableOpacity>
+                </Link>
+
+                <TouchableOpacity onPress={upOrder} className="items-center py-3 flex-1 rounded-md mb-3" style={CustomStyles.cancelButton}>
+                  <Text style={CustomStyles.buttontext}>Aceptar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.detailsButton}>
-              <Text style={styles.buttonText}>Detalles</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.acceptButton}>
-              <Text style={styles.buttonText}>Aceptar</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </TouchableOpacity>
@@ -145,27 +185,8 @@ export default function ProductOnDelivery(item: any) {
   );
 }
 
-function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}
 
-const getCircleStyle = (priority: number) => {
-  switch (priority) {
-    case 0:
-      return styles.greencicle;
-    case 1:
-      return styles.yellowcicle;
-    case 2:
-      return styles.orangecicle;
-    case 3:
-      return styles.redcicle;
-    default:
-      return styles.greencicle;
-  }
-};
+
 
 const cicle = {
   position: "absolute",
@@ -176,119 +197,3 @@ const cicle = {
   borderRadius: 10,
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  row: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  column: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    flex: 1,
-    paddingVertical: 15,
-  },
-  image: {
-    width: 120,
-    height: 120,
-  },
-  colorcustom: {
-    color: "#1969a3",
-  },
-  money: {
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "500",
-  },
-  margin: {
-    margin: 10,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  date: {
-    opacity: 0.5,
-    fontSize: 12,
-  },
-  address: {
-    fontSize: 14,
-  },
-  vip: {
-    color: "green",
-    fontWeight: "500",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    gap: 12,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  detailsButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#2c7379",
-    flex: 1,
-    borderRadius: 8,
-  },
-  acceptButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#f0a62f",
-    flex: 1,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "white",
-  },
-  redcicle: {
-    ...cicle,
-    backgroundColor: "red",
-  },
-  greencicle: {
-    ...cicle,
-    backgroundColor: "green",
-  },
-  yellowcicle: {
-    ...cicle,
-    backgroundColor: "yellow",
-  },
-  orangecicle: {
-    ...cicle,
-    backgroundColor: "orange",
-  },
-  pressableArea: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    width: 25, // Ajusta estos valores según tus necesidades
-    height: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  priorityText: {
-    position: "absolute",
-    top: -20,
-    right: -5, // Ajusta estos valores según tus necesidades
-    width: 120,
-    height: 20,
-    backgroundColor: "withe",
-    color: "black",
-  },
-});

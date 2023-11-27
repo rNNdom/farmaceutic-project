@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 import { Text, View } from "../../components/Themed";
-import { Products } from "~/utils/interface";
+import { Product } from "~/utils/interface";
+import { CustomStyles } from "~/styles/CustomStyles";
 
-const CatItem = (data:Products) => {
+const CatItem = (data: Product) => {
   const _item = data;
   return (
     <Link
@@ -16,10 +17,10 @@ const CatItem = (data:Products) => {
       asChild
     >
       <TouchableOpacity>
-        <View style={styles.main}>
-          <Image source={{ uri: data.prod_image }} style={styles.image} />
-          <View style={styles.containertext}>
-            <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
+        <View className="w-36 py-2 px-2 h-36 flex-row justify-end rounded-lg" >
+          <Image source={{ uri: data.prod_image }} style={CustomStyles.img} />
+          <View className="w-full relative bg-transparent rounded-3xl justify-end">
+            <Text className="text-sm font-medium uppercase text-center pl-1 pb-2 w-full flex-shrink" numberOfLines={1} ellipsizeMode="tail">
               {_item.prod_category}
             </Text>
           </View>
@@ -31,38 +32,4 @@ const CatItem = (data:Products) => {
 
 export default CatItem;
 
-const styles = StyleSheet.create({
-  image: {
-    backgroundColor: "#fff",
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-  },
-  main: {
-    width: 150,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    height: 150,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    borderRadius: 8,
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: "500",
-    textTransform: "uppercase",
-    textAlign: "center",
-    paddingLeft: 5,
-    paddingBottom: 10,
-    width: "100%",
-    flexShrink: 1,
-  },
-  containertext: {
-    width: "100%",
-    position: "relative",
-    backgroundColor: "transparent",
-    borderRadius: 20,
-    justifyContent: "flex-end",
-  },
-});
+

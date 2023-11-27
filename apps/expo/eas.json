@@ -23,6 +23,11 @@
     },
     "production": {
       "extends": "base"
+    },
+    "preview-android": {
+      "android": {
+        "buildType": "apk"
+      }
     }
   },
   "submit": {

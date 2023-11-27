@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
@@ -14,29 +14,45 @@ import {
 
 import { TRPCProvider } from "~/utils/api";
 import { CartProvider } from "../components/context";
+import { UserContext, UserProvider } from "~/components/userContext";
+import { getTokenFromAsyncStorage, getContentFromAsyncStorage, deleteAllFromAsyncStorage } from "~/components/storage";
 
 // ----------
 
-export {
-  // Catch any errors thrown by the Layout component.
+import {
   ErrorBoundary,
 } from "expo-router";
 
+
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(tabs)/index",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout () {
+export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...(FontAwesome.font as unknown as Record<string, unknown>),
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  const { addUser, addToken } = useContext(UserContext);
+
+
+
+  useEffect(() => {
+    getTokenFromAsyncStorage("@token").then((res) => {
+      if (res) {
+        addToken(res);
+        getContentFromAsyncStorage("@user").then((res2) => {
+          if (res2) {
+            addUser(res2);
+          }
+        });
+      }
+    });
+  }, []);
+
 
   useEffect(() => {
     if (error) throw error;
@@ -57,48 +73,60 @@ export default function RootLayout () {
 
 // --------
 
-function RootLayoutNav () {
+function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const [role, setRole] = useState('');
+
+  useLayoutEffect(() => {
+    const fetchRole = async () => {
+      const user = await getContentFromAsyncStorage("@user");
+      setRole(user?.usr_role || '');
+
+    };
+
+    fetchRole();
+  }, []);
   return (
 
     <TRPCProvider>
       <SafeAreaProvider>
-
         <ThemeProvider
           value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-          <CartProvider>
-            <Stack>
-              <Stack.Screen
-                name="(tabs)"
-                options={{
-                  headerShown: false,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="(auth)"
-                options={{
-                  headerShown: false,
-                  animation: "slide_from_right",
-                }}
-              />
-              <Stack.Screen
-                name="modal"
-                options={{
-                  presentation: "modal",
-                  animation: "slide_from_bottom",
-                }}
-              />
-              <Stack.Screen
-                name="(repartidor)"
-                options={{
-                  headerShown: false,
-                  animation: "slide_from_right",
-                }}
-              />
-            </Stack>
-          </CartProvider>
+          <UserProvider>
+            <CartProvider>
+              <Stack>
+                <Stack.Screen
+                  name="(tabs)"
+                  options={{
+                    headerShown: false,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="(auth)"
+                  options={{
+                    headerShown: false,
+                    animation: "slide_from_right",
+                  }}
+                />
+                <Stack.Screen
+                  name="modal"
+                  options={{
+                    presentation: "modal",
+                    animation: "slide_from_bottom",
+                  }}
+                />
+                <Stack.Screen
+                  name="(repartidor)"
+                  options={{
+                    headerShown: false,
+                    animation: "slide_from_right",
+                  }}
+                />
+              </Stack>
+            </CartProvider>
+          </UserProvider>
         </ThemeProvider>
         <StatusBar />
       </SafeAreaProvider>

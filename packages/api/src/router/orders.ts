@@ -19,6 +19,21 @@ export const orderRouter = createTRPCRouter({
       });
       return order;
     }),
+  getProdDetails: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const order = await ctx.prisma.productOrderDetail.findMany({
+        where: { orderDetailId: input.id },
+        include: {
+          Product: true,
+        },
+      });
+      return order;
+    }),
   getAllOrder: publicProcedure
     .input(
       z.object({
@@ -42,11 +57,40 @@ export const orderRouter = createTRPCRouter({
               usr_email: true,
             },
           },
-          OrderDetail: {
-            include: {
-              ProductOrderDetail: true,
+          OrderDetail: true,
+        },
+      });
+
+      return order;
+    }),
+  getAllOrderforDeliver: publicProcedure
+    .input(
+      z.object({
+        idDeliver: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const order = await ctx.prisma.order.findMany({
+        where: {
+          OR: [
+            {
+              order_delivery: null,
+            },
+            {
+              order_delivery: input.idDeliver,
+            },
+          ],
+        },
+        orderBy: { order_date_of_ord: "asc" },
+        include: {
+          user: {
+            select: {
+              usr_vip: true,
+              usr_email: true,
+              profile: true,
             },
           },
+          OrderDetail: true,
         },
       });
 
@@ -58,28 +102,32 @@ export const orderRouter = createTRPCRouter({
         idCustomer: z.number(),
       }),
     )
+
     .query(async ({ ctx, input }) => {
       return await ctx.prisma.order.findFirst({
         where: { order_customer: input.idCustomer },
         orderBy: { order_date_of_ord: "desc" },
+        include: {
+          OrderDetail: true,
+        },
       });
     }),
   updateOrder: protectedDeliveryProcedure
     .input(
       z.object({
-        id: z.number(),
+        idOrder: z.number(),
+        idDeliver: z.number(),
         status: z.enum(["PENDING", "DELIVERING", "DELIVERED", "CANCELED"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const deliverId = ctx.userId as string;
       const updateOrders = await ctx.prisma.order.update({
-        where: { order_id: input.id },
+        where: { order_id: input.idOrder },
         data: {
           order_status: input.status,
           delivery_user: {
             connect: {
-              usr_id: parseInt(deliverId),
+              usr_id: input.idDeliver,
             },
           },
         },
@@ -115,6 +163,7 @@ export const orderRouter = createTRPCRouter({
   createOrder: publicProcedure
     .input(
       z.object({
+        user_id: z.number(),
         total: z.number(),
         recipe: z.boolean(),
         location: z.string(),
@@ -127,13 +176,11 @@ export const orderRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.userId as string;
-
       const createOrder = await ctx.prisma.order.create({
         data: {
           user: {
             connect: {
-              usr_id: parseInt(userId),
+              usr_id: input.user_id,
             },
           },
           order_location: input.location,
@@ -144,11 +191,6 @@ export const orderRouter = createTRPCRouter({
               ProductOrderDetail: {
                 createMany: {
                   data: input.products.map((product) => ({
-                    Product: {
-                      connect: {
-                        prod_id: product.prod_id,
-                      },
-                    },
                     quantity: product.quantity,
                     productId: product.prod_id,
                   })),

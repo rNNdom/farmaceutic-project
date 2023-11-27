@@ -32,15 +32,15 @@ const NewBrands = () => {
         <Loading />
       ) : (
         <>
-          <View style={styles.main}>
-            <View style={styles.header}>
-              <Text style={styles.headerText}>Nuevas marcas</Text>
-              <TouchableOpacity style={styles.headerButton}>
+          <View className="px-1 bg-transparent" >
+            <View className="flex-row justify-between items-center bg-transparent">
+              <Text className="text-sm font-bold" >Nuevas marcas</Text>
+              <TouchableOpacity className="flex-row items-center gap-2">
                 <Text>Ver todas</Text>
                 <Ionicons name="chevron-forward-outline" size={20} />
               </TouchableOpacity>
             </View>
-            <View style={styles.app}>
+            <View className=" bg-transparent flex-row">
               <FlatList
                 horizontal
                 data={_item}
@@ -58,32 +58,3 @@ const NewBrands = () => {
 };
 
 export default NewBrands;
-
-const styles = StyleSheet.create({
-  main: {
-    padding: 10,
-    marginVertical: 10,
-    backgroundColor: "transparent",
-  },
-  app: {
-    gap: 10,
-    paddingVertical: 10,
-    backgroundColor: "transparent",
-    flexDirection: "row",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "transparent",
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  headerButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-});

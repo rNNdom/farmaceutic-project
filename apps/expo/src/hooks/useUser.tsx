@@ -7,15 +7,19 @@ const useUser = (props: any) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [userData, setUserData] = useState<User | null>(null);
-  const userRole = userData?.usr_role === 1 ? "Client" : "Deliver";
+  const userRole = userData?.usr_role
 
   const isClient = () => {
-    return userRole === "Client";
+    return userRole === "USER"
   };
 
   const isDeliver = () => {
-    return userRole === "Deliver";
+    return userRole === "DELIVER"
   };
+
+  const isAdmin = () => {
+    return userRole === "ADMIN"
+  }
 
   const fetchUser = async () => {
     const response = await getUser();
@@ -38,6 +42,7 @@ const useUser = (props: any) => {
     isClient,
     isDeliver,
     loading,
+    isAdmin,
   };
 };
 

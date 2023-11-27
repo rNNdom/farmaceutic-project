@@ -28,10 +28,13 @@ const defineConfig = (): ExpoConfig => ({
       foregroundImage: "./assets/icon.png",
       backgroundColor: "#1F104A",
     },
+    package: "fama.app.pene",
+    versionCode: 1,
+    userInterfaceStyle: "light",
   },
   extra: {
     eas: {
-      // projectId: "your-project-id",
+      projectId: "df0d2e07-6f19-41a9-816c-f75313fd9dc9",
     },
     clerkPublishableKey: CLERK_PUBLISHABLE_KEY,
   },

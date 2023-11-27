@@ -1,23 +1,21 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
-
 import { View } from "../../components/Themed";
 import ProductViewer from "./ProductSome";
-import { Products } from "~/utils/interface";
+import { Product } from "~/utils/interface";
 import { api } from "~/utils/api";
 import Loading from "../loading";
 
 const Row = ({ children }: { children: React.ReactNode }) => (
-  <View style={styles.row}>{children}</View>
+  <View className="flex-row bg-transparent gap-1">{children}</View>
 );
 const Col = ({ children }: { children: React.ReactNode }) => (
-  <View style={styles.col}>{children}</View>
+  <View className="bg-transparent flex-1">{children}</View>
 );
 
 const ProductList = ({ products }: { products: any[] | undefined }) => {
   return (
     <Col>
-      {products?.map((item: React.JSX.IntrinsicAttributes & Products) => (
+      {products?.map((item: React.JSX.IntrinsicAttributes & Product) => (
         <ProductViewer key={item.prod_id} {...item} />
       ))}
 
@@ -38,7 +36,7 @@ const RecomendedComponent = () => {
         <Loading />
       ) : (
         <>
-          <View style={styles.app}>
+          <View className="gap-2 p-2 bg-transparent">
             <Row>
               <ProductList products={firstTwoProducts} />
               <ProductList products={nextTwoProducts} />
@@ -52,19 +50,3 @@ const RecomendedComponent = () => {
 
 export default RecomendedComponent;
 
-const styles = StyleSheet.create({
-  app: {
-    gap: 10,
-    padding: 10,
-    backgroundColor: "transparent",
-  },
-  row: {
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    gap: 10,
-  },
-  col: {
-    backgroundColor: "transparent",
-    flex: 2,
-  },
-});

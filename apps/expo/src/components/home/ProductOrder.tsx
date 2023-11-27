@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
-import { Order } from "~/utils/interface";
+import { Order, ProductOrderDetail } from "~/utils/interface";
 import { Ionicons, Text, View } from "../Themed";
 import { api } from "~/utils/api";
 
@@ -15,6 +15,7 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
   const customer = order.user;
   const orderdet = order.OrderDetail.at(0);
   const delivery = order.delivery_user;
+
 
   const options = {
     weekday: "long",
@@ -51,11 +52,26 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
 
   }, [deleteOrders.isSuccess, deleteOrders.isError])
 
+  const getStatusColor = (status: any) => {
+    switch (status) {
+      case 'PENDING':
+        return 'yellow';
+      case 'DELIVERING':
+        return '#1969a3'; // colorcustom
+      case 'DELIVERED':
+        return 'green';
+      case 'CANCELED':
+        return 'red';
+      default:
+        return '#1969a3'; // colorcustom
+    }
+  };
+
   return (
     <Link
       href={{
         pathname: "/(tabs)/productOrderDetails",
-        params: { ...order },
+        params: { ...orderdet },
       }}
       asChild
     >
@@ -76,6 +92,18 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
                       </Text>
                     )}
                   </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.settingtext,
+                      {
+                        fontWeight: "500",
+                        gap: 12,
+                        color: getStatusColor(order.order_status),
+                      }
+                    ]}
+                  >
+                    {order.order_status}
+                  </Text>
                   <View style={[
                     {
                       gap: 12,
@@ -118,9 +146,11 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
                       {order.order_date_of_ord.toLocaleTimeString("es-419")}
                     </Text>
                   </View>
-                  <Text style={[styles.title]}>
-                    Repartidor: {delivery.profile.prf_name} {delivery.profile.prf_lastname}
-                  </Text>
+                  {delivery && (
+                    <Text style={[styles.title]}>
+                      Repartidor: {delivery.profile?.prf_name} {delivery.profile?.prf_lastname}
+                    </Text>
+                  )}
                   <Text style={styles.address}>{order.order_location}</Text>
                   {customer.usr_vip && (
                     <Text style={styles.vip}>Cliente VIP</Text>
@@ -133,7 +163,7 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
               <View style={styles.row}>
                 <Link href={{
                   pathname: "/(tabs)/productOrderDetails",
-                  params: { ...order },
+                  params: { ...orderdet },
                 }}
                   asChild>
                   <TouchableOpacity style={styles.detailsButton}>
@@ -264,6 +294,11 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 8,
   },
+  settingtext: {
+    fontSize: 18,
+    fontWeight: "400",
+    textAlign: "center",
+  },
   buttonText: {
     color: "white",
   },
@@ -287,8 +322,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     right: 0,
-    width: 25, // Ajusta estos valores según tus necesidades
-    height: 25,
+    width: 30, // Ajusta estos valores según tus necesidades
+    height: 30,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,

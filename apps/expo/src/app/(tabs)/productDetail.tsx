@@ -2,18 +2,18 @@ import React, { useContext, useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useRoute } from "@react-navigation/native";
-import { Products } from "~/utils/interface";
+import { Product } from "~/utils/interface";
 import { CartContext } from "~/components/context";
 import Header from "~/components/Header";
 import { formatMoney } from "~/components/home/Product";
-import { commonStyles, componentStyles } from "~/styles/mystyle";
 import { Text, View } from "../../components/Themed";
+import { commonStyles, componentStyles } from "~/styles/mystyle";
 
 export default function ProductDetail() {
-  const _item = useRoute().params as Products;
+  const _item = useRoute().params as Product;
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useContext(CartContext);
-  
+
   function handleAddToCart() {
     addToCart(_item, quantity);
   }

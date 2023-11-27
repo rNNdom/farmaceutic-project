@@ -1,18 +1,18 @@
 import { FlatList, StyleSheet } from "react-native";
-import { useRoute } from "@react-navigation/native";
 
 import Header from "~/components/Header";
 import ProductOrder from "~/components/home/ProductOrder";
 import { Text, View } from "../../components/Themed";
 import { api } from "~/utils/api";
-import {  useEffect, useState } from "react";
+import {  useContext, useEffect, useState } from "react";
 import Loading from "~/components/loading";
+import { UserContext } from "~/components/userContext";
 
 export default function MyOrders() {
-  const _item = useRoute().params as any;
+  const { user } = useContext(UserContext);
   const [isDeleted, setIsDeleted] = useState(false)
   const getOrdert = api.orders.getAllOrder.useQuery({
-    idCustomer: Number(_item.usr_id),
+    idCustomer: Number(user?.usr_id),
   })
 
   useEffect(() => {

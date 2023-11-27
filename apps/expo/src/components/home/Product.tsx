@@ -1,10 +1,10 @@
 import { Image, StyleSheet, View } from "react-native";
 import { Link } from "expo-router";
 
-import { Products } from "~/utils/interface";
+import { Product } from "~/utils/interface";
 import { Pressable, Text } from "../../components/Themed";
 
-const ProductShort = (data: Products) => {
+const ProductShort = (data: Product) => {
   return (
     <Link
       href={{
