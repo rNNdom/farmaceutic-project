@@ -1,7 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, LayoutPanelLeft, User, Users } from "lucide-react";
 
-import { Payment } from "~/components/TablePaymentsData";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
+import { Payment } from "~/components/TablePaymentsData";
 
 export const NavItems = [
   {
@@ -54,92 +54,6 @@ export const NavItems = [
 
 ];
 
-export const payments: Payment[] = [
-  {
-    item: "Nougat - Paste / Cream",
-    amount: 231,
-    deliveredTo: "Massimo",
-    date: "4/27/2023",
-    status: "pending",
-  },
-  {
-    item: "Pepper - Cayenne",
-    amount: 976,
-    deliveredTo: "Julissa",
-    date: "7/24/2023",
-    status: "pending",
-  },
-  {
-    item: "Fond - Neutral",
-    amount: 675,
-    deliveredTo: "Meridith",
-    date: "5/6/2023",
-    status: "pending",
-  },
-  {
-    item: "Wine - White, Ej",
-    amount: 128,
-    deliveredTo: "Consuela",
-    date: "3/15/2023",
-    status: "pending",
-  },
-  {
-    item: "Star Fruit",
-    amount: 624,
-    deliveredTo: "Somerset",
-    date: "5/11/2023",
-    status: "pending",
-  },
-  {
-    item: "Wine - Blue Nun Qualitatswein",
-    amount: 149,
-    deliveredTo: "Padraic",
-    date: "9/10/2023",
-    status: "pending",
-  },
-  {
-    item: "Longos - Grilled Veg Sandwiches",
-    amount: 751,
-    deliveredTo: "Erhard",
-    date: "5/16/2023",
-    status: "pending",
-  },
-  {
-    item: "Sauce - Soy Low Sodium - 3.87l",
-    amount: 109,
-    deliveredTo: "Eugenio",
-    date: "6/7/2023",
-    status: "pending",
-  },
-  {
-    item: "Lamb Leg - Bone - In Nz",
-    amount: 199,
-    deliveredTo: "Cary",
-    date: "4/30/2023",
-    status: "pending",
-  },
-  {
-    item: "Seedlings - Mix, Organic",
-    amount: 344,
-    deliveredTo: "Lea",
-    date: "6/26/2023",
-    status: "pending",
-  },
-  {
-    item: "Nougat - Paste / Cream",
-    amount: 231,
-    deliveredTo: "Massimo",
-    date: "4/27/2023",
-    status: "pending",
-  },
-  {
-    item: "Nougat - Paste / Cream",
-    amount: 231,
-    deliveredTo: "Massimo",
-    date: "4/27/2023",
-    status: "pending",
-  },
-];
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -148,14 +62,14 @@ export const columns: ColumnDef<Payment>[] = [
     cell: () => <></>,
   },
   {
-    accessorKey: "item",
-    header: () => <p className="text-black">Producto</p>,
+    accessorKey: "order_id",
+    header: () => <p className="text-black">N° Orden</p>,
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("item")}</div>
+      <div className="text-muted-foreground">{row.getValue("order_id")}</div>
     ),
   },
   {
-    accessorKey: "amount",
+    accessorKey: "order_det_total",
     header: ({ column }) => {
       return (
         <span className="flex w-full items-center justify-center text-black">
@@ -170,7 +84,7 @@ export const columns: ColumnDef<Payment>[] = [
       );
     },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = parseFloat(row.getValue("order_det_total"));
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "CLP",
@@ -185,26 +99,26 @@ export const columns: ColumnDef<Payment>[] = [
   },
 
   {
-    accessorKey: "deliveredTo",
+    accessorKey: "user_name",
     header: () => <p className="text-black">Entregado a</p>,
     cell: ({ row }) => (
       <div className="text-muted-foreground capitalize">
-        {row.getValue("deliveredTo")}
+        {row.getValue("user_name")}
       </div>
     ),
   },
 
   {
-    accessorKey: "date",
-    header: () => <p className="text-black">Fecha</p>,
+    accessorKey: "delivery_user_name",
+    header: () => <p className="text-black">Entregado por</p>,
     cell: ({ row }) => (
       <div className="text-muted-foreground capitalize">
-        {row.getValue("date")}
+        {row.getValue("delivery_user_name")}
       </div>
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: "order_status",
     header: ({ column }) => {
       return (
         <span className="flex w-full items-center justify-center">
@@ -219,7 +133,7 @@ export const columns: ColumnDef<Payment>[] = [
       );
     },
     cell: ({ row }) => {
-      const status: string = row.getValue("status");
+      const status: string = row.getValue("order_status");
 
       return (
         <div

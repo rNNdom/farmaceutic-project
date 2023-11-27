@@ -46,7 +46,7 @@ export function UsersTable () {
   const handleIsSubmit = (userId: number, payload: any) => {
     roleMutation.mutate({ id: userId, role: payload });
   }
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const data = api.user.all.useQuery().data ?? [];
 
