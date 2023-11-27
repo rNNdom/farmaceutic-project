@@ -3,6 +3,8 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
 import { Text, View } from "../../components/Themed";
+import { CustomStyles } from "~/styles/CustomStyles";
+import { formatMoney } from "~/utils/formats";
 
 const OrderProductDetail = ({ item, quantity }: any) => {
 
@@ -16,27 +18,24 @@ const OrderProductDetail = ({ item, quantity }: any) => {
             asChild
         >
             <TouchableOpacity>
-                <View style={styles.container}>
-                    <Image source={{ uri: _item.prod_image }} style={styles.image} />
-
-                    <View style={styles.detailsContainer}>
-
-
-                        <View style={styles.containertext}>
+                <View className="flex-row mx-1 my-1 rounded-md">
+                    <Image source={{ uri: _item.prod_image }} style={CustomStyles.imgCart} />
+                    <View className="flex-col-reverse justify-between mx-3 my-4 flex-1">
+                        <View className="w-full justify-start  bg-transparent flex-col rounded-xl  mb-3">
                             {_item.prod_recipe && (
                                 <>
-                                    <Text style={{ color: 'red' }}>Requiere receta medica</Text>
+                                    <Text className="w-full pb-1 flex-shrink  items-center" style={CustomStyles.recipeTetx}>Requiere receta medica</Text>
                                 </>
                             )}
-                            <Text style={styles.colorcustom}>{_item.prod_brand}</Text>
-                            <Text style={[styles.colorcustom, styles.title]}>
+                            <Text style={CustomStyles.textBrand}>{_item.prod_brand}</Text>
+                            <Text className="text-xl font-bold w-full" style={CustomStyles.textProduct}>
                                 {_item.prod_name}
                             </Text>
-                            <Text style={styles.money}>{formatMoney(_item.prod_price)}</Text>
+                            <Text className="font-bold text-xl" style={CustomStyles.textMoney}>{formatMoney(_item.prod_price)}</Text>
                         </View>
                     </View>
-                    <View style={styles.quantityContainer}>
-                        <Text style={styles.margin}>Cantidad: {quantity}</Text>
+                    <View className="flex-1 justify-end items-end" style={CustomStyles.textMoney}>
+                        <Text className="m-3 text-xl font-medium">Cantidad: {quantity}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -44,62 +43,3 @@ const OrderProductDetail = ({ item, quantity }: any) => {
     );
 };
 export default OrderProductDetail;
-
-const styles = StyleSheet.create({
-    container: {
-        flexDirection: "row",
-        marginHorizontal: 10,
-        marginVertical: 5,
-        borderRadius: 8,
-    },
-    image: {
-        width: 120,
-        height: 120,
-        resizeMode: "contain",
-    },
-    detailsContainer: {
-        flexDirection: "column-reverse",
-        justifyContent: "space-between",
-        marginHorizontal: 10,
-        flex: 1,
-        paddingVertical: 15,
-    },
-    containertext: {
-        flex: 1, // Añade esta línea
-        backgroundColor: "transparent",
-        flexDirection: "column",
-        borderRadius: 20,
-        justifyContent: "flex-end",
-        position: "absolute",
-        marginBottom: 10,
-    },
-    quantityContainer: {
-        flex: 1,
-        justifyContent: "flex-end",
-        alignItems: "flex-end",
-    },
-    colorcustom: {
-        color: "#1969a3",
-    },
-    money: {
-        fontWeight: "bold",
-        fontSize: 20,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: "bold",
-        width: "100%",
-    },
-    margin: {
-        margin: 10,
-        fontSize: 16,
-        fontWeight: "500",
-    },
-});
-
-function formatMoney(number: number) {
-    return new Intl.NumberFormat("es-CL", {
-        style: "currency",
-        currency: "CLP",
-    }).format(number);
-}

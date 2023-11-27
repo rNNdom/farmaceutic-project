@@ -6,8 +6,8 @@ import { Product } from "~/utils/interface";
 import { CartContext } from "~/components/context";
 import Header from "~/components/Header";
 import { formatMoney } from "~/components/home/Product";
-import { commonStyles, componentStyles } from "~/styles/mystyle";
 import { Text, View } from "../../components/Themed";
+import { commonStyles, componentStyles } from "~/styles/mystyle";
 
 export default function ProductDetail() {
   const _item = useRoute().params as Product;

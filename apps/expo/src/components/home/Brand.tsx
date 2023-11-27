@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 import { View } from "../../components/Themed";
 import { Product } from "~/utils/interface";
+import { CustomStyles } from "~/styles/CustomStyles";
 
 function Brand(data: Product) {
   const _item = data;
@@ -15,11 +16,11 @@ function Brand(data: Product) {
       }}
       asChild
     >
-      <TouchableOpacity>
-        <View style={styles.main}>
-          <Image source={{ uri: _item.prod_image }} style={styles.image} />
-          <View style={styles.containertext}>
-            <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
+      <TouchableOpacity >
+        <View className="w-40 h-40 py-2 px-2 flex-row justify-end">
+          <Image source={{ uri: _item.prod_image }} style={CustomStyles.img} />
+          <View className="w-full bg-transparent  justify-end relative">
+            <Text className="text-sm font-medium uppercase items-center pl-1 pb-2 w-full flex-shrink" numberOfLines={1} ellipsizeMode="tail">
               {_item.prod_brand}
             </Text>
           </View>
@@ -31,38 +32,3 @@ function Brand(data: Product) {
 
 export default Brand;
 
-const styles = StyleSheet.create({
-  image: {
-    backgroundColor: "#fff",
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-  },
-  main: {
-    width: 150,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    height: 150,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    borderRadius: 8,
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: "500",
-    textTransform: "uppercase",
-    textAlign: "center",
-    paddingLeft: 5,
-    paddingBottom: 10,
-    width: "100%",
-    flexShrink: 1,
-  },
-  containertext: {
-    width: "100%",
-    backgroundColor: "transparent",
-    borderRadius: 20,
-    justifyContent: "flex-end",
-    position: "relative",
-  },
-});

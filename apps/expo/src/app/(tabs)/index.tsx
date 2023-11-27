@@ -8,6 +8,7 @@ import { Text } from "../../components/Themed";
 import CatalogoScreens from "../(repartidor)/cart";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
+import { CustomColors, CustomStyles } from "~/styles/CustomStyles";
 
 export default function CatalogoScreen() {
   const { user } = useContext(UserContext);
@@ -18,17 +19,19 @@ export default function CatalogoScreen() {
   return (
     <>
       <Header showSearch />
-      <View style={styles.home}>
+      <View className="flex-1" style={CustomStyles.home}>
         {isClient ? (
           <>
-            <Text style={styles.current}>Inicio</Text>
-            <RecomendedComponent />
-            <ViewCategories />
-            <NewBrands />
+            <ScrollView>
+              <Text className="text-sm text-lg my-5 mx-2 opacity-50">Inicio</Text>
+              <RecomendedComponent />
+              <ViewCategories />
+              <NewBrands />
+            </ScrollView>
           </>
         ) : (
           <>
-            <Text style={styles.current}>Inicio</Text>
+            <Text className="text-sm text-lg my-5 mx-2 opacity-50">Inicio</Text>
             <CatalogoScreens />
           </>
         )}
@@ -36,22 +39,3 @@ export default function CatalogoScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  home: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  current: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginHorizontal: 18,
-    marginVertical: 8,
-    opacity: 0.5,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

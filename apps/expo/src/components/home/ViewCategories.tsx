@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
+import { FlatList } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons, Text, View } from "../../components/Themed";
 import CatItem from "./CatItem";
@@ -32,15 +32,15 @@ const ViewCategories = () => {
         <Loading />
       ) : (
         <>
-          <View style={styles.main}>
-            <View style={styles.header}>
-              <Text style={styles.headerText}>Categorias</Text>
-              <TouchableOpacity style={styles.headerButton}>
+          <View className="p-3">
+            <View className="flex-row justify-between items-center">
+              <Text className="font-bold text-xl">Categorias</Text>
+              <TouchableOpacity className="flex-row items-center gap-1">
                 <Text>Ver todas</Text>
                 <Ionicons name="chevron-forward-outline" size={20} />
               </TouchableOpacity>
             </View>
-            <View style={styles.app}>
+            <View className="gap-3 px-3 bg-transparent flex-row">
               <FlatList
                 horizontal
                 data={_item}
@@ -59,28 +59,3 @@ const ViewCategories = () => {
 
 export default ViewCategories;
 
-const styles = StyleSheet.create({
-  main: {
-    padding: 10,
-  },
-  app: {
-    gap: 10,
-    paddingVertical: 10,
-    backgroundColor: "transparent",
-    flexDirection: "row",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  headerButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-});

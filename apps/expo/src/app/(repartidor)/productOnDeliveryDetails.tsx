@@ -8,6 +8,7 @@ import { api } from "~/utils/api";
 import Loading from "~/components/loading";
 import Header from "~/components/Header";
 import OrderProductDetail from "~/components/home/OrderDetail";
+import { formatMoney } from "~/utils/formats";
 
 
 interface CartItemProps {
@@ -17,8 +18,8 @@ interface CartItemProps {
 
 const EmptyComponent = () => {
   return (
-    <View style={styles.empty}>
-      <Text style={styles.emptyText}>No hay productos en el carrito.</Text>
+    <View className="items-center content-center flex-1 bg-transparent">
+      <Text className="text-xl font-medium m-3">No hay productos en el carrito.</Text>
     </View>
   );
 };
@@ -39,8 +40,8 @@ const CartItem = ({ prodDet, orderDet }: CartItemProps) => {
         renderItem={({ item }) => <OrderProductDetail item={item.Product} quantity={item.quantity} />}
         keyExtractor={(item: any) => item.prod_id}
       />
-      <View style={styles.totalContainer}>
-        <Text style={styles.totalText}>Total: {formatMoney(orderDet.order_det_total)}</Text>
+      <View className="flex-col justify-between items-center mx-3 my-3">
+        <Text className="text-xl font-medium m-3">Total: {formatMoney(orderDet.order_det_total)}</Text>
       </View>
     </>
   );
@@ -74,80 +75,4 @@ export default function OrderDetail() {
   );
 }
 
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  home: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  current: {
-    fontSize: 14,
-    fontWeight: "500",
-    backgroundColor: "#000",
-    marginHorizontal: 18,
-    marginVertical: 8,
-    opacity: 0.5,
-  },
-  pay: {
-    backgroundColor: "#1969a3",
-    padding: 10,
-    borderRadius: 8,
-    marginHorizontal: 10,
-    marginBottom: 10,
-    alignItems: "center",
-  },
-  payText: {
-    color: "white",
-  },
-  empty: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  emptyText: {
-    fontSize: 20,
-    fontWeight: "500",
-    margin: 10,
-  },
-  vaciar: {
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "flex-end",
-  },
-  vaciarText: {
-    color: "red",
-  },
-  totalContainer: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginHorizontal: 10,
-    marginVertical: 10,
-  },
-  totalText: {
-    fontSize: 20,
-    fontWeight: "500",
-    margin: 10,
-  },
-});
 
-function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}

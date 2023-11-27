@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { api, setToken } from "~/utils/api";
 import { setContentAsyncStorage } from "~/components/storage";
 import { UserContext } from "~/components/userContext";
+import { CustomColors } from "~/styles/CustomStyles";
 
 
 
@@ -41,12 +42,9 @@ export default function LoginAuth() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text
+      <Text className="text-3xl font-bold py-4"
         style={{
-          color: "#1969a3",
-          fontSize: 26,
-          fontWeight: "bold",
-          paddingVertical: 18,
+          color: CustomColors.Bice_blue,
         }}
       >
         Iniciar Sesion

@@ -6,6 +6,8 @@ import { Order } from "~/utils/interface";
 import { Ionicons, Text, View } from "../../components/Themed";
 import { api } from "~/utils/api";
 import { UserContext } from "../userContext";
+import { CustomColors, CustomStyles, getCircleStyle, getStatusColor } from "~/styles/CustomStyles";
+import { DateOpctions, formatMoney } from "~/utils/formats";
 
 export const calculatePriority = (isVip: boolean, orderDate: Date) => {
   if (isVip) {
@@ -63,27 +65,9 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
     [customer, item],
   );
 
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
+  const options = DateOpctions();
 
-  const getStatusColor = (status: any) => {
-    switch (status) {
-      case 'PENDING':
-        return 'yellow';
-      case 'DELIVERING':
-        return '#1969a3'; // colorcustom
-      case 'DELIVERED':
-        return 'green';
-      case 'CANCELED':
-        return 'red';
-      default:
-        return '#1969a3'; // colorcustom
-    }
-  };
+
 
   const upOrder = () => {
     updateOrder.mutate({
@@ -112,46 +96,33 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
       asChild
     >
       <TouchableOpacity>
-        <View style={styles.container}>
-          <View style={styles.row}>
-            <Image source={image} style={styles.image} />
-            <View style={styles.column}>
+        <View className="flex-row mx-1 my-1 rounded-md content-center">
+          <View className="flex-row mx-1 my-1 rounded-md content-center items-center">
+            <Image source={image} className="w-28 h-28" />
+            <View className="flex-col justify-between mx-3 my-4 flex-auto">
               <View>
                 <View>
                   <TouchableOpacity
                     onPress={handlePress}
-                    style={styles.pressableArea}
-                  >
+                    className="absolute top-0 right-0 w-6 h-6 justify-center items-center z-10">
                     <View style={getCircleStyle(priority)} />
                     {showText && (
-                      <Text style={styles.priorityText}>
+                      <Text className="absolute -top-5 -right-1 w-32 h-5" style={CustomStyles.priorityText}>
                         {getPriorityText(priority)}
                       </Text>
                     )}
                   </TouchableOpacity>
-                  <Text
-                    style={[
-                      styles.settingtext,
-                      {
-                        fontWeight: "500",
-                        gap: 12,
-                        color: getStatusColor(order.order_status),
-                      }
-                    ]}
+                  <Text className="text-xl font-bold"
+                    style={{ color: getStatusColor(order.order_status), }}
                   >
                     {order.order_status}
                   </Text>
                   {orderdet?.order_det_recipe && (
-                    <Text style={[styles.colorcustom, styles.title]}>
+                    <Text className="text-sm font-medium" style={CustomStyles.recipeTetx}>
                       Requiere receta
                     </Text>
                   )}
-                  <View style={[
-                    {
-                      gap: 12,
-                      flexDirection: "row",
-                    },
-                  ]}>
+                  <View className="gap-3 flex-row mt-1">
                     <View >
                       <Ionicons
                         name="calendar-sharp"
@@ -161,18 +132,11 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
                         }}
                       />
                     </View>
-                    <Text
-                      style={styles.date}
-                    >
-                      {order.order_date_of_ord.toLocaleDateString("es-419", options)}
+                    <Text className="opacity-50 text-xs">
+                      {order.order_date_of_ord.toLocaleDateString(options.localDate, options.options)}
                     </Text>
                   </View>
-                  <View style={[
-                    {
-                      gap: 12,
-                      flexDirection: "row",
-                    },
-                  ]}>
+                  <View className="gap-3 mt-1 mb-auto flex-row">
                     <View >
                       <Ionicons
                         name="time-sharp"
@@ -182,37 +146,35 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
                         }}
                       />
                     </View>
-                    <Text
-                      style={styles.date}
-                    >
-                      {order.order_date_of_ord.toLocaleTimeString("es-419")}
+                    <Text className="opacity-50 text-xs">
+                      {order.order_date_of_ord.toLocaleTimeString(options.localDate)}
                     </Text>
                   </View>
-                  <Text style={[styles.title]}>
+                  <Text className="text-lg font-medium" style={CustomStyles.textBrand}>
                     {customer.profile.prf_name} {customer.profile.prf_lastname}
                   </Text>
-                  <Text style={styles.address}>{order.order_location}</Text>
+                  <Text className="text-xs font-bold">{order.order_location}</Text>
                   {customer.usr_vip && (
-                    <Text style={styles.vip}>Cliente VIP</Text>
+                    <Text style={CustomStyles.isVip}>Cliente VIP</Text>
                   )}
                 </View>
               </View>
-              <Text style={styles.money}>
+              <Text style={CustomStyles.textMoney}>
                 {formatMoney(Number(orderdet?.order_det_total))}
               </Text>
-              <View style={[styles.buttonRow, styles.margin]}>
+              <View className="flex-row justify-between mx-1 gap-3 mt-2 content-center items-center flex-initial">
                 <Link href={{
                   pathname: "/(repartidor)/productOnDeliveryDetails",
                   params: { ...orderdet, ...customer }
                 }} asChild
                 >
-                  <TouchableOpacity style={styles.detailsButton}>
-                    <Text style={styles.buttonText}>Detalles</Text>
+                  <TouchableOpacity className="items-center py-3 flex-1 rounded-md" style={CustomStyles.detailButtton}>
+                    <Text style={CustomStyles.buttontext}>Detalles</Text>
                   </TouchableOpacity>
                 </Link>
 
-                <TouchableOpacity onPress={upOrder} style={styles.acceptButton}>
-                  <Text style={styles.buttonText}>Aceptar</Text>
+                <TouchableOpacity onPress={upOrder} className="items-center py-3 flex-1 rounded-md mb-3" style={CustomStyles.cancelButton}>
+                  <Text style={CustomStyles.buttontext}>Aceptar</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -223,27 +185,8 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
   );
 }
 
-function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}
 
-const getCircleStyle = (priority: number) => {
-  switch (priority) {
-    case 0:
-      return styles.greencicle;
-    case 1:
-      return styles.yellowcicle;
-    case 2:
-      return styles.orangecicle;
-    case 3:
-      return styles.redcicle;
-    default:
-      return styles.greencicle;
-  }
-};
+
 
 const cicle = {
   position: "absolute",
@@ -254,123 +197,3 @@ const cicle = {
   borderRadius: 10,
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  row: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  column: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    flex: 1,
-    paddingVertical: 15,
-  },
-  image: {
-    width: 120,
-    height: 120,
-  },
-  colorcustom: {
-    color: "#1969a3",
-  },
-  money: {
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "500",
-  },
-  margin: {
-    margin: 10,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  date: {
-    opacity: 0.5,
-    fontSize: 12,
-  },
-  address: {
-    fontSize: 14,
-  },
-  vip: {
-    color: "green",
-    fontWeight: "500",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    gap: 12,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  detailsButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#2c7379",
-    flex: 1,
-    borderRadius: 8,
-  },
-  settingtext: {
-    fontSize: 18,
-    fontWeight: "400",
-  },
-  acceptButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#f0a62f",
-    flex: 1,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "white",
-  },
-  redcicle: {
-    ...cicle,
-    backgroundColor: "red",
-  },
-  greencicle: {
-    ...cicle,
-    backgroundColor: "green",
-  },
-  yellowcicle: {
-    ...cicle,
-    backgroundColor: "yellow",
-  },
-  orangecicle: {
-    ...cicle,
-    backgroundColor: "orange",
-  },
-  pressableArea: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    width: 25, // Ajusta estos valores según tus necesidades
-    height: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  priorityText: {
-    position: "absolute",
-    top: -20,
-    right: -5, // Ajusta estos valores según tus necesidades
-    width: 120,
-    height: 20,
-    backgroundColor: "withe",
-    color: "black",
-  },
-});
