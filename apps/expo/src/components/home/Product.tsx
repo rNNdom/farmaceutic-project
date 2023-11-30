@@ -3,6 +3,7 @@ import { Link } from "expo-router";
 
 import { Product } from "~/utils/interface";
 import { Pressable, Text } from "../../components/Themed";
+import { formatMoney } from "~/utils/formats";
 
 const ProductShort = (data: Product) => {
   return (
@@ -84,9 +85,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}

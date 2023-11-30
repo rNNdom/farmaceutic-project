@@ -41,12 +41,19 @@ export const getStatusColor = (status: any) => {
 
 const cicle = {
     position: "absolute",
-    top: 0,
-    right: 0,
+    top: 4,
+    right: 4,
     width: 20,
     height: 20,
     borderRadius: 10,
 };
+
+const buttonOrder = {
+    alignItems: "center",
+    paddingVertical: 12,
+    flex: 1,
+    borderRadius: 8,
+}
 
 export const getCircleStyle = (priority: number) => {
     switch (priority) {
@@ -109,9 +116,11 @@ export const CustomStyles = StyleSheet.create({
         color: CustomColors.Dark_purple
     },
     detailButtton: {
+        ...buttonOrder,
         backgroundColor: CustomColors.Persian_green
     },
     cancelButton: {
+        ...buttonOrder,
         backgroundColor: CustomColors.Claret
     },
     redcicle: {
@@ -149,18 +158,34 @@ export const CustomStyles = StyleSheet.create({
     },
     arrowicon: {
         position: "absolute",
-        // right: 0,
-
         left: 0,
         top: 0,
-        // paddingLeft: 40,
-        // gap: 10,
         alignItems: "flex-end",
         width: "100%",
         justifyContent: "space-evenly",
-        // marginRight: 12,
         backgroundColor: "transparent"
-    }
+    },
+    card: {
+        elevation: 10,
+        shadowOpacity: 0.12,
+        shadowRadius: 20,
+        shadowOffset: {
+            width: 0,
+            height: 10,
+        },
+        shadowColor: CustomColors.Dark_purple,
+    },
+    inputContainer: {
+        borderBlockColor: CustomColors.Bice_blue,
+        borderWidth: 1,
+        paddingVertical: 12,
+        paddingHorizontal: 8,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        borderRadius: 8,
+    },
+
 
 
 

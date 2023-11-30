@@ -8,6 +8,8 @@ import { deleteAllFromAsyncStorage } from "~/components/storage";
 import { UserContext } from "~/components/userContext";
 import { useContext, useEffect } from "react";
 import Loading from "~/components/loading";
+import { formatDate } from "~/utils/formats";
+import { getStatusColor } from "~/styles/CustomStyles";
 
 
 export default function Profilesr() {
@@ -17,7 +19,7 @@ export default function Profilesr() {
       id: Number(user?.usr_profile),
     }
   );
-  const lastOrder = api.orders.getLastOrder.useQuery(
+  const lastOrder = api.orders.getLastDeliverOrder.useQuery(
     {
       idCustomer: Number(user?.usr_id),
     }
@@ -31,27 +33,7 @@ export default function Profilesr() {
   }, [getProfile.isSuccess, getProfile.isError, profile]);
 
 
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-
-  const getStatusColor = (status: any) => {
-    switch (status) {
-      case 'PENDING':
-        return 'yellow';
-      case 'DELIVERING':
-        return '#1969a3'; // colorcustom
-      case 'DELIVERED':
-        return 'green';
-      case 'CANCELED':
-        return 'red';
-      default:
-        return '#1969a3'; // colorcustom
-    }
-  };
+  const options = formatDate()
 
   return (
     <>
@@ -115,7 +97,7 @@ export default function Profilesr() {
 
                       }}
                     >
-                      Realizado el: {lastOrder.data?.order_date_of_ord.toLocaleDateString("es-419", options)}
+                      Realizado el: {lastOrder.data?.order_date_of_ord.toLocaleDateString(options.localDate, options.options)}
                     </Text>
                   </View>
                   <View style={[
@@ -140,7 +122,7 @@ export default function Profilesr() {
                         fontWeight: "bold"
                       }}
                     >
-                      {lastOrder.data?.order_date_of_ord.toLocaleTimeString("es-419")}
+                      {lastOrder.data?.order_date_of_ord.toLocaleTimeString(options.localDate)}
                     </Text>
                   </View>
                 </View>
@@ -316,7 +298,6 @@ export default function Profilesr() {
                   deleteAllFromAsyncStorage();
                   emptyUser();
                   router.replace("/(tabs)");
-                  // window.location.reload();
                 }}>
                 <View style={[styles.container, { gap: 12 }]}>
                   <Ionicons

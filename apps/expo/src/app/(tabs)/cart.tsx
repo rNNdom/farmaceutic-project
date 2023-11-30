@@ -44,7 +44,9 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
   const onSubmit = () => {
     if (loggedIn) {
 
-      const recipeRequired = data.some((item) => item.prod_recipe);
+      const recipeRequired = data.some((item) => item.prod_recipe === "true");
+      console.log(recipeRequired);
+      console.log(data)
       createOrder.mutate({
         user_id: Number(user?.usr_id),
         location: "Santiago",

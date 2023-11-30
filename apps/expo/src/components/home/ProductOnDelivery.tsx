@@ -7,7 +7,7 @@ import { Ionicons, Text, View } from "../../components/Themed";
 import { api } from "~/utils/api";
 import { UserContext } from "../userContext";
 import { CustomColors, CustomStyles, getCircleStyle, getStatusColor } from "~/styles/CustomStyles";
-import { DateOpctions, formatMoney } from "~/utils/formats";
+import { formatDate, formatMoney } from "~/utils/formats";
 
 export const calculatePriority = (isVip: boolean, orderDate: Date) => {
   if (isVip) {
@@ -65,7 +65,7 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
     [customer, item],
   );
 
-  const options = DateOpctions();
+  const options = formatDate();
 
 
 
@@ -168,12 +168,12 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
                   params: { ...orderdet, ...customer }
                 }} asChild
                 >
-                  <TouchableOpacity className="items-center py-3 flex-1 rounded-md" style={CustomStyles.detailButtton}>
+                  <TouchableOpacity style={CustomStyles.detailButtton}>
                     <Text style={CustomStyles.buttontext}>Detalles</Text>
                   </TouchableOpacity>
                 </Link>
 
-                <TouchableOpacity onPress={upOrder} className="items-center py-3 flex-1 rounded-md mb-3" style={CustomStyles.cancelButton}>
+                <TouchableOpacity onPress={upOrder} style={CustomStyles.cancelButton}>
                   <Text style={CustomStyles.buttontext}>Aceptar</Text>
                 </TouchableOpacity>
               </View>

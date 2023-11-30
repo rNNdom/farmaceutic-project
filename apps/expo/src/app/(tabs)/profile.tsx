@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Link, router } from "expo-router";
 
 import Header from "~/components/Header";
@@ -8,6 +8,9 @@ import { deleteAllFromAsyncStorage } from "~/components/storage";
 import { UserContext } from "~/components/userContext";
 import { useContext, useEffect } from "react";
 import Loading from "~/components/loading";
+import { CustomColors, CustomStyles, getStatusColor } from "~/styles/CustomStyles";
+import { formatDate, formatStatus } from "~/utils/formats";
+import ViewIconCard from "~/components/ViewIconCard";
 
 
 export default function Profilesr() {
@@ -23,6 +26,18 @@ export default function Profilesr() {
     }
   );
 
+  const aux = {
+    ...lastOrder.data?.OrderDetail.at(0),
+    order_date_of_ord: lastOrder.data?.order_date_of_ord,
+    order_location: lastOrder.data?.order_location,
+    order_status: lastOrder.data?.order_status,
+    prf_lastname: lastOrder.data?.order_delivery ? lastOrder.data?.delivery_user?.profile.prf_lastname : null,
+    prf_name: lastOrder.data?.order_delivery ? lastOrder.data?.delivery_user?.profile.prf_name : null,
+    prf_phone: lastOrder.data?.order_delivery ? lastOrder.data?.delivery_user?.profile.prf_phone : null,
+    prf_email: lastOrder.data?.order_delivery ? lastOrder.data.delivery_user?.usr_email : null,
+
+  }
+
   useEffect(() => {
     if (getProfile.isSuccess) {
       addProfile(getProfile.data)
@@ -31,27 +46,8 @@ export default function Profilesr() {
   }, [getProfile.isSuccess, getProfile.isError, profile]);
 
 
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
+  const options = formatDate()
 
-  const getStatusColor = (status: any) => {
-    switch (status) {
-      case 'PENDING':
-        return 'yellow';
-      case 'DELIVERING':
-        return '#1969a3'; // colorcustom
-      case 'DELIVERED':
-        return 'green';
-      case 'CANCELED':
-        return 'red';
-      default:
-        return '#1969a3'; // colorcustom
-    }
-  };
 
   return (
     <>
@@ -59,209 +55,175 @@ export default function Profilesr() {
         <Loading />
       ) : (
         <>
-          <View
-            style={{
-              backgroundColor: "#fff",
-              height: "100%",
-            }}
-          >
+          <View>
             <Header />
-            <View
-              style={{
-                paddingHorizontal: 12,
-                paddingTop: 8,
-                paddingBottom: 18,
-              }}
-            >
-              <Text style={[styles.title, styles.colorcustom]}>
-                Hola, {profile?.prf_name} {profile?.prf_lastname}
-              </Text>
-            </View>
-
-            <View style={styles.card}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: "500",
-                }}
-              >
-                Ultimo pedido:
-                <Text
-                  style={[
-                    styles.settingtext,
-                    {
-                      fontWeight: "500",
-                      gap: 12,
-                      color: getStatusColor(lastOrder.data?.order_status),
-                    }
-                  ]}
-                >
-                  {lastOrder.data?.order_status}
+            <View>
+              <View className="px-4 pt-2 pb-2">
+                <Text className="text-2xl font-extrabold" style={CustomStyles.textProduct}>
+                  Hola, {profile?.prf_name} {profile?.prf_lastname}
                 </Text>
-              </Text>
-              <View
-                style={[
-                  styles.container,
-                  {
-                    gap: 18,
-                  },
-                ]}
-              >
-                <View>
-                  <View>
-                    <Text
-                      style={{
-                        opacity: 0.5,
+              </View>
+              {/* Card */}
+              <View className="flex-row mx-1 my-2 px-1 shadow-sm rounded-xl" style={CustomStyles.card} >
+                <View className="flex-1 m-1">
+                  <View className="flex-row items-center">
+                    <Text className="mr-1 ">
+                      Ultimo pedido:
+                    </Text>
+                    <Text className="font-bold uppercase text-xl"
+                      style={
+                        {
+                          color: getStatusColor(lastOrder.data?.order_status),
+                        }
+                      }
+                    >
+                      {formatStatus(lastOrder.data?.order_status)}
+                    </Text>
+                  </View>
+                  <ViewIconCard data={[lastOrder.data?.order_date_of_ord.toLocaleDateString(options.localDate, options.options)]} icon="calendar-sharp" />
+                  <ViewIconCard data={[lastOrder.data?.order_date_of_ord.toLocaleTimeString(options.localDate)]} icon="time-sharp" />
 
-                      }}
-                    >
-                      Realizado el: {lastOrder.data?.order_date_of_ord.toLocaleDateString("es-419", options)}
-                    </Text>
-                  </View>
-                  <View style={[
-                    styles.container,
-                    {
-                      gap: 12,
-                      flexDirection: "row",
-                    },
-                  ]}>
-                    <View >
-                      <Ionicons
-                        name="time-outline"
-                        size={26}
-                        style={{
-                          opacity: 0.3,
-                        }}
-                      />
-                    </View>
-                    <Text
-                      style={{
-                        opacity: 0.5,
-                        fontWeight: "bold"
-                      }}
-                    >
-                      {lastOrder.data?.order_date_of_ord.toLocaleTimeString("es-419")}
-                    </Text>
-                  </View>
+                  <Link href={{
+                    pathname: "/(tabs)/productOrderDetails",
+                    params: { ...aux }
+                  }}
+                    asChild
+                  >
+                    <TouchableOpacity className="mt-1 pt-1 pb-1">
+                      <View className="ml-1 flex-row bg-transparent">
+                        <View className="flex-row mr-2 bg-transparent">
+                          <Ionicons
+                            name="eye-outline"
+                            size={24}
+                            style={{ color: CustomColors.Bice_blue }}
+                          />
+                        </View>
+
+                        <Text className="font-bold">
+                          Hacer Seguimiento
+                        </Text>
+
+                        <View className="flex-1 items-end bg-transparent">
+                          <Ionicons
+                            name="chevron-forward-outline"
+                            size={26}
+                            style={{
+                              opacity: 0.3,
+                            }}
+                          />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </Link>
                 </View>
               </View>
-              <Link href={{
-                pathname: "/(tabs)/productOrderDetails",
-                params: { ...lastOrder.data?.OrderDetail.at(0) }
-              }}
-                asChild
-              >
-                <TouchableOpacity style={[styles.container, styles.settingcard, styles.ordercard]}>
-                  <View
-                    style={[
-                      styles.container,
-                      {
-                        gap: 12,
-                      },
-                    ]}
-                  >
-                    <Ionicons
-                      name="eye-outline"
-                      size={24}
-                      style={styles.colorcustom}
-                    />
-                    <Text style={[styles.settingtext, styles.colorcustom]}>
-                      Hacer Seguimiento
-                    </Text>
-                    <View style={styles.arrowicon}>
-                      <Ionicons
-                        name="chevron-forward-outline"
-                        size={26}
-                        style={{
-                          opacity: 0.3,
-                        }}
-                      />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </Link>
-            </View>
+              {/* END CARD */}
 
-            <View
-              style={{
-                flex: 1,
-                paddingVertical: 12,
-              }}
-            >
-              <View style={styles.separator} />
-              <Link
-                href={{
-                  pathname: "/(tabs)/myOrders",
-                }}
-                asChild
-              >
-                <TouchableOpacity style={[styles.container, styles.settingcard]}>
-                  <View
-                    style={[
-                      styles.container,
-                      {
-                        gap: 12,
-                        flexDirection: "row",
-                      },
-                    ]}
+              <View style={CustomStyles.separator} />
+              {/* OPTIONS */}
+              <View className="flex-row mx-1 my-2 px-1 shadow-sm rounded-xl">
+                <View className="flex-1 m-1" >
+                  <Link
+                    href={{
+                      pathname: "/(tabs)/myOrders",
+                    }}
+                    asChild
                   >
-                    <Ionicons
-                      name="cart-outline"
-                      size={26}
-                      style={styles.colorcustom}
-                    />
-                    <Text style={[styles.settingtext, styles.colorcustom]}>
-                      Mis Pedidos
-                    </Text>
-                    <View style={styles.arrowicon}>
-                      <Ionicons
-                        name="chevron-forward-outline"
-                        size={26}
-                        style={{
-                          opacity: 0.3,
-                        }}
-                      />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </Link>
-              <View style={styles.separator} />
-              <Link
-                href={{
-                  pathname: "/(tabs)/editProfile",
-                }}
-                asChild
-              >
-                <TouchableOpacity style={[styles.container, styles.settingcard]}>
-                  <View
-                    style={[
-                      styles.container,
-                      {
-                        gap: 12,
-                      },
-                    ]}
+                    <TouchableOpacity className="mt-1 pt-1 pb-1">
+                      <View className="ml-1 flex-row bg-transparent">
+                        <View className="flex-row mr-2 bg-transparent">
+                          <Ionicons
+                            name="cart-outline"
+                            size={26}
+                            style={{ color: CustomColors.Bice_blue }}
+                          />
+                        </View>
+                        <Text className="font-bold">
+                          Mis Pedidos
+                        </Text>
+                        <View className="flex-1 items-end bg-transparent" >
+                          <Ionicons
+                            name="chevron-forward-outline"
+                            size={26}
+                            style={{
+                              opacity: 0.3,
+                            }}
+                          />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </Link>
+                  <View style={CustomStyles.separator} />
+                  <Link
+                    href={{
+                      pathname: "/(tabs)/editProfile",
+                    }}
+                    asChild
                   >
-                    <Ionicons
-                      name="person-outline"
-                      size={24}
-                      style={styles.colorcustom}
-                    />
-                    <Text style={[styles.settingtext, styles.colorcustom]}>
-                      Mis Datos
-                    </Text>
-                    <View style={styles.arrowicon}>
-                      <Ionicons
-                        name="chevron-forward-outline"
-                        size={26}
-                        style={{
-                          opacity: 0.3,
-                        }}
-                      />
+                    <TouchableOpacity className="mt-1 pt-1 pb-1">
+                      <View className="ml-1 flex-row bg-transparent">
+                        <View className="flex-row mr-2 bg-transparent">
+                          <Ionicons
+                            name="person-outline"
+                            size={24}
+                            style={{ color: CustomColors.Bice_blue }}
+                          />
+                        </View>
+                        <Text className="font-bold">
+                          Mis Datos
+                        </Text>
+                        <View className="flex-1 items-end bg-transparent" >
+                          <Ionicons
+                            name="chevron-forward-outline"
+                            size={26}
+                            style={{
+                              opacity: 0.3,
+                            }}
+                          />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </Link>
+                  <View style={CustomStyles.separator} />
+                  <TouchableOpacity className="mt-1 pt-1 pb-1"
+                    onPress={() => {
+                      setToken("");
+                      deleteAllFromAsyncStorage();
+                      emptyUser();
+                      router.replace("/(tabs)");
+                    }}>
+                    <View className="ml-1 flex-row bg-transparent">
+                      <View className="flex-row mr-2 bg-transparent">
+                        <Ionicons
+                          name="log-out-outline"
+                          size={26}
+                          style={{
+                            color: CustomColors.Engineering_orange,
+                          }}
+                        />
+                      </View>
+                      <Text className="font-bold" style={{ color: CustomColors.Engineering_orange }}>
+                        Cerrar Sesion
+                      </Text>
+                      <View className="flex-1 items-end bg-transparent" >
+                        <Ionicons
+                          name="chevron-forward-outline"
+                          size={26}
+                          style={{
+                            opacity: 0.3,
+                          }}
+                        />
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </Link>
-              {/* <View style={styles.separator} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              {/*END OPTIONS */}
+            </View>
+            <View style={CustomStyles.separator} />
+
+
+            {/* <View style={styles.separator} />
               <Link href="/(tabs)/myProfile" asChild>
                 <TouchableOpacity style={[styles.container, styles.settingcard]}>
                   <View style={[styles.container, { gap: 12 }]}>
@@ -285,7 +247,7 @@ export default function Profilesr() {
                   </View>
                 </TouchableOpacity>
               </Link> */}
-              {/* <View style={styles.separator} />
+            {/* <View style={styles.separator} />
               <Link href="/(tabs)/myProfile" asChild>
                 <TouchableOpacity style={[styles.container, styles.settingcard]}>
                   <View style={[styles.container, { gap: 12 }]}>
@@ -309,118 +271,10 @@ export default function Profilesr() {
                   </View>
                 </TouchableOpacity>
               </Link> */}
-              <View style={styles.separator} />
-              <TouchableOpacity style={[styles.container, styles.settingcard]}
-                onPress={() => {
-                  setToken("");
-                  deleteAllFromAsyncStorage();
-                  emptyUser();
-                  router.replace("/(tabs)");
-                  // window.location.reload();
-                }}>
-                <View style={[styles.container, { gap: 12 }]}>
-                  <Ionicons
-                    name="log-out-outline"
-                    size={26}
-                    style={{
-                      color: "#ff0000",
-                    }}
-                  />
-                  <Text style={[styles.container, { gap: 19, color: "#ff0000" }]}>
-                    Cerrar Sesion
-                  </Text>
-                </View>
-                <Ionicons
-                  name="chevron-forward-outline"
-                  size={26}
-                  style={{
-                    opacity: 0.3,
-                  }}
-                />
-              </TouchableOpacity>
-              <View style={styles.separator} />
-            </View>
+
           </View>
         </>
       )}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 26,
-    fontWeight: "500",
-  },
-  separator: {
-    height: 0.8,
-    width: "100%",
-    marginVertical: 8,
-    backgroundColor: "#1969a3",
-  },
-  home: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  current: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginHorizontal: 18,
-    marginVertical: 8,
-    opacity: 0.5,
-  },
-  colorcustom: {
-    color: "#1969a3",
-  },
-  image: {
-    width: 150,
-    height: 150,
-  },
-  card: {
-    marginHorizontal: 12,
-    marginVertical: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  ordercard: {
-    gap: 12,
-    paddingVertical: 8,
-    backgroundColor: "#1969a3ba",
-    borderRadius: 8,
-    marginTop: 12,
-    paddingHorizontal: 12,
-
-  },
-  settingcard: {
-    justifyContent: "space-between",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    alignItems: "flex-end",
-    width: "100%",
-  },
-  settingtext: {
-    fontSize: 18,
-    fontWeight: "400",
-    textAlign: "center",
-  },
-  arrowicon: {
-    position: "absolute",
-    right: 0,
-    marginRight: 12,
-    backgroundColor: "transparent"
-  },
-});

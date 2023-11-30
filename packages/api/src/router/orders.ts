@@ -109,6 +109,34 @@ export const orderRouter = createTRPCRouter({
         orderBy: { order_date_of_ord: "desc" },
         include: {
           OrderDetail: true,
+          delivery_user: {
+            select:{
+              usr_email:true,
+              profile: {
+                select: {
+                  prf_lastname: true,
+                  prf_name: true,
+                  prf_phone: true,
+                },
+              }
+            }
+          }
+        },
+      });
+    }),
+  getLastDeliverOrder: publicProcedure
+    .input(
+      z.object({
+        idCustomer: z.number(),
+      }),
+    )
+
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.order.findFirst({
+        where: { order_delivery: input.idCustomer },
+        orderBy: { order_date_of_ord: "desc" },
+        include: {
+          OrderDetail: true,
         },
       });
     }),
