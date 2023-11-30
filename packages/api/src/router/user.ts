@@ -34,4 +34,38 @@ export const userRouter = createTRPCRouter({
         user: updateUser,
       };
     }),
+  getDeliversData: publicProcedure.query(async ({ ctx }) => {
+    const profiles = await ctx.prisma.user.findMany({
+      where: { usr_role: "DELIVER" },
+      select: {
+        usr_status: true,
+        profile: {
+          select: {
+            prf_name: true,
+            prf_phone: true,
+          },
+        },
+        Order_Delivery: {
+          where: { order_status: "DELIVERED" },
+          select: {
+            OrderDetail: true,
+          },
+        },
+      },
+    });
+    return profiles.map((profile) => {
+      const {
+        usr_status,
+        profile: { prf_name, prf_phone },
+        Order_Delivery,
+      } = profile;
+      const totalOrders = Order_Delivery.length;
+      return {
+        usr_status,
+        prf_name,
+        prf_phone,
+        totalOrders,
+      };
+    });
+  }),
 });
