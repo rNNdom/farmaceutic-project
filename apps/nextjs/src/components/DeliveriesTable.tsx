@@ -36,64 +36,35 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
+import { api } from "~/utils/api";
+import { $Enums } from "@acme/db";
 
-const data: Payment[] = [
-  {
-    name: "Luis",
-    sales: 316,
-    status: "Reparto",
-    number: "+56964897165",
-  },
-  {
-    name: "Esteban",
-    sales: 242,
-    status: "Reparto",
-    number: "+56964897165",
-  },
-  {
-    name: "Vicente",
-    sales: 837,
-    status: "Reparto",
-    number: "+56964897165",
-  },
-  {
-    name: "Diego",
-    sales: 874,
-    status: "Reparto",
-    number: "+56964897165",
-  },
-  {
-    name: "Juan",
-    sales: 721,
-    status: "Reparto",
-    number: "+56964897165",
-  },
-];
-
-export interface Payment {
-  name: string;
-  sales: number;
-  status: "Reparto" | "Descanso" | "Disponible";
-  number: string;
+interface Dealers {
+  usr_status: $Enums.UserStatus;
+  prf_name: string;
+  prf_phone: string;
+  totalOrders: number;
 }
 
-export const columns: ColumnDef<Payment>[] = [
+
+
+export const columns: ColumnDef<Dealers>[] = [
   {
     id: "select",
     header: () => <></>,
     cell: () => <></>,
   },
   {
-    accessorKey: "name",
+    accessorKey: "prf_name",
     header: () => <p className="text-black">Trabajador</p>,
     cell: ({ row }) => (
       <div className="text-muted-foreground capitalize">
-        {row.getValue("name")}
+        {row.getValue("prf_name")}
       </div>
     ),
   },
   {
-    accessorKey: "sales",
+    accessorKey: "totalOrders",
     header: ({ column }) => {
       return (
         <span className="flex w-full items-center justify-center text-black">
@@ -109,19 +80,19 @@ export const columns: ColumnDef<Payment>[] = [
     },
     cell: ({ row }) => (
       <div className="text-muted-foreground flex items-center justify-center font-medium">
-        {row.getValue("sales")}
+        {row.getValue("totalOrders")}
       </div>
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: "usr_status",
     header: () => (
       <div className="flex items-center justify-center font-medium text-black">
         Estado
       </div>
     ),
     cell: ({ row }) => {
-      const status: string = row.getValue("status");
+      const status: string = row.getValue("usr_status");
 
       return (
         <div className="flex items-center justify-center rounded-full bg-yellow-100 p-1 font-medium uppercase text-amber-700">
@@ -131,14 +102,14 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
   {
-    accessorKey: "number",
+    accessorKey: "prf_phone",
     header: () => (
       <div className="flex items-center justify-center font-medium text-black">
         Contacto
       </div>
     ),
     cell: ({ row }) => {
-      const contact: string = row.getValue("number");
+      const contact: string = row.getValue("prf_phone");
 
       return (
         <div className="text-muted-foreground flex items-center justify-center font-medium">
@@ -173,7 +144,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export function DeliveriesTable() {
+export function DeliveriesTable () {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -181,6 +152,7 @@ export function DeliveriesTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const data = api.user.getDeliversData.useQuery().data ?? [];
 
   const table = useReactTable({
     data,
@@ -205,10 +177,10 @@ export function DeliveriesTable() {
     <div className="rounded-md">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter por nombre..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          placeholder="Filtrar por nombre..."
+          value={(table.getColumn("prf_name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("prf_name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -224,9 +196,9 @@ export function DeliveriesTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}
