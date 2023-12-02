@@ -3,30 +3,33 @@
     "version": ">= 3.3.0"
   },
   "build": {
-    "base": {
-      "node": "18.16.1",
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium"
       }
     },
-    "development": {
-      "extends": "base",
-      "developmentClient": true,
-      "distribution": "internal"
-    },
     "preview": {
-      "extends": "base",
       "distribution": "internal",
       "ios": {
-        "simulator": true
+        "simulator": true,
+        "resourceClass": "m-medium"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "DATABASE_URL": "url del .env",
+        
       }
     },
     "production": {
-      "extends": "base"
-    },
-    "preview-android": {
-      "android": {
-        "buildType": "apk"
+      "distribution": "internal",
+      "env": {
+        "DATABASE_URL": "la url del .env",
+         
+       
       }
     }
   },
