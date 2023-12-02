@@ -1,4 +1,5 @@
 import React from "react";
+import Constants from "expo-constants";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
@@ -19,7 +20,9 @@ const getBaseUrl = () => {
   //     "Failed to get localhost. Please point to your production server.",
   //   );
   // }
-  return `https://localhost:3000`;
+  // return `http://${localhost}:3000`;
+  return 'https://farmaceutic-project-nextjs.vercel.app';
+
 };
 
 
