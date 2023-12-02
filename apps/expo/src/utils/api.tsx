@@ -1,13 +1,10 @@
-import React, { useContext } from "react";
-import Constants from "expo-constants";
+import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import superjson from "superjson";
 import type { AppRouter } from "@acme/api";
 import { getTokenFromAsyncStorage } from "~/components/storage";
-import { UserContext } from "~/components/userContext";
-
 export const api = createTRPCReact<AppRouter>();
 export { type RouterInputs, type RouterOutputs } from "@acme/api";
 
@@ -22,7 +19,7 @@ const getBaseUrl = () => {
   //     "Failed to get localhost. Please point to your production server.",
   //   );
   // }
-  return `https://farmaceutic-project-nextjs.vercel.app`;
+  return `https://localhost:3000`;
 };
 
 
