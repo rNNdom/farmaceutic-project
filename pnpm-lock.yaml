@@ -106,7 +106,7 @@ importers:
         version: 3.22.1(react-native@0.72.6)(react@18.2.0)
       react-native-star-rating-widget:
         specifier: ^1.7.2
-        version: 1.7.3(react-native-svg@13.14.0)(react-native@0.72.6)(react@18.2.0)
+        version: 1.7.3(react-native-svg@13.9.0)(react-native@0.72.6)(react@18.2.0)
       react-native-svg:
         specifier: ^13.9.0
         version: 13.9.0(react-native@0.72.6)(react@18.2.0)
@@ -7237,7 +7237,7 @@ packages:
     hasBin: true
     dev: false
 
-  /expo-file-system@15.4.5(expo@49.0.20):
+  /expo-file-system@15.4.5(expo@49.0.21):
     resolution: {integrity: sha512-xy61KaTaDgXhT/dllwYDHm3ch026EyO8j4eC6wSVr/yE12MMMxAC09yGwy4f7kkOs6ztGVQF5j7ldRzNLN4l0Q==}
     peerDependencies:
       expo: '*'
@@ -11207,7 +11207,7 @@ packages:
       warn-once: 0.1.1
     dev: false
 
-  /react-native-star-rating-widget@1.7.3(react-native-svg@13.14.0)(react-native@0.72.6)(react@18.2.0):
+  /react-native-star-rating-widget@1.7.3(react-native-svg@13.9.0)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-5XY05vezOs21S+jSItgLHH5LoIRpCrSKbELPnkW+ct8yt0Nqs7w3HzeHMhX9TDW2BT7fkcT3rW6x9AVFKLb3zA==}
     engines: {node: '>= 16.0.0'}
     peerDependencies:
