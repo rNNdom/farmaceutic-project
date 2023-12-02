@@ -1,6 +1,5 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Link, router } from "expo-router";
-
 import Header from "~/components/Header";
 import { setToken, api } from "~/utils/api";
 import { Ionicons, Text, View } from "../../components/Themed";
@@ -11,6 +10,7 @@ import Loading from "~/components/loading";
 import { formatDate, formatStatus } from "~/utils/formats";
 import { CustomColors, CustomStyles, getStatusColor } from "~/styles/CustomStyles";
 import ViewIconCard from "~/components/ViewIconCard";
+import EmptyCardOrder from "~/components/EmptyCardOrder";
 
 
 export default function Profilesr() {
@@ -22,9 +22,11 @@ export default function Profilesr() {
   );
   const lastOrder = api.orders.getLastDeliverOrder.useQuery(
     {
-      idCustomer: Number(user?.usr_id),
+      idDeliver: Number(getProfile.data?.usr_id),
     }
   );
+
+
 
   const aux = {
     ...lastOrder.data?.OrderDetail.at(0),
@@ -43,7 +45,7 @@ export default function Profilesr() {
       addProfile(getProfile.data)
     }
     getProfile.isError && console.log(getProfile.error.message);
-  }, [getProfile.isSuccess, getProfile.isError, profile]);
+  }, [getProfile.isSuccess, getProfile.isError, lastOrder.isSuccess, lastOrder.isError]);
 
 
   const options = formatDate()
@@ -63,59 +65,66 @@ export default function Profilesr() {
                 </Text>
               </View>
               {/* Card */}
-              <View className="flex-row mx-1 my-2 px-1 shadow-sm rounded-xl" style={CustomStyles.card} >
-                <View className="flex-1 m-1">
-                  <View className="flex-row items-center">
-                    <Text className="mr-1 ">
-                      Ultimo pedido:
-                    </Text>
-                    <Text className="font-bold uppercase text-xl"
-                      style={
-                        {
-                          color: getStatusColor(lastOrder.data?.order_status),
-                        }
-                      }
-                    >
-                      {formatStatus(lastOrder.data?.order_status)}
-                    </Text>
-                  </View>
-                  <ViewIconCard data={[lastOrder.data?.order_date_of_ord.toLocaleDateString(options.localDate, options.options)]} icon="calendar-sharp" />
-                  <ViewIconCard data={[lastOrder.data?.order_date_of_ord.toLocaleTimeString(options.localDate)]} icon="time-sharp" />
-
-                  <Link href={{
-                    pathname: "/(tabs)/productOrderDetails",
-                    params: { ...aux }
-                  }}
-                    asChild
-                  >
-                    <TouchableOpacity className="mt-1 pt-1 pb-1">
-                      <View className="ml-1 flex-row bg-transparent">
-                        <View className="flex-row mr-2 bg-transparent">
-                          <Ionicons
-                            name="eye-outline"
-                            size={24}
-                            style={{ color: CustomColors.Bice_blue }}
-                          />
-                        </View>
-
-                        <Text className="font-bold">
-                          Hacer Seguimiento
+              {lastOrder.data ? (
+                <>
+                  <View className="flex-row mx-1 my-2 px-1 shadow-sm rounded-xl" style={CustomStyles.card} >
+                    <View className="flex-1 m-1">
+                      <View className="flex-row items-center">
+                        <Text className="mr-1 ">
+                          Ultimo pedido:
                         </Text>
-
-                        <View className="flex-1 items-end bg-transparent">
-                          <Ionicons
-                            name="chevron-forward-outline"
-                            size={26}
-                            style={{
-                              opacity: 0.3,
-                            }}
-                          />
-                        </View>
+                        <Text className="font-bold uppercase text-xl"
+                          style={
+                            {
+                              color: getStatusColor(lastOrder.data?.order_status),
+                            }
+                          }
+                        >
+                          {formatStatus(lastOrder.data?.order_status)}
+                        </Text>
                       </View>
-                    </TouchableOpacity>
-                  </Link>
-                </View>
-              </View>
+                      <ViewIconCard data={[lastOrder.data?.order_date_of_ord.toLocaleDateString(options.localDate, options.options)]} icon="calendar-sharp" />
+                      <ViewIconCard data={[lastOrder.data?.order_date_of_ord.toLocaleTimeString(options.localDate)]} icon="time-sharp" />
+
+                      <Link href={{
+                        pathname: "/(tabs)/productOrderDetails",
+                        params: { ...aux }
+                      }}
+                        asChild
+                      >
+                        <TouchableOpacity className="mt-1 pt-1 pb-1">
+                          <View className="ml-1 flex-row bg-transparent">
+                            <View className="flex-row mr-2 bg-transparent">
+                              <Ionicons
+                                name="eye-outline"
+                                size={24}
+                                style={{ color: CustomColors.Bice_blue }}
+                              />
+                            </View>
+
+                            <Text className="font-bold">
+                              Hacer Seguimiento
+                            </Text>
+
+                            <View className="flex-1 items-end bg-transparent">
+                              <Ionicons
+                                name="chevron-forward-outline"
+                                size={26}
+                                style={{
+                                  opacity: 0.3,
+                                }}
+                              />
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      </Link>
+                    </View>
+                  </View>
+
+                </>
+              ) : (
+                <EmptyCardOrder />
+              )}
               {/* END CARD */}
 
               <View style={CustomStyles.separator} />
@@ -124,7 +133,7 @@ export default function Profilesr() {
                 <View className="flex-1 m-1" >
                   <Link
                     href={{
-                      pathname: "/(tabs)/myOrders",
+                      pathname: "/(repartidor)/DeliverOrders",
                     }}
                     asChild
                   >

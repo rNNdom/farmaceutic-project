@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Text, View } from "../../components/Themed";
 
@@ -20,7 +20,7 @@ interface CartItemProps {
 const EmptyComponent = () => {
   return (
     <View className="items-center content-center flex-1 bg-transparent">
-      <Text className="text-xl font-medium m-3">No hay productos en el carrito.</Text>
+      <Text className="text-xl font-medium m-3">No hay Ordenes disponibles.</Text>
     </View>
   );
 };

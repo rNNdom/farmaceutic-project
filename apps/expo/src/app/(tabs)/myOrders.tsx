@@ -1,10 +1,9 @@
-import { FlatList, StyleSheet } from "react-native";
-
+import { FlatList } from "react-native";
 import Header from "~/components/Header";
 import ProductOrder from "~/components/home/ProductOrder";
 import { Text, View } from "../../components/Themed";
 import { api } from "~/utils/api";
-import {  useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Loading from "~/components/loading";
 import { UserContext } from "~/components/userContext";
 
@@ -40,7 +39,7 @@ export default function MyOrders() {
   );
 }
 
-const CartItem = ({data, setIsDeleted}) => {
+const CartItem = ({ data, setIsDeleted }) => {
   return (
     <FlatList
       data={data}
@@ -56,39 +55,10 @@ const CartItem = ({data, setIsDeleted}) => {
 
 const EmptyComponent = () => {
   return (
-    <View style={styles.empty}>
-      <Text style={{ fontSize: 20, fontWeight: "500", margin: 10 }}>
+    <View className="flex-1 justify-center bg-transparent items-center">
+      <Text className="text-xl font-medium m-3">
         No hay pedidos disponibles.
       </Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  pay: {
-    backgroundColor: "#1969a3",
-    padding: 10,
-    borderRadius: 8,
-    marginHorizontal: 10,
-    marginBottom: 10,
-    alignItems: "center",
-  },
-  empty: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  vaciar: {
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "flex-end",
-  },
-});
-
-function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}

@@ -46,6 +46,7 @@ const getPriorityText = (priority: number) => {
 
 export default function ProductOnDelivery({ setIsChange, ...item }) {
   const [showText, setShowText] = useState(false);
+  const [orderStatus, setOrderStatus] = useState('PENDING');
   const { user } = useContext(UserContext);
   const order = item as Order;
   const updateOrder = api.orders.updateOrder.useMutation();
@@ -81,10 +82,30 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
 
 
   const upOrder = () => {
+    let nextStatus: "PENDING" | "DELIVERING" | "DELIVERED" | "CANCELED";
+
+    // Cambiar el estado en función del estado actual
+    switch (order.order_status) {
+      case "PENDING":
+        nextStatus = "DELIVERING";
+        break;
+      case "DELIVERING":
+        nextStatus = "DELIVERED";
+        break;
+      case "DELIVERED":
+        nextStatus = "CANCELED";
+        break;
+      case "CANCELED":
+        nextStatus = "PENDING";
+        break;
+      default:
+        nextStatus = "PENDING";
+    }
+
     updateOrder.mutate({
       idDeliver: Number(user?.usr_id),
       idOrder: Number(order.order_id),
-      status: 'DELIVERING'
+      status: nextStatus
     })
   }
 
@@ -101,7 +122,7 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
   return (
     <Link
       href={{
-        pathname: "/(repartidor)/productOnDeliveryDetails",
+        pathname: "/(tabs)/productOrderDetails",
         params: { ...aux }
       }}
       asChild
@@ -110,7 +131,7 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
         <View className="flex-1 rounded-xl">
           <View className="rounded-xl bg-transparent flex-row content-center items-center">
             <Image source={image} className="w-28 h-28" />
-            <View className="flex-col justify-between mx-2 my-3 pr-3 flex-1">
+            <View className="flex-col justify-between mx-2 my-3 pr-3 flex-1 bg-transparent">
               <TouchableOpacity className="absolute top-0 right-0 w-9 h-9 rounded-full z-10 justify-center items-center"
                 onPress={handlePress}
               >
@@ -151,7 +172,7 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
               )}
 
               <View className="flex-row ml-1 bg-transparent" >
-                <View className="mr-2">
+                <View className="mr-2 bg-transparent">
                   <Ionicons
                     name="cash-outline"
                     size={26}

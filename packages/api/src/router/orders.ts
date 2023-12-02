@@ -1,10 +1,9 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedDeliveryProcedure,
-  publicProcedure,
-} from "../trpc";
+
+
+import { createTRPCRouter, protectedDeliveryProcedure, publicProcedure } from "../trpc";
+
 
 export const orderRouter = createTRPCRouter({
   getOrder: publicProcedure
@@ -63,6 +62,30 @@ export const orderRouter = createTRPCRouter({
 
       return order;
     }),
+  getAllOrdersByDeliverId: publicProcedure
+    .input(
+      z.object({
+        idDeliver: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const order = await ctx.prisma.order.findMany({
+        where: { order_delivery: input.idDeliver },
+        orderBy: { order_date_of_ord: "asc" },
+        include: {
+          user: {
+            select: {
+              usr_vip: true,
+              usr_email: true,
+              profile: true,
+            },
+          },
+          OrderDetail: true,
+        },
+      });
+
+      return order;
+    }),
   getAllOrderforDeliver: publicProcedure
     .input(
       z.object({
@@ -110,47 +133,52 @@ export const orderRouter = createTRPCRouter({
         include: {
           OrderDetail: true,
           delivery_user: {
-            select:{
-              usr_email:true,
+            select: {
+              usr_email: true,
               profile: {
                 select: {
                   prf_lastname: true,
                   prf_name: true,
                   prf_phone: true,
                 },
-              }
-            }
-          }
+              },
+            },
+          },
         },
       });
     }),
   getLastDeliverOrder: publicProcedure
     .input(
       z.object({
-        idCustomer: z.number(),
+        idDeliver: z.number(),
       }),
     )
 
     .query(async ({ ctx, input }) => {
-      return await ctx.prisma.order.findFirst({
-        where: { order_delivery: input.idCustomer },
+      const order = await ctx.prisma.order.findFirst({
+        where: { order_delivery: input.idDeliver },
         orderBy: { order_date_of_ord: "desc" },
         include: {
           OrderDetail: true,
           user: {
-            select:{
-              usr_email:true,
+            select: {
+              usr_email: true,
               profile: {
                 select: {
                   prf_lastname: true,
                   prf_name: true,
                   prf_phone: true,
                 },
-              }
-            }
-          }
+              },
+            },
+          },
         },
       });
+      if (!order) {
+        throw new Error("No se encontraron pedidos");
+      }
+
+      return order;
     }),
   updateOrder: protectedDeliveryProcedure
     .input(

@@ -78,7 +78,7 @@ const EditProfile = () => {
             color: CustomColors.Bice_blue,
           }}
         >
-          My Perfil
+          Mi Perfil
         </Text>
         <View className="gap-4">
           <View className="gap-3 mr-2">
