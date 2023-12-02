@@ -23,10 +23,7 @@ import { api } from "~/utils/api";
 import { $Enums } from "@acme/db";
 import { columns } from "~/utils/lists";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
+
 export interface Payment {
   order_id: number;
   order_det_total: number;
@@ -38,6 +35,13 @@ export interface Payment {
 function TablePaymentsData () {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const data: Payment[] = api.orders.getOrdersForTable.useQuery().data ?? [];
+  // function TablePaymentsData () {
+  //   const [sorting, setSorting] = React.useState<SortingState>([]);
+  //   const data: Payment[] = api.orders.getOrdersForTable.useQuery(undefined, {
+  //     refetchInterval () {
+  //       return 1000;
+  //     },
+  //   }).data ?? [];
 
   const table = useReactTable({
     data,
@@ -50,7 +54,6 @@ function TablePaymentsData () {
       sorting,
     },
   });
-
   return (
     <>
       <div className="rounded-md border">

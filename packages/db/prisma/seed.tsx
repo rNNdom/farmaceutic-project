@@ -8,7 +8,7 @@ async function main () {
     data: {
       user: {
         connect: {
-          usr_id: 12,
+          usr_id: 16,
         },
       },
       delivery_user: {
@@ -16,11 +16,11 @@ async function main () {
           usr_id: 13,
         },
       },
-      order_location: "Santiago",
+      order_location: "Temuco",
       OrderDetail: {
         create: {
           order_det_total: 2000,
-          order_det_recipe: true,
+          order_det_recipe: false,
           ProductOrderDetail: {
             create: {
               quantity: 2,
@@ -37,11 +37,11 @@ async function main () {
   });
 }
 main()
-    .then(async () => {
-        await prisma.$disconnect();
-    })
-    .catch(async (e) => {
-        console.error(e);
-        await prisma.$disconnect();
-        process.exit(1);
-    });
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

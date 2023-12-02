@@ -7,8 +7,6 @@ import {
 } from "../trpc";
 
 export const orderRouter = createTRPCRouter({
-  //create me a procedure that gets me all the orders even when order_delivery is null
-
   getOrdersForTable: publicProcedure.query(async ({ ctx }) => {
     const orders = await ctx.prisma.order.findMany({
       include: {
@@ -33,7 +31,6 @@ export const orderRouter = createTRPCRouter({
         },
       },
     });
-
     return orders.map((order) => {
       const {
         order_id,
