@@ -106,4 +106,3 @@ model Profile {
     prf_phone    String
     Users        User[]
 }
-

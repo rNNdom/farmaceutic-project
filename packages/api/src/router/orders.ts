@@ -6,6 +6,58 @@ import { createTRPCRouter, protectedDeliveryProcedure, publicProcedure } from ".
 
 
 export const orderRouter = createTRPCRouter({
+  //create me a procedure that gets me all the orders even when order_delivery is null
+
+  getOrdersForTable: publicProcedure.query(async ({ ctx }) => {
+    const orders = await ctx.prisma.order.findMany({
+      include: {
+        user: {
+          select: {
+            profile: true,
+          },
+        },
+        delivery_user: {
+          select: {
+            profile: true,
+          },
+        },
+        OrderDetail: {
+          include: {
+            ProductOrderDetail: {
+              include: {
+                Product: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return orders.map((order) => {
+      const {
+        order_id,
+        order_status,
+        user: {
+          profile: { prf_name: userName },
+        },
+        delivery_user,
+        OrderDetail: [{ order_det_total } = {} as { order_det_total: number }],
+      } = order;
+
+      const deliveryUserName = delivery_user
+        ? delivery_user.profile.prf_name
+        : "Sin asignar";
+
+      return {
+        order_id,
+        order_status,
+        user_name: userName,
+        delivery_user_name: deliveryUserName,
+        order_det_total,
+      };
+    });
+  }),
+
   getOrder: publicProcedure
     .input(
       z.object({
