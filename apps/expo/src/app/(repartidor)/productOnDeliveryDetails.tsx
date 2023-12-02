@@ -9,6 +9,7 @@ import Loading from "~/components/loading";
 import Header from "~/components/Header";
 import OrderProductDetail from "~/components/home/OrderDetail";
 import { formatMoney } from "~/utils/formats";
+import OrderDetailCard from "~/components/OrderDetailCard";
 
 
 interface CartItemProps {
@@ -24,12 +25,6 @@ const EmptyComponent = () => {
   );
 };
 
-const calculateTotal = (data: any[]) => {
-  return data.reduce((acc: any, item: any) => {
-    return acc + item.prod_price * item.onCartQuantity;
-  }, 0);
-};
-
 
 
 const CartItem = ({ prodDet, orderDet }: CartItemProps) => {
@@ -40,7 +35,7 @@ const CartItem = ({ prodDet, orderDet }: CartItemProps) => {
         renderItem={({ item }) => <OrderProductDetail item={item.Product} quantity={item.quantity} />}
         keyExtractor={(item: any) => item.prod_id}
       />
-      <View className="flex-col justify-between items-center mx-3 my-3">
+      <View className="rounded-md flex-col justify-between items-center mx-3 my-3">
         <Text className="text-xl font-medium m-3">Total: {formatMoney(orderDet.order_det_total)}</Text>
       </View>
     </>
@@ -67,7 +62,10 @@ export default function OrderDetail() {
           {prodDet.length === 0 ? (
             <EmptyComponent />
           ) : (
-            <CartItem prodDet={prodDet} orderDet={_item} />
+            <>
+              <OrderDetailCard {..._item} />
+              <CartItem prodDet={prodDet} orderDet={_item} />
+            </>
           )}
         </>
       )}

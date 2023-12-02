@@ -137,6 +137,18 @@ export const orderRouter = createTRPCRouter({
         orderBy: { order_date_of_ord: "desc" },
         include: {
           OrderDetail: true,
+          user: {
+            select:{
+              usr_email:true,
+              profile: {
+                select: {
+                  prf_lastname: true,
+                  prf_name: true,
+                  prf_phone: true,
+                },
+              }
+            }
+          }
         },
       });
     }),

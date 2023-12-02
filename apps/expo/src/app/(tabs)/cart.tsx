@@ -45,8 +45,6 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
     if (loggedIn) {
 
       const recipeRequired = data.some((item) => item.prod_recipe === "true");
-      console.log(recipeRequired);
-      console.log(data)
       createOrder.mutate({
         user_id: Number(user?.usr_id),
         location: "Santiago",

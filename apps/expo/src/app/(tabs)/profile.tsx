@@ -103,15 +103,15 @@ export default function Profilesr() {
                           Hacer Seguimiento
                         </Text>
 
-                        <View className="flex-1 items-end bg-transparent">
-                          <Ionicons
-                            name="chevron-forward-outline"
-                            size={26}
-                            style={{
-                              opacity: 0.3,
-                            }}
-                          />
-                        </View>
+                      </View>
+                      <View className="flex-1 items-end bg-transparent">
+                        <Ionicons
+                          name="chevron-forward-outline"
+                          size={26}
+                          style={{
+                            opacity: 0.3,
+                          }}
+                        />
                       </View>
                     </TouchableOpacity>
                   </Link>

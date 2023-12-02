@@ -16,7 +16,7 @@ const ViewIconCard = ({ data, icon }: { data: any[], icon: string }) => {
                 />
             </View>
             {data.map((item, index) => (
-                <Text key={index} className="font-bold pr-1" style={{ color: CustomColors.Dark_purple }} selectable>{item}</Text>
+                <Text key={index} className="capitalize font-bold pr-1" style={{ color: CustomColors.Dark_purple }} selectable>{item}</Text>
             ))}
         </View>
     )

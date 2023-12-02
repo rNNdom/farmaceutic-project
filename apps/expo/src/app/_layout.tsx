@@ -15,7 +15,7 @@ import {
 import { TRPCProvider } from "~/utils/api";
 import { CartProvider } from "../components/context";
 import { UserContext, UserProvider } from "~/components/userContext";
-import { getTokenFromAsyncStorage, getContentFromAsyncStorage, deleteAllFromAsyncStorage } from "~/components/storage";
+import { getTokenFromAsyncStorage, getContentFromAsyncStorage } from "~/components/storage";
 
 // ----------
 
@@ -25,7 +25,7 @@ import {
 
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)/profile",
+  initialRouteName: "(tabs)/index",
 };
 
 SplashScreen.preventAutoHideAsync();

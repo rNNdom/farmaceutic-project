@@ -1,5 +1,4 @@
-import { StyleSheet, TouchableOpacity } from "react-native"
-import { Ionicons, Text, View } from "../components/Themed"
+import {  Text, View } from "../components/Themed"
 import { CustomStyles, getStatusColor } from "~/styles/CustomStyles"
 import { formatDate, formatStatus } from "~/utils/formats"
 import ViewIconCard from "./ViewIconCard"
@@ -22,7 +21,6 @@ interface OrderDetailCardProps {
 const OrderDetailCard = (item: OrderDetailCardProps) => {
     const options = formatDate()
     const date = new Date(item?.order_date_of_ord)
-    console.log(item)
 
     return (
 

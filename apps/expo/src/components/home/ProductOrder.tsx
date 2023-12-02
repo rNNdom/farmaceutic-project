@@ -75,9 +75,7 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
           <View className="rounded-xl bg-transparent">
             <TouchableOpacity
               className="absolute top-0 right-0 w-9 h-9 rounded-full z-10 justify-center items-center"
-              onPress={handlePress}
-
-            >
+              onPress={handlePress}>
               <View style={getCircleStyle(orderdet?.order_det_recipe)} />
               {showText && (
                 <Text className="absolute top-0 -right-1 w-32 h-5">
