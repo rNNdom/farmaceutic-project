@@ -1,9 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, LayoutPanelLeft, User, Users } from "lucide-react";
-
+import { ArrowUpDown, Bell, CircleDashed, LayoutPanelLeft, User, Users } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
-import { Payment } from "~/components/TablePaymentsData";
+import { Payment } from "~/components/tables/TablePaymentsData";
 import DropdownOrderActions from "~/components/DropdownOrderActions";
 
 export const NavItems = [
@@ -51,27 +50,27 @@ export const NavItems = [
 const setColor = (status: string) => {
   switch (status) {
     case "Pendiente":
-      return "bg-yellow-400";
+      return "bg-amber-200";
     case "En camino":
-      return "bg-blue-400";
+      return "bg-cyan-300";
     case "Entregado":
-      return "bg-green-400";
+      return "bg-green-500";
     case "Cancelado":
-      return "bg-red-400";
+      return "bg-red-500";
     default:
       return "bg-yellow-400";
   }
 }
 const checkIfLate = (status: string) => {
   if (status === "on_time") {
-    return <div className="rounded-full p-2 w-2 bg-green-700" />
+    return null;
   }
   if (status === "not_vip") {
     return null;
 
   }
   if (status === "late") {
-    return <div className="rounded-full p-2 w-2 bg-red-700" />
+    return <Bell color="red" width={20} />
   }
   return null;
 }
@@ -147,7 +146,7 @@ export const columns: ColumnDef<Payment>[] = [
     header: () => <p className="text-black">Miembro</p>,
     cell: ({ row }) => (
       <div className="text-muted-foreground capitalize">
-        {row.getValue("user_name")}
+        {row.getValue("usr_vip") ? "Si" : "No"}
       </div>
     ),
   },
@@ -179,7 +178,8 @@ export const columns: ColumnDef<Payment>[] = [
     },
     cell: ({ row }) => (
       <div
-        className={`flex items-center justify-center rounded-full p-1 font-medium uppercase text-white ${setColor(row.getValue("order_status"))}`}
+        style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}
+        className={`flex items-center justify-center rounded-full p-1 font-medium uppercase text-card-foreground text-white border  ${setColor(row.getValue("order_status"))}`}
       >
         {row.getValue("order_status")}
       </div>
@@ -198,9 +198,9 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "order_late",
-    header: () => <></>,
+    header: () => <p className="text-black flex justify-center">Prioridad</p>,
     cell: ({ row }) => (
-      <div className="">
+      <div className="flex justify-center">
         {checkIfLate(row.getValue("order_late"))}
       </div>
     ),
@@ -227,8 +227,13 @@ export const profileFormData = [
     type: "email",
   },
   {
-    name: "pass",
-    labelName: "Contraseña",
+    name: "oldpass",
+    labelName: "Contraseña Actual",
+    type: "password",
+  },
+  {
+    name: "newpass",
+    labelName: "Nueva Contraseña",
     type: "password",
   },
   {

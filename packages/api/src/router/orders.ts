@@ -86,6 +86,7 @@ export const orderRouter = createTRPCRouter({
             : "on_time"
           : "not_vip",
         order_time: order_date_of_ord,
+        usr_vip,
       };
     });
   }),

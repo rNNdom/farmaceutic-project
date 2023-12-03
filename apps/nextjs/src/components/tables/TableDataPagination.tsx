@@ -6,20 +6,20 @@ import {
 } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 
 interface TableDataPaginationProps<TData> {
   table: Table<TData>;
 }
 
-export function TableDataPagination<TData>({
+export function TableDataPagination<TData> ({
   table,
 }: TableDataPaginationProps<TData>) {
   return (

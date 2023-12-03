@@ -62,7 +62,8 @@ export default function ProfileInfo() {
       name: values.name,
       lastname: values.lastname,
       email: values.email,
-      pass: values.pass,
+      oldpass: values.pass,
+      newpass: values.pass,
       phone: values.phone,
     })
 

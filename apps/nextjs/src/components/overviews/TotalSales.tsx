@@ -55,7 +55,7 @@ function TotalSales () {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatter.format(lastItem)}</div>
-            <p className="text-muted-foreground text-xs">
+            <p className={`text-muted-foreground text-xs ${percentage > 0 ? "text-green-500" : "text-red-500"}`}>
               {percentage > 0 ? `+${percentage.toFixed(2)}%` : `-${percentage.toFixed(2)}%`} desde el mes anterior{" "}
             </p>
           </CardContent>

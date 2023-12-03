@@ -1,7 +1,7 @@
 'use client'
 import { Tabs, TabsContent } from '@radix-ui/react-tabs'
 import React from 'react'
-import { UsersTable } from '~/components/UsersTable'
+import { UsersTable } from '~/components/tables/UsersTable'
 import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card'
 import withAuth from '~/components/withAuth'
 

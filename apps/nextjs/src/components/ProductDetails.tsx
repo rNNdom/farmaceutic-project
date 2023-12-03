@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { TableDataPagination } from "./TableDataPagination";
+import { TableDataPagination } from "./tables/TableDataPagination";
 import type {
   ColumnDef,
   ColumnFiltersState,

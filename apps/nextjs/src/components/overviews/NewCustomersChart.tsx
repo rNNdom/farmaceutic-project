@@ -46,7 +46,7 @@ export function NewCustomersChart ({ data }: {
           axisLine={false}
           tickFormatter={(value) => `${value}`}
         />
-        <Bar dataKey="value" barSize={27} fill="#7dd3fc" />
+        <Bar dataKey="value" barSize={35} fill="#7dd3fc" />
         <Tooltip content={ToolTipContent} />
       </BarChart>
     </ResponsiveContainer>
