@@ -147,7 +147,7 @@ export const columns: ColumnDef<Payment>[] = [
     header: () => <p className="text-black">Miembro</p>,
     cell: ({ row }) => (
       <div className="text-muted-foreground capitalize">
-        {row.getValue("user_name")}
+        {row.getValue("usr_vip") ? "Si" : "No"}
       </div>
     ),
   },
