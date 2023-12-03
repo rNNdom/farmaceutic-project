@@ -3,7 +3,7 @@ import type { ExpoConfig } from "@expo/config";
 const CLERK_PUBLISHABLE_KEY =
   "pk_test_b3B0aW11bS1tYXJ0ZW4tNTkuY2xlcmsuYWNjb3VudHMuZGV2JA";
 const defineConfig = (): ExpoConfig => ({
-  name: "expo",
+  name: "farmaceutic-app",
   slug: "expo",
   scheme: "expo",
   version: "1.0.0",
@@ -28,7 +28,7 @@ const defineConfig = (): ExpoConfig => ({
       foregroundImage: "./assets/icon.png",
       backgroundColor: "#1F104A",
     },
-    package: "fama.app.pene",
+    package: "fama.app.farmaceutic",
     versionCode: 1,
     userInterfaceStyle: "light",
   },

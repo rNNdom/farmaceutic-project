@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
-import { Order, ProductOrderDetail } from "~/utils/interface";
+import { Order } from "~/utils/interface";
 import { Ionicons, Text, View } from "../Themed";
 import { api } from "~/utils/api";
+import { CustomColors, CustomStyles, getStatusColor } from "~/styles/CustomStyles";
+import { formatDate, formatMoney, formatStatus } from "~/utils/formats";
+import ViewDate from "../ViewDate";
+import ViewIconCard from "../ViewIconCard";
 
 
 
@@ -15,26 +19,28 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
   const customer = order.user;
   const orderdet = order.OrderDetail.at(0);
   const delivery = order.delivery_user;
+  const aux = {
+    ...orderdet,
+    order_date_of_ord: order.order_date_of_ord,
+    order_location: order.order_location,
+    order_status: order.order_status,
+    prf_lastname: delivery ? delivery.profile?.prf_lastname : null,
+    prf_name: delivery ? delivery.profile?.prf_name : null,
+    prf_phone: delivery ? delivery.profile?.prf_phone : null,
+    prf_email: delivery ? delivery.usr_email : null,
+  }
 
-
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-
+  const options = formatDate()
 
   const handlePress = () => {
     setShowText(!showText);
   };
 
-  const getRecipeText = (recipe: boolean) => {
-    if (recipe) {
+  const getRecipeText = (isrecipe: boolean) => {
+    if (isrecipe) {
       return "Con receta";
-    } else {
-      return "Sin receta";
     }
+    return "Sin receta";
   };
 
   const deleteOrder = () => {
@@ -52,131 +58,93 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
 
   }, [deleteOrders.isSuccess, deleteOrders.isError])
 
-  const getStatusColor = (status: any) => {
-    switch (status) {
-      case 'PENDING':
-        return 'yellow';
-      case 'DELIVERING':
-        return '#1969a3'; // colorcustom
-      case 'DELIVERED':
-        return 'green';
-      case 'CANCELED':
-        return 'red';
-      default:
-        return '#1969a3'; // colorcustom
-    }
-  };
+
 
   return (
     <Link
       href={{
         pathname: "/(tabs)/productOrderDetails",
-        params: { ...orderdet },
+        params: {
+          ...aux,
+        }
       }}
       asChild
     >
-      <TouchableOpacity>
-        <View style={styles.container}>
-          <View style={styles.row}>
-            <View style={styles.column}>
-              <View>
-                <View>
-                  <TouchableOpacity
-                    onPress={handlePress}
-                    style={styles.pressableArea}
-                  >
-                    <View style={getCircleStyle(orderdet?.order_det_recipe)} />
-                    {showText && (
-                      <Text style={styles.priorityText}>
-                        {getRecipeText(orderdet?.order_det_recipe)}
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                  <Text
-                    style={[
-                      styles.settingtext,
-                      {
-                        fontWeight: "500",
-                        gap: 12,
-                        color: getStatusColor(order.order_status),
-                      }
-                    ]}
-                  >
-                    {order.order_status}
-                  </Text>
-                  <View style={[
-                    {
-                      gap: 12,
-                      flexDirection: "row",
-                    },
-                  ]}>
-                    <View >
-                      <Ionicons
-                        name="calendar-sharp"
-                        size={26}
-                        style={{
-                          opacity: 0.3,
-                        }}
-                      />
-                    </View>
-                    <Text
-                      style={styles.date}
-                    >
-                      {order.order_date_of_ord.toLocaleDateString("es-419", options)}
-                    </Text>
-                  </View>
-                  <View style={[
-                    {
-                      gap: 12,
-                      flexDirection: "row",
-                    },
-                  ]}>
-                    <View >
-                      <Ionicons
-                        name="time-sharp"
-                        size={26}
-                        style={{
-                          opacity: 0.3,
-                        }}
-                      />
-                    </View>
-                    <Text
-                      style={styles.date}
-                    >
-                      {order.order_date_of_ord.toLocaleTimeString("es-419")}
-                    </Text>
-                  </View>
-                  {delivery && (
-                    <Text style={[styles.title]}>
-                      Repartidor: {delivery.profile?.prf_name} {delivery.profile?.prf_lastname}
-                    </Text>
-                  )}
-                  <Text style={styles.address}>{order.order_location}</Text>
-                  {customer.usr_vip && (
-                    <Text style={styles.vip}>Cliente VIP</Text>
-                  )}
-                </View>
+      <TouchableOpacity className="flex-row mx-1 my-2 px-1 shadow-sm rounded-xl" style={CustomStyles.card} >
+        <View className="flex-1 rounded-xl">
+          <View className="rounded-xl bg-transparent">
+            <TouchableOpacity
+              className="absolute top-0 right-0 w-9 h-9 rounded-full z-10 justify-center items-center"
+              onPress={handlePress}>
+              <View style={getCircleStyle(orderdet?.order_det_recipe)} />
+              {showText && (
+                <Text className="absolute top-0 -right-1 w-32 h-5">
+                  {getRecipeText(orderdet?.order_det_recipe)}
+                </Text>
+              )}
+            </TouchableOpacity>
+            <Text className="font-bold uppercase text-xl ml-2"
+              style={{ color: getStatusColor(order.order_status) }}>
+              {formatStatus(order.order_status)}
+            </Text>
+            <ViewIconCard data={[order.order_date_of_ord.toLocaleDateString(options.localDate, options.options)]} icon="calendar-sharp" />
+            <ViewIconCard data={[order.order_date_of_ord.toLocaleTimeString(options.localDate)]} icon="time-sharp" />
+          </View>
+
+          {delivery && (
+            <>
+              <ViewIconCard data={[delivery.profile?.prf_name, delivery.profile?.prf_lastname]} icon="person-outline" />
+            </>
+          )}
+
+          <ViewIconCard data={[order.order_location]} icon="map-outline" />
+
+          {customer.usr_vip && (
+            <View className="flex-row ml-1" >
+              <View className="mr-2">
+                <Ionicons
+                  name="flash-outline"
+                  size={26}
+                  style={{
+                    opacity: 0.3,
+                  }}
+                />
               </View>
-              <Text style={styles.money}>
-                {formatMoney(orderdet?.order_det_total)}
-              </Text>
-              <View style={styles.row}>
-                <Link href={{
-                  pathname: "/(tabs)/productOrderDetails",
-                  params: { ...orderdet },
-                }}
-                  asChild>
-                  <TouchableOpacity style={styles.detailsButton}>
-                    <Text style={styles.buttonText}>Detalles</Text>
-                  </TouchableOpacity>
-                </Link>
-                {order.order_status === "PENDING" && (
-                  <TouchableOpacity onPress={deleteOrder} style={styles.acceptButton}>
-                    <Text style={styles.buttonText}>Cancelar</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+              <Text style={CustomStyles.isVip} >Cliente VIP</Text>
             </View>
+          )}
+
+
+          <View className="flex-row ml-1 bg-transparent" >
+            <View className="mr-2">
+              <Ionicons
+                name="cash-outline"
+                size={26}
+                style={{
+                  opacity: 0.3,
+                }}
+              />
+            </View>
+            <Text style={CustomStyles.textMoney}>
+              {formatMoney(orderdet?.order_det_total)}
+            </Text>
+          </View>
+
+          <View className="flex-row mt-2 px-5 py-2 bg-transparent">
+            {/* <Link href={{
+              pathname: "/(tabs)/productOrderDetails",
+              params: { ...aux },
+            }}
+              asChild>
+              <TouchableOpacity style={CustomStyles.detailButtton}>
+                <Text style={{ color: CustomColors.White }} >Detalles</Text>
+              </TouchableOpacity>
+            </Link> */}
+            {order.order_status === "PENDING" && (
+              <TouchableOpacity onPress={deleteOrder} style={CustomStyles.cancelButton}>
+                <Text style={{ color: CustomColors.White }}>Cancelar</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </TouchableOpacity>
@@ -184,19 +152,13 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
   );
 }
 
-function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}
+
 
 const getCircleStyle = (recipe: boolean) => {
   if (recipe) {
-    return styles.redcicle;
-  } else {
-    return styles.greencicle;
+    return CustomStyles.redcicle;
   }
+  return CustomStyles.greencicle;
 };
 
 const cicle = {
@@ -216,136 +178,3 @@ const colors = {
   white: "white",
   red: ""
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  row: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  column: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    flex: 1,
-    paddingVertical: 15,
-  },
-  image: {
-    width: 120,
-    height: 120,
-  },
-  colorcustom: {
-    color: "#1969a3",
-  },
-  money: {
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "500",
-  },
-  margin: {
-    margin: 10,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  date: {
-    opacity: 0.5,
-    fontWeight: "bold",
-  },
-  address: {
-    fontSize: 14,
-  },
-  vip: {
-    color: "green",
-    fontWeight: "500",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    gap: 12,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  detailsButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#2c7379",
-    flex: 1,
-    borderRadius: 8,
-  },
-  acceptButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#f0a62f",
-    flex: 1,
-    borderRadius: 8,
-  },
-  settingtext: {
-    fontSize: 18,
-    fontWeight: "400",
-    textAlign: "center",
-  },
-  buttonText: {
-    color: "white",
-  },
-  redcicle: {
-    ...cicle,
-    backgroundColor: "red",
-  },
-  greencicle: {
-    ...cicle,
-    backgroundColor: "green",
-  },
-  yellowcicle: {
-    ...cicle,
-    backgroundColor: "yellow",
-  },
-  orangecicle: {
-    ...cicle,
-    backgroundColor: "orange",
-  },
-  pressableArea: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    width: 30, // Ajusta estos valores según tus necesidades
-    height: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: "bold",
-    fontStyle: "italic",
-    color: colors.custom,
-  },
-  priorityText: {
-    position: "absolute",
-    top: -20,
-    right: -5, // Ajusta estos valores según tus necesidades
-    width: 120,
-    height: 20,
-    backgroundColor: "withe",
-    color: "black",
-  },
-});
-
-
-function useProfilebyIdRepositories(order_delivery: any): { user: any } {
-  throw new Error("Function not implemented.");
-}

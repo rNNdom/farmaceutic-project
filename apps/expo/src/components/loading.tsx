@@ -1,9 +1,10 @@
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { View } from "./Themed";
+import { CustomColors } from "~/styles/CustomStyles";
 
 export default function Loading() {
     return (
-        <View style={styles.loading}>
+        <View className="flex-1 h-52 gap-3 p-3 justify-center m-3" style={styles.loading}>
             <ActivityIndicator />
         </View>
     )
@@ -12,12 +13,7 @@ export default function Loading() {
 
 const styles = StyleSheet.create({
     loading: {
-        flex: 1,
-        backgroundColor: "#f5f5f5",
-        height: 200,
-        gap: 10,
-        padding: 10,
-        margin: 10,
-        overlayColor: "#000",
+        backgroundColor: CustomColors.White,
+        overlayColor: CustomColors.Dark_purple,
     },
 })

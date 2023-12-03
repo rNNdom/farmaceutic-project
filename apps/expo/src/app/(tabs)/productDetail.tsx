@@ -5,9 +5,9 @@ import { useRoute } from "@react-navigation/native";
 import { Product } from "~/utils/interface";
 import { CartContext } from "~/components/context";
 import Header from "~/components/Header";
-import { formatMoney } from "~/components/home/Product";
 import { Text, View } from "../../components/Themed";
 import { commonStyles, componentStyles } from "~/styles/mystyle";
+import { formatMoney } from "~/utils/formats";
 
 export default function ProductDetail() {
   const _item = useRoute().params as Product;

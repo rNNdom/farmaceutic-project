@@ -1,15 +1,16 @@
-import { StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 
 import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Link, router } from "expo-router";
-import { api, setToken } from "~/utils/api";
-import { useContext, useEffect, useState } from "react";
-import React from "react";
+import { api } from "~/utils/api";
+import React, { Children, useContext, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { setContentAsyncStorage } from "~/components/storage";
 import { UserContext } from "~/components/userContext";
 import Header from "~/components/Header";
+import KeyboardAvoidingContainer from "~/components/KeyboardAvoidingCointainer";
+import { formatPhone } from "~/utils/formats";
+import { CustomColors, CustomStyles } from "~/styles/CustomStyles";
 
 type FormData = {
   name: string;
@@ -48,20 +49,6 @@ const EditProfile = () => {
     })
   }
 
-
-
-  const formatPhone = (phone: string) => {
-    if (/^\9+?\d{8}$/.test(phone)) {
-      return '+56' + phone;
-    } else if (/^\+(569)+\d{8}$/.test(phone)) {
-      return '+' + phone;
-    } else if (/^\d{8}$/.test(phone)) {
-      return '+569' + phone;
-    } else {
-      return phone;
-    }
-  };
-
   useEffect(() => {
     if (upProfile.isSuccess) {
       updateProfile({
@@ -80,33 +67,23 @@ const EditProfile = () => {
 
 
 
+
   return (
     <>
       <Header />
+      <KeyboardAvoidingContainer children={Children} style={undefined}>
 
-      <SafeAreaView style={styles.container}>
-        <Text
+        <Text className="text-2xl font-bold py-5"
           style={{
-            color: "#1969a3",
-            fontSize: 26,
-            fontWeight: "bold",
-            paddingVertical: 18,
+            color: CustomColors.Bice_blue,
           }}
         >
-          My Perfil
+          Mi Perfil
         </Text>
-        <View
-          style={{
-            gap: 15,
-          }}
-        >
-          <View
-            style={{
-              gap: 10,
-            }}
-          >
+        <View className="gap-4">
+          <View className="gap-3 mr-2">
             <Text>Nombres</Text>
-            <View style={styles.input}>
+            <View style={CustomStyles.inputContainer}>
               <Ionicons name="ios-person-outline" size={20} />
               <Controller
                 control={control}
@@ -134,15 +111,11 @@ const EditProfile = () => {
                 }}
               />
             </View>
-            {errors.name ? <Text style={{ color: 'red' }}>{errors.name.message}</Text> : null}
+            {errors.name ? <Text style={{ color: CustomColors.Persian_red }}>{errors.name.message}</Text> : null}
           </View>
-          <View
-            style={{
-              gap: 10,
-            }}
-          >
+          <View className="gap-3 m-2">
             <Text>Apellidos</Text>
-            <View style={styles.input}>
+            <View style={CustomStyles.inputContainer}>
               <Ionicons name="ios-person-outline" size={20} />
               <Controller
                 control={control}
@@ -170,15 +143,11 @@ const EditProfile = () => {
                 }}
               />
             </View>
-            {errors.lastname ? <Text style={{ color: 'red' }}>{errors.lastname.message}</Text> : null}
+            {errors.lastname ? <Text style={{ color: CustomColors.Persian_red }}>{errors.lastname.message}</Text> : null}
           </View>
-          <View
-            style={{
-              gap: 10,
-            }}
-          >
+          <View className="gap-3 m-2">
             <Text>Correo</Text>
-            <View style={styles.input}>
+            <View style={CustomStyles.inputContainer}>
               <Ionicons name="ios-person-outline" size={20} />
               <Controller
                 control={control}
@@ -202,15 +171,11 @@ const EditProfile = () => {
                 }}
               />
             </View>
-            {errors.email ? <Text style={{ color: 'red' }}>{errors.email.message}</Text> : null}
+            {errors.email ? <Text style={{ color: CustomColors.Persian_red }}>{errors.email.message}</Text> : null}
           </View>
-          <View
-            style={{
-              gap: 10,
-            }}
-          >
+          <View className="gap-3 m-2">
             <Text>Telefono</Text>
-            <View style={styles.input}>
+            <View style={CustomStyles.inputContainer}>
               <Ionicons name="ios-person-outline" size={20} />
               <Controller
                 control={control}
@@ -236,21 +201,17 @@ const EditProfile = () => {
                     message: "Telefono debe tener menos de 12 caracteres",
                   },
                   pattern: {
-                    value: /^\d{8,11}$/,
+                    value: /^\+?\d{8,11}$/,
                     message: "Telefono invalido",
                   },
                 }}
               />
             </View>
-            {errors.phone ? <Text style={{ color: 'red' }}>{errors.phone.message}</Text> : null}
+            {errors.phone ? <Text style={{ color: CustomColors.Persian_red }}>{errors.phone.message}</Text> : null}
           </View>
-          <View
-            style={{
-              gap: 10,
-            }}
-          >
+          <View className="gap-3 m-2">
             <Text>Contraseña actual</Text>
-            <View style={styles.input}>
+            <View style={CustomStyles.inputContainer}>
               <Ionicons name="lock-closed-outline" size={20} />
               <Controller
                 control={control}
@@ -275,15 +236,11 @@ const EditProfile = () => {
                 }}
               />
             </View>
-            {errors.oldpassword ? <Text style={{ color: 'red' }}>{errors.oldpassword.message}</Text> : null}
+            {errors.oldpassword ? <Text style={{ color: CustomColors.Persian_red }}>{errors.oldpassword.message}</Text> : null}
           </View>
-          <View
-            style={{
-              gap: 10,
-            }}
-          >
+          <View className="gap-3 m-2">
             <Text>Contraseña nueva</Text>
-            <View style={styles.input}>
+            <View style={CustomStyles.inputContainer}>
               <Ionicons name="lock-closed-outline" size={20} />
               <Controller
                 control={control}
@@ -308,88 +265,30 @@ const EditProfile = () => {
                 }}
               />
             </View>
-            {errors.newpassword ? <Text style={{ color: 'red' }}>{errors.newpassword.message}</Text> : null}
+            {errors.newpassword ? <Text style={{ color: CustomColors.Persian_red }}>{errors.newpassword.message}</Text> : null}
           </View>
         </View>
 
-        <View
-          style={{
-            height: 35,
-          }}
-        ></View>
-        <View
-          style={{
-            gap: 10,
-          }}
-        >
+        <View className="h-9"></View>
+        <View className="gap-3">
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
-            style={[styles.btnPrincipal, styles.btncolorprincipal]}
+            className="p-3 rounded-md flex-row items-center gap-3 justify-center"
+            style={{ backgroundColor: CustomColors.United_nations_blue }}
           >
-            <Text style={{ color: "white" }}>Guardar</Text>
+            <Text className="mb-3" style={{ color: CustomColors.White }}>Guardar</Text>
           </TouchableOpacity>
-          {upProfile.isError && (
-            <Text style={{ color: "red" }}>{upProfile.error.message}</Text>
-          )}
-          <View>
+          <View className="justify-center items-center py-3">
+            {upProfile.isError && (
+              <Text style={{ color: CustomColors.Persian_red }}>{upProfile.error.message}</Text>
+            )}
 
           </View>
         </View>
-      </SafeAreaView>
+
+      </KeyboardAvoidingContainer>
     </>
   );
 };
 
 export default EditProfile;
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  input: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    // backgroundColor: "#E5E5E5",
-    borderColor: "#E5E5E5",
-    borderWidth: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    // justifyContent: "space-between",
-  },
-  btnPrincipal: {
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    justifyContent: "center",
-  },
-  btncolorprincipal: {
-    backgroundColor: "#1969a3",
-  },
-  btncolorsecundario: {
-    borderColor: "#1969a3",
-    borderWidth: 1,
-  },
-  icon: {
-    width: 26,
-    height: 26,
-  },
-  optionlogin: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 20,
-    borderRadius: 4,
-    borderColor: "#1969a3",
-    borderWidth: 1,
-    width: "50%",
-  },
-});
