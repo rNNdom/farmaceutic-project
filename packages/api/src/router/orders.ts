@@ -9,6 +9,7 @@ import {
 export const orderRouter = createTRPCRouter({
   getOrdersForTable: publicProcedure.query(async ({ ctx }) => {
     const orders = await ctx.prisma.order.findMany({
+      orderBy: { order_date_of_ord: "desc" },
       include: {
         user: {
           select: {
@@ -45,6 +46,13 @@ export const orderRouter = createTRPCRouter({
           return "Pendiente";
       }
     };
+    const checkIs15Minutes = (date: Date) => {
+      const dateNow = new Date();
+      const dateOrder = new Date(date);
+      const diff = dateNow.getTime() - dateOrder.getTime();
+      const minutes = Math.floor(diff / 60000);
+      return minutes >= 15;
+    };
     return orders.map((order) => {
       const {
         order_id,
@@ -54,6 +62,7 @@ export const orderRouter = createTRPCRouter({
         },
         delivery_user,
         OrderDetail: [{ order_det_total } = {} as { order_det_total: number }],
+        order_date_of_ord,
       } = order;
 
       const deliveryUserName = delivery_user
@@ -67,6 +76,9 @@ export const orderRouter = createTRPCRouter({
         user_name: userName,
         delivery_user_name: deliveryUserName,
         order_det_total,
+        order_late:
+          checkIs15Minutes(order_date_of_ord) && order_status != "DELIVERED",
+        order_time: order_date_of_ord,
       };
     });
   }),

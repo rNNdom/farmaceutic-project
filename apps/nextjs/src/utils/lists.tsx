@@ -48,13 +48,21 @@ export const NavItems = [
 
 ];
 
-
+const setColor = (status: string) => {
+  switch (status) {
+    case "Pendiente":
+      return "bg-yellow-400";
+    case "En camino":
+      return "bg-blue-400";
+    case "Entregado":
+      return "bg-green-400";
+    case "Cancelado":
+      return "bg-red-400";
+    default:
+      return "bg-yellow-400";
+  }
+}
 export const columns: ColumnDef<Payment>[] = [
-  {
-    id: "select",
-    header: () => <></>,
-    cell: () => <></>,
-  },
   {
     accessorKey: "order_id",
     header: () => <p className="text-black">N° Orden</p>,
@@ -63,12 +71,32 @@ export const columns: ColumnDef<Payment>[] = [
     ),
   },
   {
+    accessorKey: "order_time",
+    header: ({ column }) => {
+      return <Button
+        variant="ghost"
+        className="text-black -px-4"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Fecha de orden
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    },
+    cell: ({ row }) => (
+      <div className="text-muted-foreground capitalize">
+        {String(row.getValue("order_time")?.toLocaleString())}
+      </div>
+    ),
+  },
+
+  {
     accessorKey: "order_det_total",
     header: ({ column }) => {
       return (
         <span className="flex w-full items-center justify-center text-black">
           <Button
             variant="ghost"
+            className="text-black"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Precio
@@ -117,6 +145,7 @@ export const columns: ColumnDef<Payment>[] = [
       return (
         <span className="flex w-full items-center justify-center">
           <Button
+            className="text-black"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -126,29 +155,34 @@ export const columns: ColumnDef<Payment>[] = [
         </span>
       );
     },
-    cell: ({ row }) => {
-      const status: string = row.getValue("order_status");
+    cell: ({ row }) => (
+      <div
+        className={`flex items-center justify-center rounded-full p-1 font-medium uppercase text-white ${setColor(row.getValue("order_status"))}`}
+      >
+        {row.getValue("order_status")}
+      </div>
+    )
 
-      return (
-        <div
-          className="flex items-center justify-center rounded-full
-        bg-yellow-100 p-1 font-medium uppercase text-amber-700"
-        >
-          {status}
-        </div>
-      );
-    },
+  },
+  {
+    accessorKey: "order_late",
+    header: () => <></>,
+    cell: ({ row }) => (
+      <div className="text-muted-foreground capitalize">
+        {row.getValue("order_late") ? <div className="rounded-full p-2 w-2 bg-red-700" /> : <div className="rounded-full p-2 w-2 bg-green-700" />}
+      </div>
+    ),
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      //const payment = row.original
 
       return (
         <DropdownOrderActions id={row.original.order_id} />
       );
     },
-  },
+  }
+
 ];
 
 export const profileFormData = [

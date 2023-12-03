@@ -1,6 +1,6 @@
 "use client";
 
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import type { SortingState } from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -29,13 +29,18 @@ export interface Payment {
   user_name: string;
   delivery_user_name: string;
   order_status: string;
+  order_late: boolean;
+  order_time: Date;
 }
 
 function TablePaymentsData () {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const data: Payment[] = api.orders.getOrdersForTable.useQuery().data ?? [];
-  console.log(data)
+  const data = api.orders.getOrdersForTable.useQuery(undefined, {
+    refetchInterval () {
+      return 30000;
+    },
+  }).data ?? [];
 
 
   const table = useReactTable({
