@@ -7,12 +7,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { api } from "~/utils/api";
-import { groupDatesByMonth, totalSalesChartData } from "~/utils/utils";
-
-
-
-// Function to generate data in the required format
 
 
 const ToolTipContent = (props: any) => {

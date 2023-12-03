@@ -10,12 +10,9 @@ import { api } from '~/utils/api';
 import { groupDatesByMonth, totalCustomersChartData } from '~/utils/utils';
 import Loading from '../Loading';
 function NewCustomers () {
-  const users = api.user.all.useQuery();
-
-  if (!users.data) {
-    return null;
-  }
-  const chartData = users.data.map((user) => ({
+  const fetchedData = api.user.all.useQuery();
+  const users = fetchedData.data ?? []
+  const chartData = users.map((user) => ({
     createdAt: new Date(user.usr_createdAt),
   }));
   const groupedDates = groupDatesByMonth(chartData, "createdAt");
@@ -23,11 +20,10 @@ function NewCustomers () {
   const lastItem = data?.[data?.length - 1]?.value;
   const previousLastItem = data?.[data?.length - 2]?.value;
   const percentage = (lastItem - previousLastItem) / previousLastItem * 100;
-  console.log(data)
 
   return (
     <Card>
-      {users.isLoading && <Loading />}
+      {fetchedData.isLoading && <Loading />}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Nuevos clientes</CardTitle>
         <svg

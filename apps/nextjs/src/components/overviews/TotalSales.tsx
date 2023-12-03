@@ -11,30 +11,20 @@ import { api } from '~/utils/api';
 import Loading from '../Loading';
 import { groupDatesByMonth, totalSalesChartData } from '~/utils/utils';
 function TotalSales () {
-  // const getTotalPerMonth = api.orders.getTotalAmmountOrders.useQuery();
-
-  // const chartData = getTotalPerMonth.data?.map(item => ({
-  //   name: item.month,
-  //   total: item.total,
-  // }));
 
   const formatter = new Intl.NumberFormat('es-CL', {
     style: 'currency',
     currency: 'CLP',
   });
-  const ordersData = api.orders.getAllOrdersDates.useQuery();
-  if (!ordersData.data) {
-    return null;
-  }
+  const fetchedData = api.orders.getAllOrdersDates.useQuery();
+  const ordersData = fetchedData.data ?? []
 
-  // Parse and group dates by month
-  const parsedDates = ordersData.data.map(item => ({
+  const parsedDates = ordersData.map(item => ({
     order_date_of_ord: new Date(item.order_date_of_ord),
     OrderDetail: item.OrderDetail,
   }));
   const groupedDates = groupDatesByMonth(parsedDates, "order_date_of_ord");
 
-  // Generate chart data
   const chartData = totalSalesChartData(groupedDates);
   const lastItem = chartData?.[chartData?.length - 1]?.value;
   const previousLastItem = chartData?.[chartData?.length - 2]?.value;
@@ -44,7 +34,7 @@ function TotalSales () {
 
   return (
     <Card>
-      {ordersData.isLoading && <Loading />}
+      {fetchedData.isLoading && <Loading />}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">
           Ingresos totales
