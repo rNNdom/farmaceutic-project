@@ -31,6 +31,20 @@ export const orderRouter = createTRPCRouter({
         },
       },
     });
+    const parseOrderStatus = (status: any) => {
+      switch (status) {
+        case "PENDING":
+          return "Pendiente";
+        case "DELIVERING":
+          return "En camino";
+        case "DELIVERED":
+          return "Entregado";
+        case "CANCELED":
+          return "Cancelado";
+        default:
+          return "Pendiente";
+      }
+    };
     return orders.map((order) => {
       const {
         order_id,
@@ -46,9 +60,10 @@ export const orderRouter = createTRPCRouter({
         ? delivery_user.profile.prf_name
         : "Sin asignar";
 
+      const orderStatus = parseOrderStatus(order_status);
       return {
         order_id,
-        order_status,
+        order_status: orderStatus,
         user_name: userName,
         delivery_user_name: deliveryUserName,
         order_det_total,
@@ -82,6 +97,53 @@ export const orderRouter = createTRPCRouter({
         },
       });
       return order;
+    }),
+  getOrderDetails: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const order = await ctx.prisma.productOrderDetail.findMany({
+        where: { orderDetailId: input.id },
+        include: {
+          Product: true,
+        },
+      });
+      const userData = await ctx.prisma.order.findMany({
+        where: { order_id: input.id },
+        include: {
+          user: {
+            select: {
+              profile: true,
+            },
+          },
+          delivery_user: {
+            select: {
+              profile: true,
+            },
+          },
+        },
+      });
+      const profileUser = userData.map((order) => order.user.profile);
+      const profileDelivery = userData.map((order) => order.delivery_user);
+      const orderData =
+        order.map((item) => {
+          return {
+            prod_id: item.Product.prod_id,
+            prod_name: item.Product.prod_name,
+            prod_price: item.Product.prod_price,
+            quantity: item.quantity,
+            prod_recipe: item.Product.prod_recipe,
+          };
+        }) ?? [];
+      const data = {
+        orderData,
+        profileUser,
+        profileDelivery,
+      };
+      return data;
     }),
   getAllOrder: publicProcedure
     .input(

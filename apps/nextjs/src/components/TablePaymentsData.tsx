@@ -20,7 +20,6 @@ import {
   TableRow,
 } from "./ui/table";
 import { api } from "~/utils/api";
-import { $Enums } from "@acme/db";
 import { columns } from "~/utils/lists";
 
 
@@ -29,19 +28,15 @@ export interface Payment {
   order_det_total: number;
   user_name: string;
   delivery_user_name: string;
-  order_status: $Enums.OrderStatus;
+  order_status: string;
 }
 
 function TablePaymentsData () {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const data: Payment[] = api.orders.getOrdersForTable.useQuery().data ?? [];
-  // function TablePaymentsData () {
-  //   const [sorting, setSorting] = React.useState<SortingState>([]);
-  //   const data: Payment[] = api.orders.getOrdersForTable.useQuery(undefined, {
-  //     refetchInterval () {
-  //       return 1000;
-  //     },
-  //   }).data ?? [];
+  console.log(data)
+
 
   const table = useReactTable({
     data,

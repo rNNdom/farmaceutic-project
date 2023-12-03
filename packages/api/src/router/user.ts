@@ -53,15 +53,29 @@ export const userRouter = createTRPCRouter({
         },
       },
     });
+    const parseUserStatus = (status: string) => {
+      switch (status) {
+        case "UNAVAILABLE":
+          return "Sin disponibilidad";
+        case "DELIVERING":
+          return "En entrega";
+        case "AVAILABLE":
+          return "Disponible";
+        default:
+          return "Usuario normal";
+      }
+    };
     return profiles.map((profile) => {
       const {
         usr_status,
         profile: { prf_name, prf_phone },
         Order_Delivery,
       } = profile;
+      const orderStatus = parseUserStatus(usr_status);
+
       const totalOrders = Order_Delivery.length;
       return {
-        usr_status,
+        usr_status: orderStatus,
         prf_name,
         prf_phone,
         totalOrders,

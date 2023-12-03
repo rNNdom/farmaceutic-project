@@ -2,15 +2,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, LayoutPanelLeft, User, Users } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
+
 import { Payment } from "~/components/TablePaymentsData";
+import DropdownOrderActions from "~/components/DropdownOrderActions";
 
 export const NavItems = [
   {
@@ -147,24 +141,11 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
       //const payment = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <span className="h-4 w-4">···</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Ver detalle del pedido</DropdownMenuItem>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <DropdownOrderActions id={row.original.order_id} />
       );
     },
   },
