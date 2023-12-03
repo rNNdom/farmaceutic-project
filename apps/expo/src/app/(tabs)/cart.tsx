@@ -8,6 +8,7 @@ import { Text, View } from "../../components/Themed";
 import { api } from "~/utils/api";
 import { UserContext } from "~/components/userContext";
 import { useRouter } from "expo-router";
+import { QueryClient } from "@tanstack/react-query";
 
 
 interface CartItemProps {
@@ -40,6 +41,7 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
   const { loggedIn, user } = useContext(UserContext);
   const createOrder = api.orders.createOrder.useMutation();
   const router = useRouter();
+  const utils = api.useUtils();
 
   const onSubmit = () => {
     if (loggedIn) {
@@ -56,6 +58,10 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
             quantity: Number(item.onCartQuantity),
           };
         }),
+      }, {
+        onSuccess: () => {
+          utils.orders.getOrdersForTable.invalidate();
+        }
       })
       return
     }
@@ -93,7 +99,7 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
 
 
 
-export default function CatalogoScreen() {
+export default function CatalogoScreen () {
   const { cart, emptyCart } = useContext(CartContext);
   return (
     <>
@@ -152,7 +158,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function formatMoney(number: number) {
+function formatMoney (number: number) {
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
     currency: "CLP",

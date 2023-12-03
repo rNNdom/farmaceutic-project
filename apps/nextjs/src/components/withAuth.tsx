@@ -7,7 +7,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { isAdmin, isLogged } from "~/atoms";
 import { api } from "~/utils/api";
 
-function withAuth (Component: React.ComponentType) {
+function withAuth (Component: any) {
   return function AuthComponent (props: any) {
     const getSession = api.auth.getSession.useQuery();
 

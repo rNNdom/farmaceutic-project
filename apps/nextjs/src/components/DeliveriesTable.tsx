@@ -40,7 +40,7 @@ import { api } from "~/utils/api";
 import { $Enums } from "@acme/db";
 
 interface Dealers {
-  usr_status: $Enums.UserStatus;
+  usr_status: string;
   prf_name: string;
   prf_phone: string;
   totalOrders: number;

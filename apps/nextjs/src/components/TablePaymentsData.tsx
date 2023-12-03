@@ -1,6 +1,6 @@
 "use client";
 
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import type { SortingState } from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -20,25 +20,29 @@ import {
   TableRow,
 } from "./ui/table";
 import { api } from "~/utils/api";
-import { $Enums } from "@acme/db";
 import { columns } from "~/utils/lists";
+import Loading from "./Loading";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
+
 export interface Payment {
   order_id: number;
   order_det_total: number;
   user_name: string;
   delivery_user_name: string;
-  order_status: $Enums.OrderStatus;
+  order_status: string;
+  order_late: string;
+  order_time: Date;
 }
 
 function TablePaymentsData () {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const data: Payment[] = api.orders.getOrdersForTable.useQuery().data ?? [];
 
+  const orders = api.orders.getOrdersForTable.useQuery(undefined, {
+    refetchInterval () {
+      return 30000;
+    },
+  });
+  const data = orders.data ?? [];
   const table = useReactTable({
     data,
     columns,
@@ -50,6 +54,7 @@ function TablePaymentsData () {
       sorting,
     },
   });
+  if (orders.isLoading) return <Loading />
 
   return (
     <>

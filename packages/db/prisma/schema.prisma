@@ -11,6 +11,7 @@ generator client {
 model User {
     usr_id         Int        @id @default(autoincrement())
     usr_email      String     @unique
+    usr_createdAt  DateTime   @default(now())
     usr_pass       String
     usr_role       Role       @default(USER)
     usr_profile    Int

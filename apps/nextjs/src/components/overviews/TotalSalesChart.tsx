@@ -1,5 +1,4 @@
-"use client";
-
+// Import necessary libraries and components
 import {
   Bar,
   BarChart,
@@ -8,57 +7,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { api } from "~/utils/api";
+import { groupDatesByMonth, totalSalesChartData } from "~/utils/utils";
 
-const data = [
-  {
-    name: "Ene",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Abr",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Ago",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Sep",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Oct",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Nov",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Dic",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-];
+
+
+// Function to generate data in the required format
+
 
 const ToolTipContent = (props: any) => {
   if (!props.active || !props.payload) return;
@@ -74,10 +29,26 @@ const ToolTipContent = (props: any) => {
   );
 };
 
-export function Overview() {
+// Main component
+export function TotalSalesChart () {
+  const ordersData = api.orders.getAllOrdersDates.useQuery();
+  if (!ordersData.data) {
+    return null;
+  }
+
+  // Parse and group dates by month
+  const parsedDates = ordersData.data.map(item => ({
+    order_date_of_ord: new Date(item.order_date_of_ord),
+    OrderDetail: item.OrderDetail,
+  }));
+  const groupedDates = groupDatesByMonth(parsedDates, "order_date_of_ord");
+
+  // Generate chart data
+  const chartData = totalSalesChartData(groupedDates);
+
   return (
     <ResponsiveContainer width="100%" height={120}>
-      <BarChart data={data}>
+      <BarChart data={chartData}>
         <XAxis
           dataKey="name"
           stroke="#888888"

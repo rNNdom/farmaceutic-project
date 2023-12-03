@@ -3,7 +3,6 @@ import React from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
@@ -15,7 +14,6 @@ function Payments () {
       <Card className="col-span-3">
         <CardHeader className="px-8 pt-8">
           <CardTitle>Reporte detallado</CardTitle>
-          <CardDescription>Se vendieron 200 productos este mes</CardDescription>
         </CardHeader>
         <CardContent className="p-8 pt-0">
           <TablePaymentsData />
