@@ -30,25 +30,17 @@ const ToolTipContent = (props: any) => {
 };
 
 // Main component
-export function TotalSalesChart () {
-  const ordersData = api.orders.getAllOrdersDates.useQuery();
-  if (!ordersData.data) {
-    return null;
-  }
+export function TotalSalesChart ({ data }: {
+  data: {
+    name: string;
+    value: any;
+  }[]
+}) {
 
-  // Parse and group dates by month
-  const parsedDates = ordersData.data.map(item => ({
-    order_date_of_ord: new Date(item.order_date_of_ord),
-    OrderDetail: item.OrderDetail,
-  }));
-  const groupedDates = groupDatesByMonth(parsedDates, "order_date_of_ord");
-
-  // Generate chart data
-  const chartData = totalSalesChartData(groupedDates);
 
   return (
     <ResponsiveContainer width="100%" height={120}>
-      <BarChart data={chartData}>
+      <BarChart data={data}>
         <XAxis
           dataKey="name"
           stroke="#888888"

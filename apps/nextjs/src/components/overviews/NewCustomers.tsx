@@ -8,6 +8,7 @@ import {
 import { NewCustomersChart } from './NewCustomersChart';
 import { api } from '~/utils/api';
 import { groupDatesByMonth, totalCustomersChartData } from '~/utils/utils';
+import Loading from '../Loading';
 function NewCustomers () {
   const users = api.user.all.useQuery();
 
@@ -26,7 +27,7 @@ function NewCustomers () {
 
   return (
     <Card>
-
+      {users.isLoading && <Loading />}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Nuevos clientes</CardTitle>
         <svg

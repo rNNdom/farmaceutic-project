@@ -60,6 +60,7 @@ function TablePaymentsData () {
     <>
       <div className="rounded-md border">
         <Table>
+          {orders.isLoading && <Loading />}
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
