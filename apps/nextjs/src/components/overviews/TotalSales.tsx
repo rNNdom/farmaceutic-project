@@ -9,25 +9,42 @@ import {
 } from "../../components/ui/card";
 import { api } from '~/utils/api';
 import Loading from '../Loading';
+import { groupDatesByMonth, totalSalesChartData } from '~/utils/utils';
 function TotalSales () {
-  const getTotalPerMonth = api.orders.getTotalAmmountOrders.useQuery();
+  // const getTotalPerMonth = api.orders.getTotalAmmountOrders.useQuery();
 
-  const chartData = getTotalPerMonth.data?.map(item => ({
-    name: item.month,
-    total: item.total,
-  }));
-
-  const lastItem = chartData?.[chartData?.length - 1]?.total;
-  const previousLastItem = chartData?.[chartData?.length - 2]?.total;
-  const percentage = (lastItem - previousLastItem) / previousLastItem * 100;
+  // const chartData = getTotalPerMonth.data?.map(item => ({
+  //   name: item.month,
+  //   total: item.total,
+  // }));
 
   const formatter = new Intl.NumberFormat('es-CL', {
     style: 'currency',
     currency: 'CLP',
   });
+  const ordersData = api.orders.getAllOrdersDates.useQuery();
+  if (!ordersData.data) {
+    return null;
+  }
+
+  // Parse and group dates by month
+  const parsedDates = ordersData.data.map(item => ({
+    order_date_of_ord: new Date(item.order_date_of_ord),
+    OrderDetail: item.OrderDetail,
+  }));
+  const groupedDates = groupDatesByMonth(parsedDates, "order_date_of_ord");
+
+  // Generate chart data
+  const chartData = totalSalesChartData(groupedDates);
+  const lastItem = chartData?.[chartData?.length - 1]?.value;
+  const previousLastItem = chartData?.[chartData?.length - 2]?.value;
+  const percentage = (lastItem - previousLastItem) / previousLastItem * 100;
+
+
+
   return (
     <Card>
-      {getTotalPerMonth.isLoading && <Loading />}
+      {ordersData.isLoading && <Loading />}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">
           Ingresos totales
@@ -46,12 +63,12 @@ function TotalSales () {
         </svg>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{formatter.format(chartData?.[chartData?.length - 1]?.total)}</div>
+        <div className="text-2xl font-bold">{formatter.format(lastItem)}</div>
         <p className="text-muted-foreground text-xs">
           {percentage > 0 ? `+${percentage.toFixed(2)}%` : `-${percentage.toFixed(2)}%`} desde el mes anterior{" "}
         </p>
       </CardContent>
-      <TotalSalesChart />
+      <TotalSalesChart data={chartData} />
     </Card>
   )
 }

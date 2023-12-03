@@ -1,9 +1,10 @@
 import { z } from "zod";
 
-
-
-import { createTRPCRouter, protectedDeliveryProcedure, publicProcedure } from "../trpc";
-
+import {
+  createTRPCRouter,
+  protectedDeliveryProcedure,
+  publicProcedure,
+} from "../trpc";
 
 export const orderRouter = createTRPCRouter({
   getOrdersForTable: publicProcedure.query(async ({ ctx }) => {
@@ -101,39 +102,6 @@ export const orderRouter = createTRPCRouter({
       },
     });
   }),
-  getTotalAmmountOrders: publicProcedure.query(async ({ ctx }) => {
-    const orderAmmounts = await ctx.prisma.order.findMany({
-      orderBy: { order_date_of_ord: "asc" },
-      select: {
-        order_date_of_ord: true,
-        OrderDetail: {
-          select: {
-            order_det_total: true,
-          },
-        },
-      },
-    });
-
-    const groupBy = (array: any, key: any) => {
-      return array.reduce((result: any, currentValue: any) => {
-        (result[currentValue[key].getMonth() + 1] =
-          result[currentValue[key].getMonth() + 1] || []).push(currentValue);
-        return result;
-      }, {});
-    };
-    const groupedItems = groupBy(orderAmmounts, "order_date_of_ord");
-    return Object.keys(groupedItems).map((key) => {
-      const total = groupedItems[key].reduce(
-        (acc: any, curr: any) => acc + curr.OrderDetail[0].order_det_total,
-        0,
-      );
-      return {
-        month: key,
-        total,
-      };
-    });
-  }),
-
   getOrder: publicProcedure
     .input(
       z.object({
