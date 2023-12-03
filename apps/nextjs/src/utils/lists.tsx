@@ -62,6 +62,19 @@ const setColor = (status: string) => {
       return "bg-yellow-400";
   }
 }
+const checkIfLate = (status: string) => {
+  if (status === "on_time") {
+    return <div className="rounded-full p-2 w-2 bg-green-700" />
+  }
+  if (status === "not_vip") {
+    return null;
+
+  }
+  if (status === "late") {
+    return <div className="rounded-full p-2 w-2 bg-red-700" />
+  }
+  return null;
+}
 export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "order_id",
@@ -129,6 +142,15 @@ export const columns: ColumnDef<Payment>[] = [
       </div>
     ),
   },
+  {
+    accessorKey: "usr_vip",
+    header: () => <p className="text-black">Miembro</p>,
+    cell: ({ row }) => (
+      <div className="text-muted-foreground capitalize">
+        {row.getValue("user_name")}
+      </div>
+    ),
+  },
 
   {
     accessorKey: "delivery_user_name",
@@ -164,15 +186,7 @@ export const columns: ColumnDef<Payment>[] = [
     )
 
   },
-  {
-    accessorKey: "order_late",
-    header: () => <></>,
-    cell: ({ row }) => (
-      <div className="text-muted-foreground capitalize">
-        {row.getValue("order_late") ? <div className="rounded-full p-2 w-2 bg-red-700" /> : <div className="rounded-full p-2 w-2 bg-green-700" />}
-      </div>
-    ),
-  },
+
   {
     id: "actions",
     cell: ({ row }) => {
@@ -181,9 +195,20 @@ export const columns: ColumnDef<Payment>[] = [
         <DropdownOrderActions id={row.original.order_id} />
       );
     },
-  }
+  },
+  {
+    accessorKey: "order_late",
+    header: () => <></>,
+    cell: ({ row }) => (
+      <div className="">
+        {checkIfLate(row.getValue("order_late"))}
+      </div>
+    ),
+  },
 
 ];
+
+
 
 export const profileFormData = [
   {

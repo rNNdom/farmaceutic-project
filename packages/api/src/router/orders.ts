@@ -14,6 +14,7 @@ export const orderRouter = createTRPCRouter({
         user: {
           select: {
             profile: true,
+            usr_vip: true,
           },
         },
         delivery_user: {
@@ -55,10 +56,12 @@ export const orderRouter = createTRPCRouter({
     };
     return orders.map((order) => {
       const {
+        order_customer,
         order_id,
         order_status,
         user: {
           profile: { prf_name: userName },
+          usr_vip,
         },
         delivery_user,
         OrderDetail: [{ order_det_total } = {} as { order_det_total: number }],
@@ -71,14 +74,63 @@ export const orderRouter = createTRPCRouter({
 
       const orderStatus = parseOrderStatus(order_status);
       return {
+        order_customer,
         order_id,
         order_status: orderStatus,
         user_name: userName,
         delivery_user_name: deliveryUserName,
         order_det_total,
-        order_late:
-          checkIs15Minutes(order_date_of_ord) && order_status != "DELIVERED",
+        order_late: usr_vip
+          ? checkIs15Minutes(order_date_of_ord) && order_status != "DELIVERED"
+            ? "late"
+            : "on_time"
+          : "not_vip",
         order_time: order_date_of_ord,
+      };
+    });
+  }),
+  getAllOrdersDates: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.order.findMany({
+      orderBy: { order_date_of_ord: "desc" },
+      select: {
+        order_date_of_ord: true,
+        OrderDetail: {
+          select: {
+            order_det_total: true,
+          },
+        },
+      },
+    });
+  }),
+  getTotalAmmountOrders: publicProcedure.query(async ({ ctx }) => {
+    const orderAmmounts = await ctx.prisma.order.findMany({
+      orderBy: { order_date_of_ord: "asc" },
+      select: {
+        order_date_of_ord: true,
+        OrderDetail: {
+          select: {
+            order_det_total: true,
+          },
+        },
+      },
+    });
+
+    const groupBy = (array: any, key: any) => {
+      return array.reduce((result: any, currentValue: any) => {
+        (result[currentValue[key].getMonth() + 1] =
+          result[currentValue[key].getMonth() + 1] || []).push(currentValue);
+        return result;
+      }, {});
+    };
+    const groupedItems = groupBy(orderAmmounts, "order_date_of_ord");
+    return Object.keys(groupedItems).map((key) => {
+      const total = groupedItems[key].reduce(
+        (acc: any, curr: any) => acc + curr.OrderDetail[0].order_det_total,
+        0,
+      );
+      return {
+        month: key,
+        total,
       };
     });
   }),

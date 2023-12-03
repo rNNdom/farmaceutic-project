@@ -21,6 +21,7 @@ import {
 } from "./ui/table";
 import { api } from "~/utils/api";
 import { columns } from "~/utils/lists";
+import Loading from "./Loading";
 
 
 export interface Payment {
@@ -29,20 +30,19 @@ export interface Payment {
   user_name: string;
   delivery_user_name: string;
   order_status: string;
-  order_late: boolean;
+  order_late: string;
   order_time: Date;
 }
 
 function TablePaymentsData () {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const data = api.orders.getOrdersForTable.useQuery(undefined, {
+  const orders = api.orders.getOrdersForTable.useQuery(undefined, {
     refetchInterval () {
       return 30000;
     },
-  }).data ?? [];
-
-
+  });
+  const data = orders.data ?? [];
   const table = useReactTable({
     data,
     columns,
@@ -54,6 +54,8 @@ function TablePaymentsData () {
       sorting,
     },
   });
+  if (orders.isLoading) return <Loading />
+
   return (
     <>
       <div className="rounded-md border">

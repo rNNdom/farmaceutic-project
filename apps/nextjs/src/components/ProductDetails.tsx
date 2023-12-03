@@ -90,7 +90,6 @@ function ProductDetails ({ orderId }: ProductDetailProps) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const orderDetails = api.orders.getOrderDetails.useQuery({ id: orderId });
-  console.log(orderDetails.data, "pene")
   const data = orderDetails.data?.orderData ?? [];
   const userProfile = orderDetails.data?.profileUser ?? [];
   const deliveryProfile = orderDetails.data?.profileDelivery ?? [];
