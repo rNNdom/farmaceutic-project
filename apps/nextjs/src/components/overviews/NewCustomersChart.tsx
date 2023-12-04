@@ -22,12 +22,12 @@ const ToolTipContent = (props: any) => {
 };
 
 // Main component
-export function NewCustomersChart ({ data }: {
+export function NewCustomersChart ({ data }: Readonly<{
   data: {
     name: string;
     value: any;
   }[]
-}) {
+}>) {
 
   return (
     <ResponsiveContainer width="100%" height={120}>

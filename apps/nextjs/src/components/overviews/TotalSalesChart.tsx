@@ -24,12 +24,12 @@ const ToolTipContent = (props: any) => {
 };
 
 // Main component
-export function TotalSalesChart ({ data }: {
+export function TotalSalesChart ({ data }: Readonly<{
   data: {
     name: string;
     value: any;
   }[]
-}) {
+}>) {
 
 
   return (

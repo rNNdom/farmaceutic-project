@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { setToken } from "~/app/providers";
 import { api } from "~/utils/api";
 import { profileFormData } from "~/utils/lists";
-import { setToken } from "~/app/providers";
 import Loading from "./Loading";
 import { Button } from "./ui/button";
 import {
@@ -28,7 +28,7 @@ const formSchema = z.object({
   phone: z.string().min(10, "El teléfono debe tener al menos 10 caracteres."),
 });
 
-export default function ProfileInfo() {
+export default function ProfileInfo () {
   const userSession = api.auth.getSession.useQuery();
   const getProfile = api.profile.getProfile.useQuery({
     id: Number(userSession.data?.user.id),
@@ -38,11 +38,11 @@ export default function ProfileInfo() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: getProfile.data?.prf_name || "",
-      lastname: getProfile.data?.prf_lastname || "",
-      email: getProfile.data?.usr_email || "",
-      pass: getProfile.data?.usr_pass || "",
-      phone: getProfile.data?.prf_phone || "",
+      name: getProfile.data?.prf_name ?? "",
+      lastname: getProfile.data?.prf_lastname ?? "",
+      email: getProfile.data?.usr_email ?? "",
+      pass: getProfile.data?.usr_pass ?? "",
+      phone: getProfile.data?.prf_phone ?? "",
     },
   });
   React.useEffect(() => {
@@ -56,7 +56,7 @@ export default function ProfileInfo() {
       });
     }
   }, [getProfile.data]);
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit (values: z.infer<typeof formSchema>) {
     updateProfile.mutate({
       id: Number(userSession.data?.user.id),
       name: values.name,
@@ -110,8 +110,8 @@ export default function ProfileInfo() {
                 >
                   Guardar
                 </Button>
-                )}
-                {updateProfile.isError && (
+              )}
+              {updateProfile.isError && (
                 <p className="text-red-500 ">{updateProfile.error.message}</p>
               )}
               <Button
