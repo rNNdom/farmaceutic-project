@@ -46,7 +46,6 @@ const getPriorityText = (priority: number) => {
 
 export default function ProductOnDelivery({ setIsChange, ...item }) {
   const [showText, setShowText] = useState(false);
-  const [orderStatus, setOrderStatus] = useState('PENDING');
   const { user } = useContext(UserContext);
   const order = item as Order;
   const updateOrder = api.orders.updateOrder.useMutation();
