@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Bell, CircleDashed, LayoutPanelLeft, User, Users } from "lucide-react";
+import { ArrowUpDown, Bell, LayoutPanelLeft, User, Users } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
 import { Payment } from "~/components/tables/TablePaymentsData";

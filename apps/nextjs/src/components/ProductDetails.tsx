@@ -41,14 +41,14 @@ const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "prod_name",
-    header: () => {
+    header: () =>
       <p className="flex w-full items-center justify-center text-black">
         Producto
       </p>
-    },
-    cell: ({ row }) => {
+    ,
+    cell: ({ row }) =>
       <p className="text-black">{row.getValue("prod_name")}</p>
-    },
+    ,
   },
 
   {
@@ -81,7 +81,7 @@ const columns: ColumnDef<any>[] = [
   },
 
 ];
-function ProductDetails ({ orderId }: ProductDetailProps) {
+function ProductDetails ({ orderId }: Readonly<ProductDetailProps>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -179,8 +179,8 @@ function ProductDetails ({ orderId }: ProductDetailProps) {
                   Datos del cliente
                 </h2>
                 {
-                  userProfile.map((user, index) => (
-                    <div key={index} className="flex flex-row gap-5">
+                  userProfile.map((user) => (
+                    <div key={user.prf_id} className="flex flex-row gap-5">
                       <span><label>Nombre:</label> <Input disabled className='w-fit' defaultValue={user.prf_name} /></span>
                       <span><label>Apellido:</label> <Input disabled className='w-fit' defaultValue={user.prf_lastname} /></span>
                       <span><label>Telefono:</label> <Input disabled className='w-fit' defaultValue={user.prf_phone} /></span>
@@ -194,8 +194,8 @@ function ProductDetails ({ orderId }: ProductDetailProps) {
                 </h2>
                 <div>
                   {deliveryProfile[0]?.profile ?
-                    deliveryProfile.map((user, index) => (
-                      <div key={index} className="flex flex-row gap-5">
+                    deliveryProfile.map((user) => (
+                      <div key={user?.profile.prf_id} className="flex flex-row gap-5">
                         <span><label>Nombre:</label> <Input disabled className='w-fit' defaultValue={user?.profile.prf_name} /></span>
                         <span><label>Apellido:</label> <Input disabled className='w-fit' defaultValue={user?.profile.prf_lastname} /></span>
                         <span><label>Telefono:</label> <Input disabled className='w-fit' defaultValue={user?.profile.prf_phone} /></span>

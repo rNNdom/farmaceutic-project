@@ -51,9 +51,6 @@ export default function LogIn () {
     userLogin.isError && console.log(userLogin.error.message);
   }, [userLogin.isSuccess, userLogin.isError]);
 
-  // const handleButtonClick = () => {
-  //   router.push("/auth/sign-up");
-  // };
   return (
     <Card className="w-1/4 p-10">
       <Form {...form}>

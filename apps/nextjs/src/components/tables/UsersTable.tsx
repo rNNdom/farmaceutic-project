@@ -61,8 +61,8 @@ export function UsersTable () {
   const columns: ColumnDef<User>[] = [
     {
       id: "select",
-      header: () => <></>,
-      cell: () => <></>,
+      header: () => null,
+      cell: () => null,
     },
     {
       accessorKey: "usr_id",

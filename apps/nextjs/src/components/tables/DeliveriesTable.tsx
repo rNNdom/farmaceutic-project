@@ -37,7 +37,6 @@ import {
   TableRow,
 } from "../ui/table";
 import { api } from "~/utils/api";
-import { $Enums } from "@acme/db";
 import Loading from "../Loading";
 
 interface Dealers {
