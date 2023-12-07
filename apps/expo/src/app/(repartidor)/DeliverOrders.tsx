@@ -1,11 +1,12 @@
 import { FlatList } from "react-native-gesture-handler";
-import ProductOnDelivery, { calculatePriority } from "~/components/home/ProductOnDelivery";
+import ProductOnDelivery from "~/components/home/ProductOnDelivery";
 import { Text, View } from "../../components/Themed";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "~/components/userContext";
 import { api } from "~/utils/api";
 import Loading from "~/components/loading";
 import Header from "~/components/Header";
+import { calculatePriority } from "~/utils/formats";
 
 
 const EmptyComponent = () => {
