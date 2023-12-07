@@ -16,6 +16,7 @@ export default function ProductDetail() {
 
   function handleAddToCart() {
     addToCart(_item, quantity);
+    setQuantity(1);
   }
   return (
     <View
