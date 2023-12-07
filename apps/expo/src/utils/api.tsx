@@ -10,18 +10,18 @@ export const api = createTRPCReact<AppRouter>();
 export { type RouterInputs, type RouterOutputs } from "@acme/api";
 
 const getBaseUrl = () => {
-  // const debuggerHost = Constants.expoConfig?.hostUri;
-  // const localhost = debuggerHost?.split(":")[0];
+  const debuggerHost = Constants.expoConfig?.hostUri;
+  const localhost = debuggerHost?.split(":")[0];
 
 
 
-  // if (!localhost) {
-  //   throw new Error(
-  //     "Failed to get localhost. Please point to your production server.",
-  //   );
-  // }
-  // // return `http://${localhost}:3000`;
-  return 'https://farmaceutic-project-nextjs.vercel.app';
+  if (!localhost) {
+    throw new Error(
+      "Failed to get localhost. Please point to your production server.",
+    );
+  }
+  return `http://${localhost}:3000`;
+  // return 'https://farmaceutic-project-nextjs.vercel.app';
 
 };
 
@@ -48,7 +48,7 @@ export function TRPCProvider(props: Readonly<{ children: React.ReactNode }>) {
       transformer: superjson,
       links: [
         httpBatchLink({
-          url: `${()}/api/trpc`,
+          url: `${getBaseUrl()}/api/trpc`,
           headers() {
             const headers = new Map<string, string>();
             headers.set("x-trpc-source", "expo-react");

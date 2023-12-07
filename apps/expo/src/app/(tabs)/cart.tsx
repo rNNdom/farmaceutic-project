@@ -8,6 +8,7 @@ import { Text, View } from "../../components/Themed";
 import { api } from "~/utils/api";
 import { UserContext } from "~/components/userContext";
 import { useRouter } from "expo-router";
+import { formatMoney } from "~/utils/formats";
 
 
 interface CartItemProps {
@@ -47,7 +48,7 @@ const CartItem = ({ data, emptyCart }: CartItemProps) => {
       const recipeRequired = data.some((item) => item.prod_recipe === "true");
       createOrder.mutate({
         user_id: Number(user?.usr_id),
-        location: "Santiago",
+        location: "Temuco",
         recipe: recipeRequired,
         total: Number(total),
         products: data.map((item) => {
@@ -151,10 +152,3 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 });
-
-function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}

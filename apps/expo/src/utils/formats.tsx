@@ -44,3 +44,23 @@ export const formatStatus = (status: string) => {
             return status
     }
 }
+
+export const calculatePriority = (isVip: boolean, orderDate: Date) => {
+    if (isVip) {
+        return 4;
+    }
+
+    const now = new Date();
+    const differenceInMinutes =
+        (now.getTime() - orderDate.getTime()) / (1000 * 60);
+
+    if (differenceInMinutes < 7) {
+        return 0;
+    } else if (differenceInMinutes < 15) {
+        return 1;
+    } else if (differenceInMinutes < 30) {
+        return 2;
+    } else {
+        return 3;
+    }
+};
