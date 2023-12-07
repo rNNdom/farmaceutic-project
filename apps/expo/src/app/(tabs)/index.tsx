@@ -9,6 +9,7 @@ import CatalogoScreens from "../(repartidor)/cart";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
 import { CustomColors, CustomStyles } from "~/styles/CustomStyles";
+import { api } from "~/utils/api";
 
 export default function CatalogoScreen() {
   const { user } = useContext(UserContext);

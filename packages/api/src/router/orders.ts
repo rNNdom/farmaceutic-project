@@ -110,8 +110,24 @@ export const orderRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const order = await ctx.prisma.order.findMany({
+      const order = await ctx.prisma.order.findUnique({
         where: { order_id: input.id },
+        include: {
+          user: {
+            select: {
+              usr_vip: true,
+              usr_email: true,
+              profile: true,
+            },
+          },
+          delivery_user: {
+            select: {
+              profile: true,
+              usr_email: true,
+            },
+          },
+          OrderDetail: true,
+        },
       });
       return order;
     }),
@@ -247,6 +263,9 @@ export const orderRouter = createTRPCRouter({
               order_delivery: input.idDeliver,
             },
           ],
+          NOT:{
+            order_status: "DELIVERED"
+          }
         },
         orderBy: { order_date_of_ord: "asc" },
         include: {
@@ -328,21 +347,32 @@ export const orderRouter = createTRPCRouter({
     .input(
       z.object({
         idOrder: z.number(),
-        idDeliver: z.number(),
+        idDeliver: z.number().nullable(),
         status: z.enum(["PENDING", "DELIVERING", "DELIVERED", "CANCELED"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const dataToUpdate = {
+        order_status: input.status,
+        delivery_user: {},
+      };
+
+      if (input.idDeliver !== null) {
+        dataToUpdate.delivery_user = {
+          connect: {
+            usr_id: input.idDeliver,
+          },
+        };
+      } else {
+        dataToUpdate.delivery_user = {
+          disconnect: true,
+        };
+      }
+      console.log(dataToUpdate);
+
       const updateOrders = await ctx.prisma.order.update({
         where: { order_id: input.idOrder },
-        data: {
-          order_status: input.status,
-          delivery_user: {
-            connect: {
-              usr_id: input.idDeliver,
-            },
-          },
-        },
+        data: dataToUpdate,
       });
 
       if (!updateOrders) {
