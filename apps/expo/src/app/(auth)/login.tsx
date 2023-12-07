@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, } from "react-native";
+import { TextInput, } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link, useRouter } from "expo-router";
 import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { api, setToken } from "~/utils/api";
 import { setContentAsyncStorage } from "~/components/storage";
 import { UserContext } from "~/components/userContext";
-import { CustomColors } from "~/styles/CustomStyles";
+import { CustomColors, CustomStyles } from "~/styles/CustomStyles";
 
 
 
@@ -41,190 +41,66 @@ export default function LoginAuth() {
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text className="text-3xl font-bold py-4"
-        style={{
-          color: CustomColors.Bice_blue,
-        }}
-      >
-        Iniciar Sesion
-      </Text>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 10,
-          marginVertical: 10,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            height: 1,
-            backgroundColor: "#1969a3",
-          }}
-        />
+    <SafeAreaView className="flex-1 py-1">
+      <View className="items-start px-2 mb-3 mx-3 py-3">
+        <Text className="text-3xl font-bold" style={{ color: CustomColors.Bice_blue }}>
+          Iniciar Sesion
+        </Text>
+        <Text className="text-xl font-bold opacity-70" style={{ color: CustomColors.Bice_blue }}>
+          Bienvenido
+        </Text>
       </View>
-      <View
-        style={{
-          gap: 15,
-        }}
-      >
-        <View
-          style={{
-            gap: 10,
-          }}
-        >
-          <Text>Correo</Text>
-          <View style={styles.input}>
-            <Ionicons name="ios-person-outline" size={20} />
-            <TextInput
-              placeholder="Correo Electronico"
-              onChangeText={(text) => setEmail(text)}
-              style={{
-                flex: 1,
-              }}
-            />
-          </View>
-        </View>
-        <View
-          style={{
-            gap: 10,
-          }}
-        >
-          <Text>Contraseña</Text>
-          <View style={styles.input}>
-            <Ionicons name="lock-closed-outline" size={20} />
-            <TextInput
-              placeholder="Contraseña"
-              onChangeText={(text) => setPassword(text)}
-              style={{
-                flex: 1,
-              }}
-              secureTextEntry
-            />
-          </View>
+
+      <View className="flex-col gap-3 mx-3 py-3 mb-3 ">
+        <Text className="text-sm font-medium">Correo</Text>
+        <View className="flex-row border-2 border-gray-200 gap-3 justify-stretch ">
+          <Ionicons name="ios-person-outline" size={20} />
+          <TextInput className="pb-2"
+            placeholder="Correo Electronico"
+            onChangeText={(text) => setEmail(text)} />
         </View>
       </View>
 
-      <Text
-        style={{
-          textAlign: "right",
-          color: "#1969a3",
-          fontSize: 12,
-          fontWeight: "500",
-          paddingVertical: 12,
-        }}
-      >
-        Olvidaste tu contraseña?
-      </Text>
-      <View
-        style={{
-          gap: 10,
-        }}
-      >
-        <TouchableOpacity
-          onPress={onSubmit}
-          style={[styles.btnPrincipal, styles.btncolorprincipal]}
-        >
-          <Text style={{ color: "white" }}>Iniciar Sesion</Text>
+      <View className="flex-col gap-3 mx-3 py-3 mb-3 ">
+        <Text className="text-sm font-medium">Contraseña</Text>
+        <View className="flex-row border-2 border-gray-200 gap-3 justify-stretch ">
+          <Ionicons name="lock-closed-outline" size={20} />
+          <TextInput className="pb-2"
+            placeholder="Contraseña"
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          />
+        </View>
+      </View>
+
+      <View className="items-end mx-3">
+        <Text className="font-medium" style={{ color: CustomColors.Bice_blue }}>Olvidaste tu contraseña?</Text>
+      </View>
+
+      <View className="mt-2 px-5 py-2 bg-transparent">
+        <TouchableOpacity style={CustomStyles.loginButtton}
+          onPress={onSubmit}>
+          <Text className="text-white font-medium">Iniciar Sesion</Text>
         </TouchableOpacity>
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 10,
-              marginVertical: 10,
-            }}
-          >
-            <View
-              style={{
-                flex: 1,
-                height: 1,
-                backgroundColor: "#E5E5E5",
-              }}
-            />
-            <Text style={{ textAlign: "center", opacity: 0.6 }}>
-              Eres nuevo cliente?
-            </Text>
-            <View
-              style={{
-                flex: 1,
-                height: 1,
-                backgroundColor: "#E5E5E5",
-              }}
-            />
-          </View>
+      </View>
 
-          <TouchableOpacity
-            style={[styles.btnPrincipal, styles.btncolorsecundario]}
-          >
-            <Link href="/(auth)/register" replace={true}>
-              <Text
-                style={{
-                  color: "#1969a3",
-                }}
-              >
-                Crear Cuenta
-              </Text>
-            </Link>
-          </TouchableOpacity>
-        </View>
+      <View className="flex-row items-center justify-center gap-3 my-3">
+        <View className="flex-1 h-px bg-gray-400 opacity-50" />
+        <Text className="text-center opacity-60">
+          Eres nuevo cliente?
+        </Text>
+        <View className="flex-1 h-px bg-gray-400 opacity-50" />
+      </View>
+
+      <View className="mt-2 px-5 py-2 bg-transparent">
+        <TouchableOpacity style={CustomStyles.singUpButtton} >
+          <Link href="/(auth)/register" replace={true}>
+            <Text className="font-medium border-opacity-50">
+              Crear Cuenta
+            </Text>
+          </Link>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  input: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    // backgroundColor: "#E5E5E5",
-    borderColor: "#E5E5E5",
-    borderWidth: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    // justifyContent: "space-between",
-  },
-  btnPrincipal: {
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    justifyContent: "center",
-  },
-  btncolorprincipal: {
-    backgroundColor: "#1969a3",
-  },
-  btncolorsecundario: {
-    borderColor: "#1969a3",
-    borderWidth: 1,
-  },
-  icon: {
-    width: 26,
-    height: 26,
-  },
-  optionlogin: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 20,
-    borderRadius: 4,
-    borderColor: "#1969a3",
-    borderWidth: 1,
-    width: "50%",
-  },
-});
