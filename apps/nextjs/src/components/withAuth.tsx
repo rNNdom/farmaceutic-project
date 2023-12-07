@@ -6,16 +6,14 @@ import { useAtom, useSetAtom } from "jotai";
 
 import { isAdmin, isLogged } from "~/atoms";
 import { api } from "~/utils/api";
+import Loading from "./Loading";
 
 function withAuth (Component: any) {
   return function AuthComponent (props: any) {
     const getSession = api.auth.getSession.useQuery();
-
     const [session] = useAtom(isLogged);
     const isRoleAdmin = getSession.data?.user.role === "ADMIN";
     const setState = useSetAtom(isAdmin);
-
-
 
     useLayoutEffect(() => {
       if (getSession.isSuccess) {
@@ -25,9 +23,8 @@ function withAuth (Component: any) {
         redirect("/auth/sign-in");
       }
     }, [getSession.isSuccess]);
-
-    if (!session) return null;
-    if (getSession.isSuccess && !isRoleAdmin) {
+    if (getSession.isLoading) return <Loading />
+    if (!isRoleAdmin || getSession.isError) {
       return (
         <div className="flex h-screen w-screen ">
           <main className="flex-grow overflow-auto">
