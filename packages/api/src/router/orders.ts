@@ -111,6 +111,7 @@ export const orderRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const order = await ctx.prisma.order.findMany({
         where: { order_customer: input.idCustomer },
+        orderBy: { order_date_of_ord: "desc" },
         include: {
           user: {
             select: {
@@ -140,7 +141,7 @@ export const orderRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const order = await ctx.prisma.order.findMany({
         where: { order_delivery: input.idDeliver },
-        orderBy: { order_date_of_ord: "asc" },
+        orderBy: { order_date_of_ord: "desc" },
         include: {
           user: {
             select: {
@@ -172,9 +173,9 @@ export const orderRouter = createTRPCRouter({
               order_delivery: input.idDeliver,
             },
           ],
-          NOT:{
-            order_status: "DELIVERED"
-          }
+          NOT: {
+            order_status: "DELIVERED",
+          },
         },
         orderBy: { order_date_of_ord: "asc" },
         include: {
