@@ -300,6 +300,37 @@ export const orderRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const products = await ctx.prisma.order.findUnique({
+        where: { order_id: input.id },
+        include: {
+          OrderDetail: {
+            include: {
+              ProductOrderDetail: {
+                include: {
+                  Product: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      for (const product of products?.OrderDetail[0]?.ProductOrderDetail) {
+        const existingProduct = await ctx.prisma.product.findUnique({
+          where: { prod_id: product.productId },
+        });
+
+        if (!existingProduct) {
+          throw new Error("Producto no encontrado");
+        }
+
+        const newQuantity =
+          existingProduct.prod_quantity + product.quantity ?? 0;
+
+        await ctx.prisma.product.update({
+          where: { prod_id: product.productId },
+          data: { prod_quantity: newQuantity },
+        });
+      }
       const order = await ctx.prisma.order.delete({
         where: { order_id: input.id },
       });
@@ -355,6 +386,28 @@ export const orderRouter = createTRPCRouter({
 
       if (!createOrder) {
         throw new Error("No se pudo crear el pedido");
+      }
+
+      // Reduce la cantidad de stock para cada producto
+      for (const product of input.products) {
+        const existingProduct = await ctx.prisma.product.findUnique({
+          where: { prod_id: product.prod_id },
+        });
+
+        if (!existingProduct) {
+          throw new Error("Producto no encontrado");
+        }
+
+        const newQuantity = existingProduct.prod_quantity - product.quantity;
+
+        if (newQuantity < 0) {
+          throw new Error("No hay suficiente stock para el producto");
+        }
+
+        await ctx.prisma.product.update({
+          where: { prod_id: product.prod_id },
+          data: { prod_quantity: newQuantity },
+        });
       }
 
       return {

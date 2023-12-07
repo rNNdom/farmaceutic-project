@@ -1,6 +1,6 @@
-import { StyleSheet, TextInput, KeyboardAvoidingView, Platform } from "react-native";
+import { TextInput } from "react-native";
 
-import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
+import { Ionicons, Text, View } from "../../components/Themed";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { api } from "~/utils/api";
 import React, { Children, useContext, useEffect } from "react";
