@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Header from "~/components/Header";
 import NewBrands from "../../components/home/NewBrands";
@@ -8,8 +8,7 @@ import { Text } from "../../components/Themed";
 import CatalogoScreens from "../(repartidor)/cart";
 import { useContext } from "react";
 import { UserContext } from "~/components/userContext";
-import { CustomColors, CustomStyles } from "~/styles/CustomStyles";
-import { api } from "~/utils/api";
+import { CustomStyles } from "~/styles/CustomStyles";
 
 export default function CatalogoScreen() {
   const { user } = useContext(UserContext);
