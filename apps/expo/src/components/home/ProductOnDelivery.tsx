@@ -140,8 +140,8 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
               <ViewIconCard data={[order.order_location]} icon="map-outline" />
 
               {customer.usr_vip && (
-                <View className="flex-row ml-1" >
-                  <View className="mr-2">
+                <View className="flex-row ml-1 bg-transparent" >
+                  <View className="mr-2 bg-transparent">
                     <Ionicons
                       name="flash-outline"
                       size={26}

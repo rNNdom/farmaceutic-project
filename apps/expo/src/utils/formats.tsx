@@ -64,3 +64,14 @@ export const calculatePriority = (isVip: boolean, orderDate: Date) => {
         return 3;
     }
 };
+
+export const getNextStatus = (status: string) => {
+    switch (status) {
+        case 'PENDING':
+            return 'DELIVERING'
+        case 'DELIVERING':
+            return 'DELIVERED'
+        default:
+            return status
+    }
+}
