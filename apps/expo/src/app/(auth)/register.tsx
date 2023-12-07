@@ -4,11 +4,12 @@ import { Ionicons, SafeAreaView, Text, View } from "../../components/Themed";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Link, router } from "expo-router";
 import { api, setToken } from "~/utils/api";
-import { useContext, useEffect, useState } from "react";
+import { Children, useContext, useEffect, useState } from "react";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { setContentAsyncStorage } from "~/components/storage";
 import { UserContext } from "~/components/userContext";
+import KeyboardAvoidingContainer from "~/components/KeyboardAvoidingCointainer";
 
 type FormData = {
   name: string;
@@ -70,274 +71,277 @@ export default function RegisterAuth() {
 
   return (
 
-    <SafeAreaView style={styles.container}>
-      <Text
-        style={{
-          color: "#1969a3",
-          fontSize: 26,
-          fontWeight: "bold",
-          paddingVertical: 18,
-        }}
-      >
-        Crear una cuenta
-      </Text>
-
-
-
-
-      <View
-        style={{
-          gap: 15,
-        }}
-      >
-        <View
+    <KeyboardAvoidingContainer children={Children} style={undefined}>
+      <SafeAreaView style={styles.container}>
+        <Text
           style={{
-            gap: 10,
+            color: "#1969a3",
+            fontSize: 26,
+            fontWeight: "bold",
+            paddingVertical: 18,
           }}
         >
-          <Text>Nombres</Text>
-          <View style={styles.input}>
-            <Ionicons name="ios-person-outline" size={20} />
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { value, onChange } }) => (
-                <TextInput
-                  placeholder="John"
-                  style={{
-                    flex: 1,
-                  }}
-                  value={value}
-                  onChangeText={(text) => onChange(text)}
-                />
+          Crear una cuenta
+        </Text>
 
-              )}
-              rules={{
-                required: "Nombre es requerido",
-                minLength: {
-                  value: 4,
-                  message: "Nombre debe tener al menos 4 caracteres",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "Nombre debe tener menos de 20 caracteres",
-                },
-              }}
-            />
-          </View>
-          {errors.name ? <Text style={{ color: 'red' }}>{errors.name.message}</Text> : null}
-        </View>
+
+
+
         <View
           style={{
-            gap: 10,
+            gap: 15,
           }}
         >
-          <Text>Apellidos</Text>
-          <View style={styles.input}>
-            <Ionicons name="ios-person-outline" size={20} />
-            <Controller
-              control={control}
-              name="lastname"
-              render={({ field: { onChange, onBlur, value } }) => (
-
-                <TextInput
-                  placeholder="Doe"
-                  style={{
-                    flex: 1,
-                  }}
-                  value={value}
-                  onChangeText={(text) => onChange(text)}
-                />
-              )}
-              rules={{
-                required: "Apellido es requerido",
-                minLength: {
-                  value: 4,
-                  message: "Apellido debe tener al menos 4 caracteres",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "Apellido debe tener menos de 20 caracteres",
-                },
-              }}
-            />
-          </View>
-          {errors.lastname ? <Text style={{ color: 'red' }}>{errors.lastname.message}</Text> : null}
-        </View>
-        <View
-          style={{
-            gap: 10,
-          }}
-        >
-          <Text>Correo</Text>
-          <View style={styles.input}>
-            <Ionicons name="ios-person-outline" size={20} />
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
-
-                <TextInput
-                  placeholder="Correo Electronico"
-                  style={{
-                    flex: 1,
-                  }}
-                  value={value}
-                  onChangeText={(text) => onChange(text)}
-                />
-              )}
-              rules={{
-                required: "Email es requerido",
-                pattern: {
-                  value: /\S+@\S+\.\S+/,
-                  message: "Email invalido",
-                },
-              }}
-            />
-          </View>
-          {errors.email ? <Text style={{ color: 'red' }}>{errors.email.message}</Text> : null}
-        </View>
-        <View
-          style={{
-            gap: 10,
-          }}
-        >
-          <Text>Telefono</Text>
-          <View style={styles.input}>
-            <Ionicons name="ios-person-outline" size={20} />
-            <Controller
-              control={control}
-              name="phone"
-              render={({ field: { onChange, onBlur, value } }) => (
-
-                <TextInput
-                  placeholder="(+56) 912345678"
-                  style={{
-                    flex: 1,
-                  }}
-                  value={value}
-                  onChangeText={(text) => onChange(text)}
-                />
-              )}
-              rules={{
-                required: "Telefono es requerido",
-                minLength: {
-                  value: 8,
-                  message: "Telefono debe tener al menos 8 caracteres",
-                },
-                maxLength: {
-                  value: 11,
-                  message: "Telefono debe tener menos de 11 caracteres",
-                },
-                pattern: {
-                  value: /^\d{8,11}$/,
-                  message: "Telefono invalido",
-                },
-              }}
-            />
-          </View>
-          {errors.phone ? <Text style={{ color: 'red' }}>{errors.phone.message}</Text> : null}
-        </View>
-        <View
-          style={{
-            gap: 10,
-          }}
-        >
-          <Text>Contraseña</Text>
-          <View style={styles.input}>
-            <Ionicons name="lock-closed-outline" size={20} />
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-
-                <TextInput
-                  placeholder="Contraseña"
-                  style={{
-                    flex: 1,
-                  }}
-                  value={value}
-                  onChangeText={(text) => onChange(text)}
-                  secureTextEntry
-                />
-              )}
-              rules={{
-                required: "Contraseña es requerida",
-                minLength: {
-                  value: 8,
-                  message: "Contraseña debe tener al menos 8 caracteres",
-                },
-              }}
-            />
-          </View>
-          {errors.password ? <Text style={{ color: 'red' }}>{errors.password.message}</Text> : null}
-        </View>
-      </View>
-
-      <View
-        style={{
-          height: 35,
-        }}
-      ></View>
-      <View
-        style={{
-          gap: 10,
-        }}
-      >
-        <TouchableOpacity
-          onPress={handleSubmit(onSubmit)}
-          style={[styles.btnPrincipal, styles.btncolorprincipal]}
-        >
-          <Text style={{ color: "white" }}>Registrarse</Text>
-        </TouchableOpacity>
-        {userRegitry.isError && (
-          <Text style={{ color: "red" }}>{userRegitry.error.message}</Text>
-        )}
-        <View>
           <View
             style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
               gap: 10,
-              marginVertical: 10,
             }}
           >
-            <View
-              style={{
-                flex: 1,
-                height: 1,
-                backgroundColor: "#E5E5E5",
-              }}
-            />
-            <Text style={{ textAlign: "center", opacity: 0.6 }}>
-              Ya tienes una cuenta?
-            </Text>
-            <View
-              style={{
-                flex: 1,
-                height: 1,
-                backgroundColor: "#E5E5E5",
-              }}
-            />
-          </View>
+            <Text>Nombres</Text>
+            <View style={styles.input}>
+              <Ionicons name="ios-person-outline" size={20} />
+              <Controller
+                control={control}
+                name="name"
+                render={({ field: { value, onChange } }) => (
+                  <TextInput
+                    placeholder="John"
+                    style={{
+                      flex: 1,
+                    }}
+                    value={value}
+                    onChangeText={(text) => onChange(text)}
+                  />
 
-          <TouchableOpacity
-            style={[styles.btnPrincipal, styles.btncolorsecundario]}
-          >
-            <Link href="/(auth)/login" replace={true}>
-              <Text
-                style={{
-                  color: "#1969a3",
+                )}
+                rules={{
+                  required: "Nombre es requerido",
+                  minLength: {
+                    value: 4,
+                    message: "Nombre debe tener al menos 4 caracteres",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "Nombre debe tener menos de 20 caracteres",
+                  },
                 }}
-              >
-                Iniciar Sesion
-              </Text>
-            </Link>
-          </TouchableOpacity>
+              />
+            </View>
+            {errors.name ? <Text style={{ color: 'red' }}>{errors.name.message}</Text> : null}
+          </View>
+          <View
+            style={{
+              gap: 10,
+            }}
+          >
+            <Text>Apellidos</Text>
+            <View style={styles.input}>
+              <Ionicons name="ios-person-outline" size={20} />
+              <Controller
+                control={control}
+                name="lastname"
+                render={({ field: { onChange, onBlur, value } }) => (
+
+                  <TextInput
+                    placeholder="Doe"
+                    style={{
+                      flex: 1,
+                    }}
+                    value={value}
+                    onChangeText={(text) => onChange(text)}
+                  />
+                )}
+                rules={{
+                  required: "Apellido es requerido",
+                  minLength: {
+                    value: 4,
+                    message: "Apellido debe tener al menos 4 caracteres",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "Apellido debe tener menos de 20 caracteres",
+                  },
+                }}
+              />
+            </View>
+            {errors.lastname ? <Text style={{ color: 'red' }}>{errors.lastname.message}</Text> : null}
+          </View>
+          <View
+            style={{
+              gap: 10,
+            }}
+          >
+            <Text>Correo</Text>
+            <View style={styles.input}>
+              <Ionicons name="ios-person-outline" size={20} />
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+
+                  <TextInput
+                    placeholder="Correo Electronico"
+                    style={{
+                      flex: 1,
+                    }}
+                    value={value}
+                    onChangeText={(text) => onChange(text)}
+                  />
+                )}
+                rules={{
+                  required: "Email es requerido",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "Email invalido",
+                  },
+                }}
+              />
+            </View>
+            {errors.email ? <Text style={{ color: 'red' }}>{errors.email.message}</Text> : null}
+          </View>
+          <View
+            style={{
+              gap: 10,
+            }}
+          >
+            <Text>Telefono</Text>
+            <View style={styles.input}>
+              <Ionicons name="ios-person-outline" size={20} />
+              <Controller
+                control={control}
+                name="phone"
+                render={({ field: { onChange, onBlur, value } }) => (
+
+                  <TextInput
+                    placeholder="(+56) 912345678"
+                    style={{
+                      flex: 1,
+                    }}
+                    value={value}
+                    onChangeText={(text) => onChange(text)}
+                  />
+                )}
+                rules={{
+                  required: "Telefono es requerido",
+                  minLength: {
+                    value: 8,
+                    message: "Telefono debe tener al menos 8 caracteres",
+                  },
+                  maxLength: {
+                    value: 11,
+                    message: "Telefono debe tener menos de 11 caracteres",
+                  },
+                  pattern: {
+                    value: /^\d{8,11}$/,
+                    message: "Telefono invalido",
+                  },
+                }}
+              />
+            </View>
+            {errors.phone ? <Text style={{ color: 'red' }}>{errors.phone.message}</Text> : null}
+          </View>
+          <View
+            style={{
+              gap: 10,
+            }}
+          >
+            <Text>Contraseña</Text>
+            <View style={styles.input}>
+              <Ionicons name="lock-closed-outline" size={20} />
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+
+                  <TextInput
+                    placeholder="Contraseña"
+                    style={{
+                      flex: 1,
+                    }}
+                    value={value}
+                    onChangeText={(text) => onChange(text)}
+                    secureTextEntry
+                  />
+                )}
+                rules={{
+                  required: "Contraseña es requerida",
+                  minLength: {
+                    value: 8,
+                    message: "Contraseña debe tener al menos 8 caracteres",
+                  },
+                }}
+              />
+            </View>
+            {errors.password ? <Text style={{ color: 'red' }}>{errors.password.message}</Text> : null}
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+
+        <View
+          style={{
+            height: 35,
+          }}
+        ></View>
+        <View
+          style={{
+            gap: 10,
+          }}
+        >
+          <TouchableOpacity
+            onPress={handleSubmit(onSubmit)}
+            style={[styles.btnPrincipal, styles.btncolorprincipal]}
+          >
+            <Text style={{ color: "white" }}>Registrarse</Text>
+          </TouchableOpacity>
+          {userRegitry.isError && (
+            <Text style={{ color: "red" }}>{userRegitry.error.message}</Text>
+          )}
+          <View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                marginVertical: 10,
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  height: 1,
+                  backgroundColor: "#E5E5E5",
+                }}
+              />
+              <Text style={{ textAlign: "center", opacity: 0.6 }}>
+                Ya tienes una cuenta?
+              </Text>
+              <View
+                style={{
+                  flex: 1,
+                  height: 1,
+                  backgroundColor: "#E5E5E5",
+                }}
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.btnPrincipal, styles.btncolorsecundario]}
+            >
+              <Link href="/(auth)/login" replace={true}>
+                <Text
+                  style={{
+                    color: "#1969a3",
+                  }}
+                >
+                  Iniciar Sesion
+                </Text>
+              </Link>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+      </SafeAreaView>
+    </KeyboardAvoidingContainer>
   );
 }
 
