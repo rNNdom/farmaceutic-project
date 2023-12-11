@@ -55,7 +55,7 @@ export default function SignUp () {
       phone: "Teléfono",
     };
 
-    return formValueMap[key] || "";
+    return formValueMap[key] ?? "";
   };
 
   useEffect(() => {

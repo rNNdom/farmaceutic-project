@@ -1,69 +1,41 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-
-import useProduct from "~/hooks/useProduct";
-import useUser from "~/hooks/useUser";
-import Header from "../../components/Header";
-// import CarouselComponent from "../../components/home/CarouselHome";
+import Header from "~/components/Header";
 import NewBrands from "../../components/home/NewBrands";
 import RecomendedComponent from "../../components/home/RecomendProd";
 import ViewCategories from "../../components/home/ViewCategories";
 import { Text } from "../../components/Themed";
 import CatalogoScreens from "../(repartidor)/cart";
+import { useContext } from "react";
+import { UserContext } from "~/components/userContext";
+import { CustomStyles } from "~/styles/CustomStyles";
 
-export default function CatalogoScreen () {
-  const { product } = useProduct(null);
-  // const { isClient, loading } = useUser(2);
-  // const { isClient, loading } = useUser(1);
-  const loading = false;
-  const isClient = true;
+export default function CatalogoScreen() {
+  const { user } = useContext(UserContext);
+  const role = user?.usr_role
+  const isClient = role !== "DELIVER";
+
+
   return (
     <>
-      {loading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator />
-        </View>
-      ) : (
-        <>
-          <Header showSearch />
-
-          <ScrollView style={styles.home}>
-            {isClient ? (
-              <>
-                <Text style={styles.current}>Inicio</Text>
-                {/* {product && <CarouselComponent data={product} />} */}
-                {product && <RecomendedComponent data={product} />}
-                {product && <ViewCategories data={product} />}
-                {product && <NewBrands data={product} />}
-              </>
-            ) : (
-              <>
-                <Text style={styles.current}>Inicio</Text>
-                <CatalogoScreens />
-              </>
-            )}
-          </ScrollView>
-        </>
-      )}
+      <Header showSearch />
+      <View className="flex-1" style={CustomStyles.home}>
+        {isClient ? (
+          <>
+            <ScrollView>
+              <Text className="text-sm text-lg my-5 mx-2 opacity-50">Inicio</Text>
+              <RecomendedComponent />
+              <ViewCategories />
+              <NewBrands />
+            </ScrollView>
+          </>
+        ) : (
+          <>
+            <Text className="text-sm text-lg my-5 mx-2 opacity-50">Inicio</Text>
+            <CatalogoScreens />
+          </>
+        )}
+      </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  home: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  current: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginHorizontal: 18,
-    marginVertical: 8,
-    opacity: 0.5,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

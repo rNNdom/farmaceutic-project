@@ -1,25 +1,22 @@
 import React from "react";
 
-import { columns, payments } from "~/utils/lists";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import TablePaymentsData from "./TablePaymentsData";
+import TablePaymentsData from "./tables/TablePaymentsData";
 
-function Payments() {
+function Payments () {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-      <Card className="col-span-3">
+    <div className="flex gap-4">
+      <Card className="flex-grow flex-col">
         <CardHeader className="px-8 pt-8">
           <CardTitle>Reporte detallado</CardTitle>
-          <CardDescription>Se vendieron 200 productos este mes</CardDescription>
         </CardHeader>
         <CardContent className="p-8 pt-0">
-          <TablePaymentsData columns={columns} data={payments} />
+          <TablePaymentsData />
         </CardContent>
       </Card>
     </div>

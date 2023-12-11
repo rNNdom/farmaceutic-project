@@ -6,9 +6,8 @@ import Loading from "~/components/Loading";
 import withAuth from "~/components/withAuth";
 import { Tabs, TabsContent } from "../components/ui/tabs";
 
-const GraphicsDetail = lazy(() => import("~/components/GraphicsDetail"));
+const GraphicsDetail = lazy(() => import("~/components/overviews/GraphicsDetail"));
 const Payments = lazy(() => import("~/components/Payments"));
-//me gusta co
 function DashboardPage () {
   return (
     <>

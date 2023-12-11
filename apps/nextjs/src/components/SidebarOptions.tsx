@@ -24,16 +24,15 @@ export const SidebarOptions = () => {
 
   return (
     <div className={"h-full"}>
-      <div className="flex h-full flex-col space-y-6 pl-2 pr-10 pt-6">
+      <div className="flex h-full flex-col space-y-6 pl-2 pr-10 pt-2">
         {NavItems.map((item) => (
           <div key={item.key}>
-            <Link href={item.ref as string}>
+            <Link href={item.ref}>
               <Button
                 variant="ghost"
                 onClick={() => handleActive(item.key)}
-                className={`w-full justify-start gap-2 ${
-                  activeButton === item.key ? "bg-sky-300 text-white" : ""
-                }`}
+                className={`w-full justify-start gap-2 ${activeButton === item.key ? "bg-sky-300 text-white" : ""
+                  }`}
               >
                 {item.label}
               </Button>

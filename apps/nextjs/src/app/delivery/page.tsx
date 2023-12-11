@@ -1,6 +1,6 @@
 "use client";
 import withAuth from "~/components/withAuth";
-import { DeliveriesTable } from "../../components/DeliveriesTable";
+import { DeliveriesTable } from "../../components/tables/DeliveriesTable";
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
 import { Tabs, TabsContent } from "@radix-ui/react-tabs";
 import React from "react";
 
-function page() {
+function page () {
   return (
     <>
       <div className=" flex-grow flex-col md:flex">

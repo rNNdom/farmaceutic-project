@@ -1,51 +1,15 @@
-import { SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { Image, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
+import { Order } from "~/utils/interface";
+import { Ionicons, Text, View } from "../../components/Themed";
+import { api } from "~/utils/api";
+import { UserContext } from "../userContext";
+import { CustomStyles, getCircleStyle, getStatusColor } from "~/styles/CustomStyles";
+import { calculatePriority, formatDate, formatMoney, formatStatus } from "~/utils/formats";
+import ViewIconCard from "../ViewIconCard";
 
-import { OrderDetails, Profile, User } from "~/utils/interface";
-import { getOrderDet, getProfile, getUser } from "~/utils/service";
-import { Text, View } from "../../components/Themed";
 
-const calculatePriority = (customer: User | undefined, orderDate: Date) => {
-  if (customer?.usr_vip) {
-    return 3;
-  }
-
-  const now = new Date();
-  const differenceInMinutes =
-    (now.getTime() - orderDate.getTime()) / (1000 * 60);
-
-  if (differenceInMinutes < 7) {
-    return 0;
-  } else if (differenceInMinutes < 15) {
-    return 1;
-  } else if (differenceInMinutes < 30) {
-    return 2;
-  } else {
-    return 3;
-  }
-};
-
-const fetchOrderdet = async (_item: { order_customer: number; order_id: number; }, setOrderdet: { (value: SetStateAction<OrderDetails | undefined>): void; (arg0: any): void; }, setCustomer: { (value: SetStateAction<{ customer: User | undefined; prof: Profile | undefined; } | undefined>): void; (arg0: { customer: any; prof: any; }): void; }) => {
-  try {
-    const responseuser = await getUser();
-    const responseProf = await getProfile();
-    const response = await getOrderDet();
-    const datauser = responseuser.find(
-      (item: User) => item.usr_id == _item.order_customer,
-    );
-    const data = response.find(
-      (item: OrderDetails) => item.order_det_id === _item.order_id,
-    );
-    const dataProf = responseProf.find(
-      (item: Profile) => item.prf_id == datauser.usr_profile,
-    );
-    setOrderdet(data);
-    setCustomer({ customer: datauser, prof: dataProf });
-  } catch (error) {
-    console.error("Failed to fetch orderdet", error);
-  }
-};
 
 const getPriorityText = (priority: number) => {
   switch (priority) {
@@ -62,13 +26,26 @@ const getPriorityText = (priority: number) => {
   }
 };
 
-export default function ProductOnDelivery(item: any) {
-  const _item = item.item;
-  const [orderdet, setOrderdet] = useState<OrderDetails>();
-  const [customer, setCustomer] = useState<
-    { customer: User | undefined; prof: Profile | undefined } | undefined
-  >();
+export default function ProductOnDelivery({ setIsChange, ...item }) {
   const [showText, setShowText] = useState(false);
+  const { user } = useContext(UserContext);
+  const order = item as Order;
+  const updateOrder = api.orders.updateOrder.useMutation();
+  const customer = order.user;
+  const orderdet = order.OrderDetail.at(0);
+  const aux = {
+    ...orderdet,
+    order_id: order.order_id,
+    order_date_of_ord: order.order_date_of_ord,
+    order_location: order.order_location,
+    order_status: order.order_status,
+    prf_lastname: customer ? customer.profile?.prf_lastname : null,
+    prf_name: customer ? customer.profile?.prf_name : null,
+    prf_phone: customer ? customer.profile?.prf_phone : null,
+    prf_email: customer ? customer.usr_email : null,
+    usr_role: user?.usr_role,
+  }
+
 
   const handlePress = () => {
     setShowText(!showText);
@@ -77,218 +54,135 @@ export default function ProductOnDelivery(item: any) {
   const priority = useMemo(
     () =>
       calculatePriority(
-        customer?.customer,
-        new Date(_item?.order_date_of_order),
+        customer.usr_vip,
+        new Date(order.order_date_of_ord),
       ),
-    [customer, _item],
+    [customer, item],
   );
 
+  const options = formatDate();
+
+
+    
+  const upOrder = () => {
+    let nextStatus: "PENDING" | "DELIVERING" | "DELIVERED" | "CANCELED";
+
+    // Cambiar el estado en función del estado actual
+    switch (order.order_status) {
+      case "PENDING":
+        nextStatus = "DELIVERING";
+        break;
+      case "DELIVERING":
+        nextStatus = "DELIVERED";
+        break;
+      case "DELIVERED":
+        nextStatus = "CANCELED";
+        break;
+      case "CANCELED":
+        nextStatus = "PENDING";
+        break;
+      default:
+        nextStatus = "PENDING";
+    }
+
+    updateOrder.mutate({
+      idDeliver: Number(user?.usr_id),
+      idOrder: Number(order.order_id),
+      status: nextStatus
+    })
+  }
+
   useEffect(() => {
-    fetchOrderdet(_item, setOrderdet, setCustomer);
-  }, [_item]);
+    if (updateOrder.isSuccess) {
+      setIsChange(true)
+    }
+    updateOrder.isError && console.log(updateOrder.error.message)
+
+  }, [updateOrder.isSuccess, updateOrder.isError, priority])
+
 
   const image = require("~/assets/carrousel-test/default-user.png");
   return (
     <Link
-      href={{ pathname: "/(repartidor)/productOnDeliveryDetails" }}
+      href={{
+        pathname: "/(tabs)/productOrderDetails",
+        params: { ...aux }
+      }}
       asChild
     >
-      <TouchableOpacity>
-        <View style={styles.container}>
-          <View style={styles.row}>
-            <Image source={image} style={styles.image} />
-            <View style={styles.column}>
-              <View>
-                <View>
-                  <TouchableOpacity
-                    onPress={handlePress}
-                    style={styles.pressableArea}
-                  >
-                    <View style={getCircleStyle(priority)} />
-                    {showText && (
-                      <Text style={styles.priorityText}>
-                        {getPriorityText(priority)}
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                  {orderdet?.order_recipe && (
-                    <Text style={[styles.colorcustom, styles.title]}>
-                      Requiere receta
-                    </Text>
-                  )}
-                  <Text style={styles.date}>{_item?.order_date_of_order}</Text>
-                  <Text style={[styles.title]}>
-                    {customer?.prof?.prf_name} {customer?.prof?.prf_lastname}
+      <TouchableOpacity className="flex-row mx-1 my-2 px-1 shadow-sm rounded-xl" style={CustomStyles.card}>
+        <View className="flex-1 rounded-xl">
+          <View className="rounded-xl bg-transparent flex-row content-center items-center">
+            <Image source={image} className="w-28 h-28" />
+            <View className="flex-col justify-between mx-2 my-3 pr-3 flex-1 bg-transparent">
+              <TouchableOpacity className="absolute top-0 right-0 w-9 h-9 rounded-full z-10 justify-center items-center"
+                onPress={handlePress}
+              >
+                <View style={getCircleStyle(priority)} />
+                {showText && (
+                  <Text className="absolute -top-3 right-4 w-32 h-5">
+                    {getPriorityText(priority)}
                   </Text>
-                  <Text style={styles.address}>{orderdet?.order_location}</Text>
-                  {customer?.customer?.usr_vip && (
-                    <Text style={styles.vip}>Cliente VIP</Text>
-                  )}
-                </View>
-              </View>
-              <Text style={styles.money}>
-                {formatMoney(orderdet?.order_det_total)}
+                )}
+              </TouchableOpacity>
+              <Text className="font-bold uppercase text-xl ml-2" style={{ color: getStatusColor(order.order_status) }}>
+                {formatStatus(order.order_status)}
               </Text>
+              {orderdet?.order_det_recipe && (
+                <Text className="text-sm font-medium pl-2" style={CustomStyles.recipeTetx}>
+                  Requiere receta
+                </Text>
+              )}
+
+              <ViewIconCard data={[order.order_date_of_ord.toLocaleDateString(options.localDate, options.options)]} icon="calendar-sharp" />
+              <ViewIconCard data={[order.order_date_of_ord.toLocaleTimeString(options.localDate)]} icon="time-sharp" />
+              <ViewIconCard data={[customer.profile.prf_name, customer.profile.prf_lastname]} icon="person-outline" />
+              <ViewIconCard data={[order.order_location]} icon="map-outline" />
+
+              {customer.usr_vip && (
+                <View className="flex-row ml-1 bg-transparent" >
+                  <View className="mr-2 bg-transparent">
+                    <Ionicons
+                      name="flash-outline"
+                      size={26}
+                      style={{
+                        opacity: 0.3,
+                      }}
+                    />
+                  </View>
+                  <Text style={CustomStyles.isVip} >Cliente VIP</Text>
+                </View>
+              )}
+
+              <View className="flex-row ml-1 bg-transparent" >
+                <View className="mr-2 bg-transparent">
+                  <Ionicons
+                    name="cash-outline"
+                    size={26}
+                    style={{
+                      opacity: 0.3,
+                    }}
+                  />
+                </View>
+                <Text style={CustomStyles.textMoney}>
+                  {formatMoney(orderdet?.order_det_total)}
+                </Text>
+              </View>
             </View>
+
           </View>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.detailsButton}>
-              <Text style={styles.buttonText}>Detalles</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.acceptButton}>
-              <Text style={styles.buttonText}>Aceptar</Text>
-            </TouchableOpacity>
-          </View>
+          {order.order_status === 'PENDING' && (
+            <View className="flex-row px-5 py-2 bg-transparent">
+              <TouchableOpacity onPress={upOrder} style={CustomStyles.detailButtton}>
+                <Text style={CustomStyles.buttontext}>Aceptar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
         </View>
-      </TouchableOpacity>
-    </Link>
+      </TouchableOpacity >
+    </Link >
   );
 }
 
-function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}
 
-const getCircleStyle = (priority: number) => {
-  switch (priority) {
-    case 0:
-      return styles.greencicle;
-    case 1:
-      return styles.yellowcicle;
-    case 2:
-      return styles.orangecicle;
-    case 3:
-      return styles.redcicle;
-    default:
-      return styles.greencicle;
-  }
-};
-
-const cicle = {
-  position: "absolute",
-  top: 0,
-  right: 0,
-  width: 20,
-  height: 20,
-  borderRadius: 10,
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  row: {
-    flexDirection: "row",
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  column: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    flex: 1,
-    paddingVertical: 15,
-  },
-  image: {
-    width: 120,
-    height: 120,
-  },
-  colorcustom: {
-    color: "#1969a3",
-  },
-  money: {
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "500",
-  },
-  margin: {
-    margin: 10,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  date: {
-    opacity: 0.5,
-    fontSize: 12,
-  },
-  address: {
-    fontSize: 14,
-  },
-  vip: {
-    color: "green",
-    fontWeight: "500",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    gap: 12,
-    alignContent: "center",
-    alignItems: "center",
-  },
-  detailsButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#2c7379",
-    flex: 1,
-    borderRadius: 8,
-  },
-  acceptButton: {
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#f0a62f",
-    flex: 1,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "white",
-  },
-  redcicle: {
-    ...cicle,
-    backgroundColor: "red",
-  },
-  greencicle: {
-    ...cicle,
-    backgroundColor: "green",
-  },
-  yellowcicle: {
-    ...cicle,
-    backgroundColor: "yellow",
-  },
-  orangecicle: {
-    ...cicle,
-    backgroundColor: "orange",
-  },
-  pressableArea: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    width: 25, // Ajusta estos valores según tus necesidades
-    height: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  priorityText: {
-    position: "absolute",
-    top: -20,
-    right: -5, // Ajusta estos valores según tus necesidades
-    width: 120,
-    height: 20,
-    backgroundColor: "withe",
-    color: "black",
-  },
-});

@@ -1,93 +1,153 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
+import { Order } from "~/utils/interface";
+import { Ionicons, Text, View } from "../Themed";
+import { api } from "~/utils/api";
+import { CustomColors, CustomStyles, getStatusColor } from "~/styles/CustomStyles";
+import { formatDate, formatMoney, formatStatus } from "~/utils/formats";
+import ViewIconCard from "../ViewIconCard";
+import { UserContext } from "../userContext";
 
 
 
-import { Profile, User } from "~/utils/interface";
-import { getProfile, getUser } from "~/utils/service";
-import useOrderDet from "~/hooks/useOrderDet";
-import { Text, View } from "../Themed";
 
+export default function ProductOrder({ setIsDeleted, ...item }) {
+  const [showText, setShowText] = useState(false);
+  const deleteOrders = api.orders.deleteOrders.useMutation();
+  const { user } = useContext(UserContext);
+  const order = item as Order;
+  const customer = order.user;
+  const orderdet = order.OrderDetail.at(0);
+  const delivery = order.delivery_user;
+  const aux = {
+    ...orderdet,
+    order_id: order.order_id,
+    order_date_of_ord: order.order_date_of_ord,
+    order_location: order.order_location,
+    order_status: order.order_status,
+    prf_lastname: delivery ? delivery.profile?.prf_lastname : null,
+    prf_name: delivery ? delivery.profile?.prf_name : null,
+    prf_phone: delivery ? delivery.profile?.prf_phone : null,
+    prf_email: delivery ? delivery.usr_email : null,
+    usr_role: user?.usr_role,
+  }
 
-export default function ProductOnDelivery(props: any) {
-  const _item = props.data;
-  const customer = props.user;
-  const { orderdet } = useOrderDet(_item.order_details);
-  const [profileDeliver, setProfileDeliver] = useState<Profile>();
+  const options = formatDate()
 
-  const fetchDeliver = async () => {
-    const responseUser = await getUser();
-    const responseProfile = await getProfile();
-    const dataUser = responseUser.find(
-      (item: User) => item.usr_id === _item.order_delivery,
-    );
-    const dataProf = responseProfile.find(
-      (item: Profile) => item.prf_id === dataUser?.usr_profile,
-    );
-    setProfileDeliver(dataProf);
+  const handlePress = () => {
+    setShowText(!showText);
   };
 
-  useEffect(() => {
-    if (_item.order_delivery) {
-      fetchDeliver();
+  const getRecipeText = (isrecipe: boolean) => {
+    if (isrecipe) {
+      return "Con receta";
     }
-  }, [_item.order_delivery]);
+    return "Sin receta";
+  };
+
+  const deleteOrder = () => {
+    deleteOrders.mutate({
+      id: order.order_id
+    })
+
+  }
+
+  useEffect(() => {
+    if (deleteOrders.isSuccess) {
+      setIsDeleted(true)
+    }
+    deleteOrders.isError && console.log(deleteOrders.error.message)
+
+  }, [deleteOrders.isSuccess, deleteOrders.isError])
+
+
+
   return (
     <Link
       href={{
         pathname: "/(tabs)/productOrderDetails",
-        params: { data: orderdet?.order_det_prod as number[] },
+        params: {
+          ...aux,
+        }
       }}
       asChild
     >
-      <TouchableOpacity>
-        <View style={[styles.container]}>
-          <View style={[styles.row]}>
-            <View style={[styles.column, styles.buttonRow]}>
-              {customer.is_vip && <Text style={styles.vip}>Cliente VIP</Text>}
-            </View>
-            <View style={[styles.column, styles.buttonRow]}>
-              {orderdet?.order_recipe ? (
-                <View style={styles.greenCircle}></View>
-              ) : (
-                <View style={styles.redCircle}></View>
+      <TouchableOpacity className="flex-row mx-1 my-2 px-1 shadow-sm rounded-xl" style={CustomStyles.card} >
+        <View className="flex-1 rounded-xl">
+          <View className="rounded-xl bg-transparent">
+            <TouchableOpacity
+              className="absolute top-0 right-0 w-9 h-9 rounded-full z-10 justify-center items-center"
+              onPress={handlePress}>
+              <View style={getCircleStyle(orderdet?.order_det_recipe)} />
+              {showText && (
+                <Text className="absolute top-0 -right-1 w-32 h-5">
+                  {getRecipeText(orderdet?.order_det_recipe)}
+                </Text>
               )}
-            </View>
-          </View>
-          <View style={styles.row}>
-            <View style={styles.column}>
-              <View style={[]}>
-                <Text style={[styles.title]}>Fecha</Text>
-                <Text style={styles.text}>{_item.order_date_of_order}</Text>
-                <View>
-                  <Text style={[styles.title]}>Repartidor</Text>
-                  <Text style={[styles.text]}>
-                    {profileDeliver?.prf_name} {profileDeliver?.prf_lastname}
-                  </Text>
-                </View>
-                <Text style={[styles.title]}>Direccción</Text>
-                <Text style={[styles.text]}>{orderdet?.order_location}</Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={[
-              {
-                // position: "absolute",
-                padding: 10,
-                gap: 10,
-                flexDirection: "row-reverse",
-                alignContent: "flex-end",
-                alignItems: "flex-end",
-                justifyContent: "flex-end",
-                // flex: 1,
-              },
-            ]}
-          >
-            <Text style={styles.money}>
-              {formatMoney(orderdet?.order_det_total as number)}
+            </TouchableOpacity>
+            <Text className="font-bold uppercase text-xl ml-2"
+              style={{ color: getStatusColor(order.order_status) }}>
+              {formatStatus(order.order_status)}
             </Text>
+            <ViewIconCard data={[order.order_date_of_ord.toLocaleDateString(options.localDate, options.options)]} icon="calendar-sharp" />
+            <ViewIconCard data={[order.order_date_of_ord.toLocaleTimeString(options.localDate)]} icon="time-sharp" />
+          </View>
+
+          {delivery && (
+            <>
+              <ViewIconCard data={[delivery.profile?.prf_name, delivery.profile?.prf_lastname]} icon="person-outline" />
+            </>
+          )}
+
+          <ViewIconCard data={[order.order_location]} icon="map-outline" />
+
+          {customer.usr_vip && (
+            <View className="flex-row ml-1 bg-transparent" >
+              <View className="mr-2 bg-transparent">
+                <Ionicons
+                  name="flash-outline"
+                  size={26}
+                  style={{
+                    opacity: 0.3,
+                  }}
+                />
+              </View>
+              <Text style={CustomStyles.isVip} >Cliente VIP</Text>
+            </View>
+          )}
+
+
+          <View className="flex-row ml-1 bg-transparent" >
+            <View className="mr-2">
+              <Ionicons
+                name="cash-outline"
+                size={26}
+                style={{
+                  opacity: 0.3,
+                }}
+              />
+            </View>
+            <Text style={CustomStyles.textMoney}>
+              {formatMoney(orderdet?.order_det_total)}
+            </Text>
+          </View>
+
+          <View className="flex-row mt-2 px-5 py-2 bg-transparent">
+            {/* <Link href={{
+              pathname: "/(tabs)/productOrderDetails",
+              params: { ...aux },
+            }}
+              asChild>
+              <TouchableOpacity style={CustomStyles.detailButtton}>
+                <Text style={{ color: CustomColors.White }} >Detalles</Text>
+              </TouchableOpacity>
+            </Link> */}
+            {order.order_status === "PENDING" && (
+              <TouchableOpacity onPress={deleteOrder} style={CustomStyles.cancelButton}>
+                <Text style={{ color: CustomColors.White }}>Cancelar</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </TouchableOpacity>
@@ -95,33 +155,13 @@ export default function ProductOnDelivery(props: any) {
   );
 }
 
-function formatMoney(number: number) {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-  }).format(number);
-}
 
-const commonContainer = {
-  marginHorizontal: 10,
-  marginVertical: 5,
-  borderRadius: 8,
-  alignItems: "center",
-};
 
-const commonButton = {
-  alignItems: "center",
-  paddingVertical: 12,
-  flex: 1,
-  borderRadius: 8,
-};
-
-const colors = {
-  custom: "#1969a3",
-  green: "green",
-  detailsButton: "#2c7379",
-  acceptButton: "#f0a62f",
-  white: "white",
+const getCircleStyle = (recipe: boolean) => {
+  if (recipe) {
+    return CustomStyles.redcicle;
+  }
+  return CustomStyles.greencicle;
 };
 
 const cicle = {
@@ -133,85 +173,11 @@ const cicle = {
   borderRadius: 10,
 };
 
-const styles = StyleSheet.create({
-  container: {
-    ...commonContainer,
-  },
-  row: {
-    ...commonContainer,
-    flexDirection: "row",
-    alignContent: "center",
-  },
-  column: {
-    flexDirection: "column",
-    marginHorizontal: 10,
-    flex: 1,
-    paddingVertical: 15,
-  },
-  image: {
-    width: 120,
-    height: 120,
-  },
-  colorcustom: {
-    color: colors.custom,
-  },
-  money: {
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    // color: colors.custom,
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: "bold",
-    fontStyle: "italic",
-    color: colors.custom,
-  },
-  margin: {
-    margin: 10,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  date: {
-    opacity: 0.5,
-    fontSize: 12,
-  },
-  address: {
-    fontSize: 14,
-  },
-  vip: {
-    color: colors.green,
-    fontWeight: "500",
-  },
-  buttonRow: {
-    justifyContent: "space-around",
-    gap: 100,
-    flexDirection: "row-reverse",
-  },
-  buttonText: {
-    color: colors.white,
-  },
-  greenCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "green",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  redCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "red",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
-
-function useProfilebyIdRepositories(order_delivery: any): { user: any } {
-  throw new Error("Function not implemented.");
-}
+const colors = {
+  custom: "#1969a3",
+  green: "green",
+  detailsButton: "#2c7379",
+  acceptButton: "#f0a62f",
+  white: "white",
+  red: ""
+};

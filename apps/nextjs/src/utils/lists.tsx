@@ -1,16 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, LayoutPanelLeft, User, Users } from "lucide-react";
-
-import { Payment } from "~/components/TablePaymentsData";
+import { ArrowUpDown, Bell, LayoutPanelLeft, User, Users } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
+
+import { Payment } from "~/components/tables/TablePaymentsData";
+import DropdownOrderActions from "~/components/DropdownOrderActions";
 
 export const NavItems = [
   {
@@ -33,7 +26,15 @@ export const NavItems = [
     ),
     ref: "/delivery",
   },
-
+  {
+    key: "user-management",
+    label: (
+      <>
+        <Users size={20} /> Administración de roles
+      </>
+    ),
+    ref: "/user-management",
+  },
   {
     key: "account",
     label: (
@@ -43,115 +44,71 @@ export const NavItems = [
     ),
     ref: "/account",
   },
+
 ];
 
-export const payments: Payment[] = [
-  {
-    item: "Nougat - Paste / Cream",
-    amount: 231,
-    deliveredTo: "Massimo",
-    date: "4/27/2023",
-    status: "pending",
-  },
-  {
-    item: "Pepper - Cayenne",
-    amount: 976,
-    deliveredTo: "Julissa",
-    date: "7/24/2023",
-    status: "pending",
-  },
-  {
-    item: "Fond - Neutral",
-    amount: 675,
-    deliveredTo: "Meridith",
-    date: "5/6/2023",
-    status: "pending",
-  },
-  {
-    item: "Wine - White, Ej",
-    amount: 128,
-    deliveredTo: "Consuela",
-    date: "3/15/2023",
-    status: "pending",
-  },
-  {
-    item: "Star Fruit",
-    amount: 624,
-    deliveredTo: "Somerset",
-    date: "5/11/2023",
-    status: "pending",
-  },
-  {
-    item: "Wine - Blue Nun Qualitatswein",
-    amount: 149,
-    deliveredTo: "Padraic",
-    date: "9/10/2023",
-    status: "pending",
-  },
-  {
-    item: "Longos - Grilled Veg Sandwiches",
-    amount: 751,
-    deliveredTo: "Erhard",
-    date: "5/16/2023",
-    status: "pending",
-  },
-  {
-    item: "Sauce - Soy Low Sodium - 3.87l",
-    amount: 109,
-    deliveredTo: "Eugenio",
-    date: "6/7/2023",
-    status: "pending",
-  },
-  {
-    item: "Lamb Leg - Bone - In Nz",
-    amount: 199,
-    deliveredTo: "Cary",
-    date: "4/30/2023",
-    status: "pending",
-  },
-  {
-    item: "Seedlings - Mix, Organic",
-    amount: 344,
-    deliveredTo: "Lea",
-    date: "6/26/2023",
-    status: "pending",
-  },
-  {
-    item: "Nougat - Paste / Cream",
-    amount: 231,
-    deliveredTo: "Massimo",
-    date: "4/27/2023",
-    status: "pending",
-  },
-  {
-    item: "Nougat - Paste / Cream",
-    amount: 231,
-    deliveredTo: "Massimo",
-    date: "4/27/2023",
-    status: "pending",
-  },
-];
+const setColor = (status: string) => {
+  switch (status) {
+    case "Pendiente":
+      return "bg-amber-200";
+    case "En camino":
+      return "bg-cyan-300";
+    case "Entregado":
+      return "bg-green-500";
+    case "Cancelado":
+      return "bg-red-500";
+    default:
+      return "bg-yellow-400";
+  }
+}
+const checkIfLate = (status: string) => {
+  if (status === "on_time") {
+    return null;
+  }
+  if (status === "not_vip") {
+    return null;
 
+  }
+  if (status === "late") {
+    return <Bell color="red" width={20} />
+  }
+  return null;
+}
 export const columns: ColumnDef<Payment>[] = [
   {
-    id: "select",
-    header: () => <></>,
-    cell: () => <></>,
-  },
-  {
-    accessorKey: "item",
-    header: () => <p className="text-black">Producto</p>,
+    accessorKey: "order_id",
+    header: () => <p className="text-black">N° Orden</p>,
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("item")}</div>
+      <div className="text-muted-foreground">{row.getValue("order_id")}</div>
     ),
   },
   {
-    accessorKey: "amount",
+    accessorKey: "order_time",
+    header: ({ column }) => {
+      return <Button
+        variant="ghost"
+        className="text-black -px-4"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Fecha de orden
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    },
+    cell: ({ row }) => (
+      <div className="text-muted-foreground capitalize">
+        {String(row.getValue("order_time")?.toLocaleString())}
+      </div>
+    ),
+  },
+
+  {
+    accessorKey: "order_det_total",
     header: ({ column }) => {
       return (
         <span className="flex w-full items-center justify-center text-black">
           <Button
             variant="ghost"
+            className="text-black"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Precio
@@ -161,7 +118,7 @@ export const columns: ColumnDef<Payment>[] = [
       );
     },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = parseFloat(row.getValue("order_det_total"));
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "CLP",
@@ -176,30 +133,40 @@ export const columns: ColumnDef<Payment>[] = [
   },
 
   {
-    accessorKey: "deliveredTo",
+    accessorKey: "user_name",
     header: () => <p className="text-black">Entregado a</p>,
     cell: ({ row }) => (
       <div className="text-muted-foreground capitalize">
-        {row.getValue("deliveredTo")}
+        {row.getValue("user_name")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "usr_vip",
+    header: () => <p className="text-black">Miembro</p>,
+    cell: ({ row }) => (
+      <div className="text-muted-foreground capitalize">
+        {row.getValue("usr_vip") ? "Si" : "No"}
       </div>
     ),
   },
 
   {
-    accessorKey: "date",
-    header: () => <p className="text-black">Fecha</p>,
+    accessorKey: "delivery_user_name",
+    header: () => <p className="text-black">Entregado por</p>,
     cell: ({ row }) => (
       <div className="text-muted-foreground capitalize">
-        {row.getValue("date")}
+        {row.getValue("delivery_user_name")}
       </div>
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: "order_status",
     header: ({ column }) => {
       return (
         <span className="flex w-full items-center justify-center">
           <Button
+            className="text-black"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -209,43 +176,39 @@ export const columns: ColumnDef<Payment>[] = [
         </span>
       );
     },
+    cell: ({ row }) => (
+      <div
+        style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}
+        className={`flex items-center justify-center rounded-full p-1 font-medium uppercase text-card-foreground text-white border  ${setColor(row.getValue("order_status"))}`}
+      >
+        {row.getValue("order_status")}
+      </div>
+    )
+
+  },
+
+  {
+    id: "actions",
     cell: ({ row }) => {
-      const status: string = row.getValue("status");
 
       return (
-        <div
-          className="flex items-center justify-center rounded-full
-        bg-yellow-100 p-1 font-medium uppercase text-amber-700"
-        >
-          {status}
-        </div>
+        <DropdownOrderActions id={row.original.order_id} />
       );
     },
   },
   {
-    id: "actions",
-    cell: () => {
-      //const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <span className="h-4 w-4">···</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Ver detalle del pedido</DropdownMenuItem>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    accessorKey: "order_late",
+    header: () => <p className="text-black flex justify-center">Prioridad</p>,
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        {checkIfLate(row.getValue("order_late"))}
+      </div>
+    ),
   },
+
 ];
+
+
 
 export const profileFormData = [
   {
@@ -264,8 +227,13 @@ export const profileFormData = [
     type: "email",
   },
   {
-    name: "pass",
-    labelName: "Contraseña",
+    name: "oldpass",
+    labelName: "Contraseña Actual",
+    type: "password",
+  },
+  {
+    name: "newpass",
+    labelName: "Nueva Contraseña",
     type: "password",
   },
   {

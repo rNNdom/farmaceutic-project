@@ -1,53 +1,31 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-
-import useProduct from "~/hooks/useProduct";
 import ListCatHeader from "./ListCatHeader";
 import ProductShort from "./Product";
+import { api } from "~/utils/api";
+import Loading from "../loading";
 
 export default function ListProducts() {
-  const { product, loading } = useProduct(null);
+  const getProduct = api.product.getAllProducts.useQuery();
 
-  const types = [
-    {
-      name: "colonias",
-      key: "colonias",
-    },
-    {
-      name: "corporal",
-      key: "corporal",
-    },
-    {
-      name: "Cosmetica Natural",
-      key: "cosmetica-natural",
-    },
-    {
-      name: "Cuidado Capilar",
-      key: "cuidado-capilar",
-    },
-    {
-      name: "Cuidado Facial",
-      key: "cuidado-facial",
-    },
-  ];
+  const uniqueCategories = Array.from(new Set(getProduct.data?.map(product => product.prod_category)));
+
 
   return (
     <>
-      {loading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator />
-        </View>
+      {getProduct.isLoading ? (
+        <Loading />
       ) : (
         <FlatList
-          data={product}
+          data={getProduct.data}
           ListHeaderComponent={
             <>
-              <ListCatHeader data={types} />
+              <ListCatHeader data={uniqueCategories} />
             </>
           }
           renderItem={({ item }) => <ProductShort {...item} />}
-          keyExtractor={(item) => item.prod_id}
+          keyExtractor={(item) => item.prod_id.toString()}
         />
       )}
     </>

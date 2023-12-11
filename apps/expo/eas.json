@@ -3,26 +3,36 @@
     "version": ">= 3.3.0"
   },
   "build": {
-    "base": {
-      "node": "18.16.1",
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium"
       }
     },
-    "development": {
-      "extends": "base",
-      "developmentClient": true,
-      "distribution": "internal"
-    },
     "preview": {
-      "extends": "base",
       "distribution": "internal",
       "ios": {
-        "simulator": true
+        "simulator": true,
+        "resourceClass": "m-medium"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "DATABASE_URL": "mysql://riqw5dfggkf86ojq5oc4:pscale_pw_U3Q9vuJAGKkBTotUPwuL1BhvtHJGHjxMoZYgVVbheBU@aws.connect.psdb.cloud/farmaceutic-project?sslaccept=strict",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY":"pk_test_b3B0aW11bS1tYXJ0ZW4tNTkuY2xlcmsuYWNjb3VudHMuZGV2JA",
+        "CLERK_SECRET_KEY":"sk_test_KIdyMxqUy2ExREXFusXfYKcYCXKZLBpgVY8bDV9aGq",
+        "ACCESS_JWT_TOKEN":"ac5787d93dd7713e644aab26c3aaf1a42aa66be2affedbaa8dc7c6a54b8a8157368ee1285467c4942e89297e5fb5a14568bbc291dcacb1d3856f70e31c4c0ca9"    
       }
     },
     "production": {
-      "extends": "base"
+      "distribution": "internal",
+      "env": {
+        "DATABASE_URL": "la url del .env"
+         
+       
+      }
     }
   },
   "submit": {

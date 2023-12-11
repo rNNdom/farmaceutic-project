@@ -15,7 +15,9 @@ export const productsRouter = createTRPCRouter({
       });
       return products;
     }),
-
+  getAllProducts: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.product.findMany();
+  }),
   updateProducts: publicProcedure
     .input(
       z.object({
