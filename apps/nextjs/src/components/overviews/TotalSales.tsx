@@ -29,8 +29,8 @@ function TotalSales () {
   const lastItem = chartData?.[chartData?.length - 1]?.value;
   const previousLastItem = chartData?.[chartData?.length - 2]?.value;
   const percentage = (lastItem - previousLastItem) / previousLastItem * 100;
-
-
+  const percentageValue = previousLastItem === 0 ? lastItem : percentage;
+  console.log(percentageValue)
 
   return (
     <Card>
@@ -55,8 +55,8 @@ function TotalSales () {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatter.format(lastItem)}</div>
-            <p className={`text-muted-foreground text-xs ${percentage > 0 ? "text-green-500" : "text-red-500"}`}>
-              {percentage > 0 ? `+${percentage.toFixed(2)}%` : `-${percentage.toFixed(2)}%`} desde el mes anterior{" "}
+            <p className={`text-xs ${percentageValue > 0 ? "text-green-500" : "text-red-500"}`}>
+              {percentageValue > 0 ? `+${percentageValue.toFixed(2)}%` : `-${percentageValue.toFixed(2)}%`} desde el mes anterior{" "}
             </p>
           </CardContent>
           <TotalSalesChart data={chartData} />
