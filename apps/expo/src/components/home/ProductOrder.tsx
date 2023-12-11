@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { Order } from "~/utils/interface";
 import { Ionicons, Text, View } from "../Themed";
 import { api } from "~/utils/api";
 import { CustomColors, CustomStyles, getStatusColor } from "~/styles/CustomStyles";
 import { formatDate, formatMoney, formatStatus } from "~/utils/formats";
-import ViewDate from "../ViewDate";
 import ViewIconCard from "../ViewIconCard";
+import { UserContext } from "../userContext";
 
 
 
@@ -15,12 +15,14 @@ import ViewIconCard from "../ViewIconCard";
 export default function ProductOrder({ setIsDeleted, ...item }) {
   const [showText, setShowText] = useState(false);
   const deleteOrders = api.orders.deleteOrders.useMutation();
+  const { user } = useContext(UserContext);
   const order = item as Order;
   const customer = order.user;
   const orderdet = order.OrderDetail.at(0);
   const delivery = order.delivery_user;
   const aux = {
     ...orderdet,
+    order_id: order.order_id,
     order_date_of_ord: order.order_date_of_ord,
     order_location: order.order_location,
     order_status: order.order_status,
@@ -28,6 +30,7 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
     prf_name: delivery ? delivery.profile?.prf_name : null,
     prf_phone: delivery ? delivery.profile?.prf_phone : null,
     prf_email: delivery ? delivery.usr_email : null,
+    usr_role: user?.usr_role,
   }
 
   const options = formatDate()
@@ -100,8 +103,8 @@ export default function ProductOrder({ setIsDeleted, ...item }) {
           <ViewIconCard data={[order.order_location]} icon="map-outline" />
 
           {customer.usr_vip && (
-            <View className="flex-row ml-1" >
-              <View className="mr-2">
+            <View className="flex-row ml-1 bg-transparent" >
+              <View className="mr-2 bg-transparent">
                 <Ionicons
                   name="flash-outline"
                   size={26}

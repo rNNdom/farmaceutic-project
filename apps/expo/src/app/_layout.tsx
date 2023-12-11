@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
-import { useColorScheme } from "react-native";
+import React, { useContext, useEffect } from "react";
+import { useColorScheme, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
@@ -75,17 +75,6 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-  const [role, setRole] = useState('');
-
-  useLayoutEffect(() => {
-    const fetchRole = async () => {
-      const user = await getContentFromAsyncStorage("@user");
-      setRole(user?.usr_role || '');
-
-    };
-
-    fetchRole();
-  }, []);
   return (
 
     <TRPCProvider>
@@ -95,6 +84,7 @@ function RootLayoutNav() {
         >
           <UserProvider>
             <CartProvider>
+
               <Stack>
                 <Stack.Screen
                   name="(tabs)"

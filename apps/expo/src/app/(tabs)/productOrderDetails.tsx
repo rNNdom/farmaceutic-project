@@ -1,15 +1,17 @@
-import React from "react";
-import { FlatList } from "react-native";
+import React, { useContext, useEffect } from "react";
+import { FlatList, TouchableOpacity } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Text, View } from "../../components/Themed";
-
-import {  OrderDetails, ProductOrderDetail } from "~/utils/interface";
+import { OrderDetails, ProductOrderDetail } from "~/utils/interface";
 import { api } from "~/utils/api";
 import Loading from "~/components/loading";
 import Header from "~/components/Header";
 import OrderProductDetail from "~/components/home/OrderDetail";
-import { formatMoney } from "~/utils/formats";
+import { formatMoney, getNextStatus } from "~/utils/formats";
 import OrderDetailCard from "~/components/OrderDetailCard";
+import { CustomColors, CustomStyles } from "~/styles/CustomStyles";
+import { UserContext } from "~/components/userContext";
+import { useRouter } from "expo-router";
 
 
 
@@ -45,6 +47,10 @@ const CartItem = ({ prodDet, orderDet }: CartItemProps) => {
 
 export default function OrderDetail() {
   const _item = useRoute().params as any;
+  const router = useRouter();
+  const { user } = useContext(UserContext);
+  const utils = api.useUtils();
+  const updateOrder = api.orders.updateOrder.useMutation();
   const getProducts = api.orders.getProdDetails.useQuery({
     id: Number(_item.order_det_id)
   })
@@ -52,6 +58,30 @@ export default function OrderDetail() {
     return item
   })
 
+  const upOrder = (_deliver: any, _status: any) => {
+    updateOrder.mutate({
+      idOrder: Number(_item.order_id),
+      status: _status,
+      idDeliver: _deliver
+    })
+  }
+
+  useEffect(() => {
+    if (updateOrder.isSuccess) {
+      utils.orders.getAllOrdersByDeliverId.refetch()
+      utils.orders.getAllOrderforDeliver.refetch()
+      utils.orders.getLastDeliverOrder.refetch()
+      if (updateOrder.data.orders.order_status === "PENDING") {
+        router.back()
+      } else {
+        router.push("/(repartidor)/DeliverOrders")
+      }
+    }
+    updateOrder.isError && console.log(updateOrder.error.message)
+
+  }, [updateOrder.isSuccess, updateOrder.isError])
+
+  console.log(_item)
 
   return (
     <>
@@ -66,6 +96,26 @@ export default function OrderDetail() {
             <>
               <OrderDetailCard {..._item} />
               <CartItem prodDet={prodDet} orderDet={_item} />
+              {_item.usr_role === "DELIVER" && _item.order_status !== "DELIVERED" && (
+                <>
+                  <View className="flex-row justify-center items-center py-2 px-2">
+                    <TouchableOpacity
+                      className="bg-transparent border-2 rounded-md px-5 py-2 justify-center m-1"
+                      style={CustomStyles.cancelButton}
+                      onPress={() => upOrder(null, "PENDING")}
+                    >
+                      <Text style={{ color: CustomColors.White }}>Cancelar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      className="bg-transparent border-2 rounded-md px-5 py-2 justify-center"
+                      style={CustomStyles.detailButtton}
+                      onPress={() => upOrder(user?.usr_id, getNextStatus(_item.order_status))}
+                    >
+                      <Text style={CustomStyles.buttontext}>Actualizar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
             </>
           )}
         </>

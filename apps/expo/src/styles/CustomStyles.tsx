@@ -51,6 +51,10 @@ const cicle = {
 const buttonOrder = {
     alignItems: "center",
     paddingVertical: 12,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
     flex: 1,
     borderRadius: 8,
 }
@@ -118,6 +122,18 @@ export const CustomStyles = StyleSheet.create({
     detailButtton: {
         ...buttonOrder,
         backgroundColor: CustomColors.Persian_green
+    },
+    loginButtton: {
+        ...buttonOrder,
+        backgroundColor: CustomColors.Bice_blue,
+        flex: 0,
+
+    },
+    singUpButtton: {
+        ...buttonOrder,
+        borderColor: CustomColors.Bice_blue,
+        borderWidth: 1,
+        flex: 0,
     },
     cancelButton: {
         ...buttonOrder,

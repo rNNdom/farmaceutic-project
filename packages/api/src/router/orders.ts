@@ -110,8 +110,24 @@ export const orderRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const order = await ctx.prisma.order.findMany({
+      const order = await ctx.prisma.order.findUnique({
         where: { order_id: input.id },
+        include: {
+          user: {
+            select: {
+              usr_vip: true,
+              usr_email: true,
+              profile: true,
+            },
+          },
+          delivery_user: {
+            select: {
+              profile: true,
+              usr_email: true,
+            },
+          },
+          OrderDetail: true,
+        },
       });
       return order;
     }),
@@ -186,6 +202,7 @@ export const orderRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const order = await ctx.prisma.order.findMany({
         where: { order_customer: input.idCustomer },
+        orderBy: { order_date_of_ord: "desc" },
         include: {
           user: {
             select: {
@@ -215,7 +232,7 @@ export const orderRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const order = await ctx.prisma.order.findMany({
         where: { order_delivery: input.idDeliver },
-        orderBy: { order_date_of_ord: "asc" },
+        orderBy: { order_date_of_ord: "desc" },
         include: {
           user: {
             select: {
@@ -247,6 +264,9 @@ export const orderRouter = createTRPCRouter({
               order_delivery: input.idDeliver,
             },
           ],
+          NOT: {
+            order_status: "DELIVERED",
+          },
         },
         orderBy: { order_date_of_ord: "asc" },
         include: {
@@ -328,21 +348,32 @@ export const orderRouter = createTRPCRouter({
     .input(
       z.object({
         idOrder: z.number(),
-        idDeliver: z.number(),
+        idDeliver: z.number().nullable(),
         status: z.enum(["PENDING", "DELIVERING", "DELIVERED", "CANCELED"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const dataToUpdate = {
+        order_status: input.status,
+        delivery_user: {},
+      };
+
+      if (input.idDeliver !== null) {
+        dataToUpdate.delivery_user = {
+          connect: {
+            usr_id: input.idDeliver,
+          },
+        };
+      } else {
+        dataToUpdate.delivery_user = {
+          disconnect: true,
+        };
+      }
+      console.log(dataToUpdate);
+
       const updateOrders = await ctx.prisma.order.update({
         where: { order_id: input.idOrder },
-        data: {
-          order_status: input.status,
-          delivery_user: {
-            connect: {
-              usr_id: input.idDeliver,
-            },
-          },
-        },
+        data: dataToUpdate,
       });
 
       if (!updateOrders) {
@@ -360,6 +391,37 @@ export const orderRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const products = await ctx.prisma.order.findUnique({
+        where: { order_id: input.id },
+        include: {
+          OrderDetail: {
+            include: {
+              ProductOrderDetail: {
+                include: {
+                  Product: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      for (const product of products?.OrderDetail[0]?.ProductOrderDetail) {
+        const existingProduct = await ctx.prisma.product.findUnique({
+          where: { prod_id: product.productId },
+        });
+
+        if (!existingProduct) {
+          throw new Error("Producto no encontrado");
+        }
+
+        const newQuantity =
+          existingProduct.prod_quantity + product.quantity ?? 0;
+
+        await ctx.prisma.product.update({
+          where: { prod_id: product.productId },
+          data: { prod_quantity: newQuantity },
+        });
+      }
       const order = await ctx.prisma.order.delete({
         where: { order_id: input.id },
       });
@@ -415,6 +477,28 @@ export const orderRouter = createTRPCRouter({
 
       if (!createOrder) {
         throw new Error("No se pudo crear el pedido");
+      }
+
+      // Reduce la cantidad de stock para cada producto
+      for (const product of input.products) {
+        const existingProduct = await ctx.prisma.product.findUnique({
+          where: { prod_id: product.prod_id },
+        });
+
+        if (!existingProduct) {
+          throw new Error("Producto no encontrado");
+        }
+
+        const newQuantity = existingProduct.prod_quantity - product.quantity;
+
+        if (newQuantity < 0) {
+          throw new Error("No hay suficiente stock para el producto");
+        }
+
+        await ctx.prisma.product.update({
+          where: { prod_id: product.prod_id },
+          data: { prod_quantity: newQuantity },
+        });
       }
 
       return {

@@ -1,5 +1,9 @@
 import type { ExpoConfig } from "@expo/config";
 
+
+
+
+
 const CLERK_PUBLISHABLE_KEY =
   "pk_test_b3B0aW11bS1tYXJ0ZW4tNTkuY2xlcmsuYWNjb3VudHMuZGV2JA";
 const defineConfig = (): ExpoConfig => ({
@@ -13,7 +17,7 @@ const defineConfig = (): ExpoConfig => ({
   splash: {
     image: "./assets/icon.png",
     resizeMode: "contain",
-    backgroundColor: "#1F104A",
+    backgroundColor: "#0F0326",
   },
   updates: {
     fallbackToCacheTimeout: 0,
@@ -26,7 +30,7 @@ const defineConfig = (): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
-      backgroundColor: "#1F104A",
+      backgroundColor: "#0F0326",
     },
     package: "fama.app.farmaceutic",
     versionCode: 1,

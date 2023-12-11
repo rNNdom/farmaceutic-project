@@ -28,6 +28,7 @@ export default function Profilesr() {
 
   const aux = {
     ...lastOrder.data?.OrderDetail.at(0),
+    order_id: lastOrder.data?.order_id,
     order_date_of_ord: lastOrder.data?.order_date_of_ord,
     order_location: lastOrder.data?.order_location,
     order_status: lastOrder.data?.order_status,
@@ -35,7 +36,7 @@ export default function Profilesr() {
     prf_name: lastOrder.data?.order_delivery ? lastOrder.data?.delivery_user?.profile.prf_name : null,
     prf_phone: lastOrder.data?.order_delivery ? lastOrder.data?.delivery_user?.profile.prf_phone : null,
     prf_email: lastOrder.data?.order_delivery ? lastOrder.data.delivery_user?.usr_email : null,
-
+    usr_role: user?.usr_role,
   }
 
   useEffect(() => {

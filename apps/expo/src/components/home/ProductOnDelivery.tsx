@@ -6,28 +6,10 @@ import { Ionicons, Text, View } from "../../components/Themed";
 import { api } from "~/utils/api";
 import { UserContext } from "../userContext";
 import { CustomStyles, getCircleStyle, getStatusColor } from "~/styles/CustomStyles";
-import { formatDate, formatMoney, formatStatus } from "~/utils/formats";
+import { calculatePriority, formatDate, formatMoney, formatStatus } from "~/utils/formats";
 import ViewIconCard from "../ViewIconCard";
 
-export const calculatePriority = (isVip: boolean, orderDate: Date) => {
-  if (isVip) {
-    return 3;
-  }
 
-  const now = new Date();
-  const differenceInMinutes =
-    (now.getTime() - orderDate.getTime()) / (1000 * 60);
-
-  if (differenceInMinutes < 7) {
-    return 0;
-  } else if (differenceInMinutes < 15) {
-    return 1;
-  } else if (differenceInMinutes < 30) {
-    return 2;
-  } else {
-    return 3;
-  }
-};
 
 const getPriorityText = (priority: number) => {
   switch (priority) {
@@ -46,7 +28,6 @@ const getPriorityText = (priority: number) => {
 
 export default function ProductOnDelivery({ setIsChange, ...item }) {
   const [showText, setShowText] = useState(false);
-  const [orderStatus, setOrderStatus] = useState('PENDING');
   const { user } = useContext(UserContext);
   const order = item as Order;
   const updateOrder = api.orders.updateOrder.useMutation();
@@ -54,6 +35,7 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
   const orderdet = order.OrderDetail.at(0);
   const aux = {
     ...orderdet,
+    order_id: order.order_id,
     order_date_of_ord: order.order_date_of_ord,
     order_location: order.order_location,
     order_status: order.order_status,
@@ -61,6 +43,7 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
     prf_name: customer ? customer.profile?.prf_name : null,
     prf_phone: customer ? customer.profile?.prf_phone : null,
     prf_email: customer ? customer.usr_email : null,
+    usr_role: user?.usr_role,
   }
 
 
@@ -157,8 +140,8 @@ export default function ProductOnDelivery({ setIsChange, ...item }) {
               <ViewIconCard data={[order.order_location]} icon="map-outline" />
 
               {customer.usr_vip && (
-                <View className="flex-row ml-1" >
-                  <View className="mr-2">
+                <View className="flex-row ml-1 bg-transparent" >
+                  <View className="mr-2 bg-transparent">
                     <Ionicons
                       name="flash-outline"
                       size={26}
