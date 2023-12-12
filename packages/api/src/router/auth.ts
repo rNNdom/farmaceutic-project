@@ -26,7 +26,12 @@ export const authRouter = createTRPCRouter({
       if (!passwordMatches) {
         throw new Error("Email o contraseña incorrectos");
       }
-
+      /*
+      const token = jwt.sign(
+        { userId: user.usr_id },
+        process.env.ACCESS_JWT_TOKEN as string,
+      );
+       */
       const token = jwt.sign({ userId: user.usr_id }, null, {
         algorithm: "none",
       });
@@ -75,7 +80,10 @@ export const authRouter = createTRPCRouter({
           },
         },
       });
-
+      /* const token = jwt.sign(
+        { userId: user.usr_id },
+        process.env.ACCESS_JWT_TOKEN as string,
+      );*/
       const token = jwt.sign({ userId: user.usr_id }, null, {
         algorithm: "none",
       });
