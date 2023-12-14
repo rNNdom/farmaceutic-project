@@ -24,7 +24,8 @@ const formSchema = z.object({
   name: z.string().min(3, "El nombre debe tener al menos 3 caracteres."),
   lastname: z.string().min(3, "El apellido debe tener al menos 3 caracteres."),
   email: z.string().email("El correo electrónico no es válido."),
-  pass: z.string().min(8, "La contraseña debe tener al menos 8 caracteres."),
+  oldpass: z.string().min(8, "La contraseña debe tener al menos 8 caracteres."),
+  newpass: z.string().min(8, "La contraseña debe tener al menos 8 caracteres.").optional().or(z.literal('')),
   phone: z.string().min(10, "El teléfono debe tener al menos 10 caracteres."),
 });
 
@@ -41,7 +42,8 @@ export default function ProfileInfo () {
       name: getProfile.data?.prf_name ?? "",
       lastname: getProfile.data?.prf_lastname ?? "",
       email: getProfile.data?.usr_email ?? "",
-      pass: getProfile.data?.usr_pass ?? "",
+      oldpass: "",
+      newpass: "",
       phone: getProfile.data?.prf_phone ?? "",
     },
   });
@@ -51,7 +53,6 @@ export default function ProfileInfo () {
         name: getProfile.data?.prf_name,
         lastname: getProfile.data?.prf_lastname,
         email: getProfile.data?.usr_email,
-        pass: getProfile.data?.usr_pass,
         phone: getProfile.data?.prf_phone,
       });
     }
@@ -62,11 +63,10 @@ export default function ProfileInfo () {
       name: values.name,
       lastname: values.lastname,
       email: values.email,
-      oldpass: values.pass,
-      newpass: values.pass,
+      oldpass: values.oldpass,
+      newpass: values.newpass ? values.newpass : values.oldpass,
       phone: values.phone,
     })
-
   }
   return (
     <div className="grid w-full items-center gap-4">
@@ -114,6 +114,10 @@ export default function ProfileInfo () {
               {updateProfile.isError && (
                 <p className="text-red-500 ">{updateProfile.error.message}</p>
               )}
+              {updateProfile.isSuccess && (
+                <p className="text-green-500 ">Perfil actualizado</p>
+              )}
+              {updateProfile.isLoading && <Loading />}
               <Button
                 type="button"
                 className="bg-sky-400"

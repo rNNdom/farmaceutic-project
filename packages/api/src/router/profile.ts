@@ -51,10 +51,10 @@ export const profileRouter = createTRPCRouter({
         throw new Error("Las contraseñas no coinciden");
       }
 
-
-
-      const hashedPassword = input.newpass !== "" ? await bcrypt.hash(input.newpass, 10): user?.usr_pass;
-      
+      const hashedPassword =
+        input.newpass !== ""
+          ? await bcrypt.hash(input.newpass, 10)
+          : user?.usr_pass;
 
       const updateUser = await ctx.prisma.user.update({
         where: { usr_id: input.id },
